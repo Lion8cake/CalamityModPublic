@@ -1086,7 +1086,7 @@ namespace CalamityMod.CalPlayer
 
         #region Biome
         public bool ZoneCalamity => Player.InModBiome(ModContent.GetInstance<BrimstoneCragsBiome>());
-        public bool ZoneAstral => Player.InModBiome(ModContent.GetInstance<BiomeManagers.AstralBiome>()) && !ZoneAbyss;
+        public bool ZoneAstral => Player.InModBiome(ModContent.GetInstance<BiomeManagers.AstralInfectionBiome>()) && !ZoneAbyss;
         public bool ZoneSunkenSea => Player.InModBiome(ModContent.GetInstance<SunkenSeaBiome>());
         public bool ZoneSulphur => Player.InModBiome(ModContent.GetInstance<SulphurousSeaBiome>());
         public bool ZoneAbyss => ZoneAbyssLayer1 || ZoneAbyssLayer2 || ZoneAbyssLayer3 || ZoneAbyssLayer4;

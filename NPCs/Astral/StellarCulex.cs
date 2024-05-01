@@ -4,7 +4,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Placeables.Banners;
-using CalamityMod.BiomeManagers.BestiaryCatagories;
+using CalamityMod.BiomeManagers.BestiaryCategories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

@@ -2,7 +2,7 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.World;
-using CalamityMod.BiomeManagers.BestiaryCatagories;
+using CalamityMod.BiomeManagers.BestiaryCategories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

@@ -59,7 +59,7 @@ namespace CalamityMod.NPCs.Astral
             }
             NPC.Calamity().VulnerableToHeat = true;
             NPC.Calamity().VulnerableToSickness = false;
-            SpawnModBiomes = new int[1] { ModContent.GetInstance<BiomeManagers.AstralBiome>().Type };
+            SpawnModBiomes = new int[1] { ModContent.GetInstance<BiomeManagers.AstralInfectionBiome>().Type };
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

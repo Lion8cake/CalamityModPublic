@@ -6,7 +6,7 @@ using CalamityMod.Items.Accessories.Wings;
 using CalamityMod.Items.Placeables.Banners;
 using CalamityMod.Tiles.AstralDesert;
 using CalamityMod.World;
-using CalamityMod.BiomeManagers.BestiaryCatagories;
+using CalamityMod.BiomeManagers.BestiaryCategories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

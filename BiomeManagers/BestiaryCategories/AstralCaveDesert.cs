@@ -1,6 +1,6 @@
 ﻿using Terraria.ModLoader;
 
-namespace CalamityMod.BiomeManagers.BestiaryCatagories
+namespace CalamityMod.BiomeManagers.BestiaryCategories
 {
     public class AstralCaveDesert : ModBiome //Unused, currently
     {

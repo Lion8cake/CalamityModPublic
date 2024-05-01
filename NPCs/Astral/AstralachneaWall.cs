@@ -6,7 +6,7 @@ using CalamityMod.Items.Placeables.Banners;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Sounds;
 using CalamityMod.World;
-using CalamityMod.BiomeManagers.BestiaryCatagories;
+using CalamityMod.BiomeManagers.BestiaryCategories;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

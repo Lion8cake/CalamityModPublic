@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace CalamityMod.BiomeManagers
 {
-    public class AstralBiome : ModBiome
+    public class AstralInfectionBiome : ModBiome
     {
         public override ModWaterStyle WaterStyle => ModContent.Find<ModWaterStyle>("CalamityMod/AstralWater");
         public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle
