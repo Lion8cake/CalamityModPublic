@@ -20,7 +20,7 @@ namespace CalamityMod.Tiles.Astral
         {
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
-			TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Wood"]);
+            TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Wood"]);
 
             CalamityUtils.MergeWithGeneral(Type);
             CalamityUtils.MergeAstralTiles(Type);

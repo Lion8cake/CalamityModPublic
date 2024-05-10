@@ -1,10 +1,10 @@
-﻿using CalamityMod.Balancing;
+﻿using System;
+using CalamityMod.Balancing;
 using CalamityMod.CalPlayer.Dashes;
 using CalamityMod.EntitySources;
 using CalamityMod.Enums;
 using CalamityMod.Items.Mounts;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,10 +27,10 @@ namespace CalamityMod.CalPlayer
             set => dashID = value;
         }
 
-    public string DeferredDashID;
+        public string DeferredDashID;
 
         public string LastUsedDashID;
-        
+
         public PlayerDashEffect UsedDash
         {
             get
@@ -127,7 +127,9 @@ namespace CalamityMod.CalPlayer
                     dashDelayToApply = BalancingConstants.UniversalShieldSlamCooldown;
                 else if (UsedDash.CollisionType == DashCollisionType.ShieldBonk)
                     dashDelayToApply = BalancingConstants.UniversalShieldBonkCooldown;
-                
+                if (DashID == "Deep Diver")
+                    dashDelayToApply = 23;
+
                 float dashSpeed = 12f;
                 float dashSpeedDecelerationFactor = 0.985f;
                 float runSpeed = Math.Max(Player.accRunSpeed, Player.maxRunSpeed);
@@ -564,8 +566,10 @@ namespace CalamityMod.CalPlayer
                         if (Player.whoAmI == Main.myPlayer)
                             Player.ApplyDamageToNPC(n, (int)Damage, Knockback, hitDirection, false);
 
+                        // 17APR2024: Ozzatron: Dash iframes are not boosted by Cross Necklace at all and are fixed.
                         n.Calamity().dashImmunityTime[Player.whoAmI] = NPCImmuneTime;
-                        Player.GiveIFrames(PlayerImmuneTime, false);
+                        Player.GiveUniversalIFrames(PlayerImmuneTime, false);
+
                         totalHurtNPCs++;
                         break;
                     }

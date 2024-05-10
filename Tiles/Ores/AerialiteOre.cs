@@ -2,11 +2,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using Terraria.Audio;
 using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ID;
 
 namespace CalamityMod.Tiles.Ores
 {
@@ -54,7 +54,7 @@ namespace CalamityMod.Tiles.Ores
         }
         public override void PostSetDefaults()
         {
-        Main.tileNoSunLight[Type] = false;
+            Main.tileNoSunLight[Type] = false;
         }
 
         int animationFrameWidth = 234;

@@ -1,9 +1,9 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.Items.Weapons.Typeless;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CalamityMod.Dusts;
+using CalamityMod.Items.Weapons.Typeless;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

@@ -1,14 +1,14 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using System.IO;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace CalamityMod.Projectiles.Boss
 {
@@ -59,15 +59,15 @@ namespace CalamityMod.Projectiles.Boss
                 int dustType = ProvUtils.GetDustID(Projectile.maxPenetrate);
                 for (int i = 0; i < 2; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, velocityY, 50, default, 1.5f);
+                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, velocityY, 50, default, 1.5f);
                     Main.dust[dust].noGravity = true;
                 }
                 for (int j = 0; j < 20; j++)
                 {
-                    int holyDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, velocityY, 0, default, 2.5f);
+                    int holyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, velocityY, 0, default, 2.5f);
                     Main.dust[holyDust].noGravity = true;
                     Main.dust[holyDust].velocity *= 2f;
-                    holyDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, velocityY, 50, default, 1.5f);
+                    holyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, velocityY, 50, default, 1.5f);
                     Main.dust[holyDust].velocity *= 1.5f;
                     Main.dust[holyDust].noGravity = true;
                 }
@@ -100,8 +100,8 @@ namespace CalamityMod.Projectiles.Boss
         }
 
         public override bool PreDraw(ref Color lightColor)
-        {            
-            Texture2D texture = (Projectile.maxPenetrate == (int)Providence.BossMode.Day) ? ModContent.Request<Texture2D>(Texture).Value : ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/HolyBombNight").Value;
+        {
+            Texture2D texture = (Projectile.maxPenetrate == (int)Providence.BossMode.Day) ? Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value : ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/HolyBombNight").Value;
             int framing = texture.Height / Main.projFrames[Projectile.type];
             int y6 = framing * Projectile.frame;
             Projectile.DrawBackglow(ProvUtils.GetProjectileColor(Projectile.maxPenetrate, Projectile.alpha, true), 4f, texture);
@@ -121,15 +121,15 @@ namespace CalamityMod.Projectiles.Boss
             int dustType = ProvUtils.GetDustID(Projectile.maxPenetrate);
             for (int i = 0; i < 2; i++)
             {
-                int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, 0f, 50, default, 1.5f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, 0f, 50, default, 1.5f);
                 Main.dust[dust].noGravity = true;
             }
             for (int j = 0; j < 20; j++)
             {
-                int holyDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, 0f, 0, default, 2.5f);
+                int holyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, 0f, 0, default, 2.5f);
                 Main.dust[holyDust].noGravity = true;
                 Main.dust[holyDust].velocity *= 3f;
-                holyDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, dustType, 0f, 0f, 50, default, 1.5f);
+                holyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, 0f, 50, default, 1.5f);
                 Main.dust[holyDust].velocity *= 2f;
                 Main.dust[holyDust].noGravity = true;
             }

@@ -55,7 +55,7 @@ namespace CalamityMod
         /// <param name="n"></param>
         public static void HideFromBestiary(this ModNPC n)
         {
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 Hide = true
             };
@@ -189,6 +189,23 @@ namespace CalamityMod
                 }
             }
             return FindFirstProjectile(ProjectileType<DeusRitualDrama>()) != -1;
+        }
+
+        /// <summary>
+        /// Syncs <see cref="CalamityGlobalNPC.destroyerLaserColor"/>. This exists to sync the Destroyer's lasers so that the telegraphs and segment colors display properly.
+        /// </summary>
+        /// <param name="npc"></param>
+        public static void SyncDestroyerLaserColor(this NPC npc)
+        {
+            // Don't bother attempting to send packets in singleplayer.
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = CalamityMod.Instance.GetPacket();
+            packet.Write((byte)CalamityModMessageType.SyncDestroyerLaserColor);
+            packet.Write((byte)npc.whoAmI);
+            packet.Write(npc.Calamity().destroyerLaserColor);
+            packet.Send();
         }
 
         /// <summary>

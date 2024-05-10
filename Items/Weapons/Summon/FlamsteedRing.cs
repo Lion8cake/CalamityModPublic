@@ -1,4 +1,6 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Weapons.Melee;
@@ -6,8 +8,6 @@ using CalamityMod.Projectiles.Summon;
 using CalamityMod.Rarities;
 using CalamityMod.Tiles.Furniture.CraftingStations;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -38,7 +38,7 @@ namespace CalamityMod.Items.Weapons.Summon
         public const int CrippleTime = 360; // 6 seconds
         public override void SetStaticDefaults()
         {
-           
+
             if (Main.netMode != NetmodeID.Server)
             {
                 int equipSlotHead = EquipLoader.GetEquipSlot(Mod, "HeadlessEquipTexture", EquipType.Head);
@@ -48,10 +48,10 @@ namespace CalamityMod.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
+            Item.width = Item.height = 28;
             Item.mana = 200;
             Item.damage = 1999;
             Item.useStyle = ItemUseStyleID.HoldUp;
-            Item.width = Item.height = 28;
             Item.useTime = Item.useAnimation = 9;
             Item.noMelee = true;
             Item.knockBack = 1f;
@@ -83,7 +83,7 @@ namespace CalamityMod.Items.Weapons.Summon
 
                         if (!visuals)
                             return false;
-                            
+
                         Dust warningDust = Dust.NewDustPerfect(pos.ToVector2() * 16f + Vector2.One * 8f, 127, Scale: 1.2f);
 
                         warningDust = Dust.NewDustPerfect(pos.ToVector2() * 16f + Vector2.One * 8f, 114, Vector2.Zero, Scale: 1.4f);

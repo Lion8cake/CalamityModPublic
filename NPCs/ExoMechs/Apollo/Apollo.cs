@@ -1,4 +1,7 @@
-﻿using CalamityMod.Events;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod.Events;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Potions;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
@@ -10,9 +13,7 @@ using CalamityMod.Sounds;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -20,7 +21,6 @@ using Terraria.GameContent.Bestiary;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using ArtemisBoss = CalamityMod.NPCs.ExoMechs.Artemis.Artemis;
 
 namespace CalamityMod.NPCs.ExoMechs.Apollo
@@ -29,6 +29,8 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
     {
         public static int phase1IconIndex;
         public static int phase2IconIndex;
+
+        public static Asset<Texture2D> GlowTexture;
 
         internal static void LoadHeadIcons()
         {
@@ -136,6 +138,10 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                 Rotation = -MathHelper.PiOver4
             };
             NPCID.Sets.NPCBestiaryDrawOffset[Type] = value;
+            if (!Main.dedServ)
+            {
+                GlowTexture = ModContent.Request<Texture2D>(Texture + "Glow", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -950,6 +956,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                 // Fly to the right of the target
                 case (int)Phase.Normal:
 
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
+
                     // Smooth movement towards the location Apollo is meant to be at
                     CalamityUtils.SmoothMovement(NPC, movementDistanceGateValue, distanceFromDestination, baseVelocity, 0f, false);
 
@@ -1023,6 +1032,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                 // Charge
                 case (int)Phase.RocketBarrage:
 
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
+
                     // Smooth movement towards the location Apollo is meant to be at
                     CalamityUtils.SmoothMovement(NPC, movementDistanceGateValue, distanceFromDestination, baseVelocity, 0f, false);
 
@@ -1063,6 +1075,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                 // Fill up the charge location array with the positions Apollo will charge from
                 // Create telegraph beams between the charge location array positions
                 case (int)Phase.LineUpChargeCombo:
+
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
 
                     if (!readyToCharge)
                     {
@@ -1125,6 +1140,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                         calamityGlobalNPC.newAI[2] += 1f;
                         if (calamityGlobalNPC.newAI[2] >= timeToLineUpCharge)
                         {
+                            // Set damage
+                            NPC.damage = NPC.defDamage;
+
                             ExoMechsSky.CreateLightningBolt(10);
 
                             AIState = (float)Phase.ChargeCombo;
@@ -1137,6 +1155,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
 
                 // Charge to several locations almost instantly (Apollo doesn't teleport here, he's just moving very fast :D)
                 case (int)Phase.ChargeCombo:
+
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
 
                     // Tell Artemis to not fire lasers for a short time
                     NPC.ai[3] = 61f;
@@ -1241,6 +1262,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                     // Reset phase and variables
                     if (calamityGlobalNPC.newAI[2] >= maxCharges - 1)
                     {
+                        // Avoid cheap bullshit
+                        NPC.damage = 0;
+
                         if (Main.zenithWorld && !exoMechdusa)
                         {
                             pickNewLocation = NPC.localAI[2] == 0f;
@@ -1277,6 +1301,9 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
 
                 // Phase transition animation, that's all this exists for
                 case (int)Phase.PhaseTransition:
+
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
 
                     // Smooth movement towards the location Apollo is meant to be at
                     CalamityUtils.SmoothMovement(NPC, movementDistanceGateValue, distanceFromDestination, baseVelocity, 0f, false);
@@ -1361,7 +1388,7 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
             if (hitboxBotRight < minDist)
                 minDist = hitboxBotRight;
 
-            return minDist <= 100f && NPC.Opacity == 1f && AIState == (float)Phase.ChargeCombo;
+            return minDist <= 100f && NPC.Opacity == 1f;
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -1576,7 +1603,7 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
                 }
             }
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Apollo/ApolloGlow").Value;
+            texture = GlowTexture.Value;
             if (CalamityConfig.Instance.Afterimages && !NPC.IsABestiaryIconDummy)
             {
                 for (int i = 1; i < numAfterimages; i += 2)
@@ -1706,7 +1733,7 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
 
             if (NPC.soundDelay == 0)
             {
@@ -1718,14 +1745,14 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
             {
                 for (int num193 = 0; num193 < 2; num193++)
                 {
-                    Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                 }
                 for (int i = 0; i < 20; i++)
                 {
-                    int plasmaDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
+                    int plasmaDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
                     Main.dust[plasmaDust].noGravity = true;
                     Main.dust[plasmaDust].velocity *= 3f;
-                    plasmaDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    plasmaDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                     Main.dust[plasmaDust].velocity *= 2f;
                     Main.dust[plasmaDust].noGravity = true;
                 }
@@ -1786,7 +1813,7 @@ namespace CalamityMod.NPCs.ExoMechs.Apollo
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance * bossAdjustment);
             NPC.damage = (int)(NPC.damage * NPC.GetExpertDamageMultiplier());
         }
     }

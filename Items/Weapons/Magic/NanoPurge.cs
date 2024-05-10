@@ -15,11 +15,11 @@ namespace CalamityMod.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
+            Item.width = 62;
+            Item.height = 34;
             Item.damage = 60;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 8;
-            Item.width = 62;
-            Item.height = 34;
             Item.useTime = Item.useAnimation = UseTime;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
@@ -27,7 +27,7 @@ namespace CalamityMod.Items.Weapons.Magic
             Item.channel = true;
             Item.knockBack = 3f;
             Item.rare = ItemRarityID.Red;
-            Item.value = CalamityGlobalItem.Rarity10BuyPrice;
+            Item.value = CalamityGlobalItem.RarityRedBuyPrice;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<NanoPurgeHoldout>();
             Item.shootSpeed = 16f;

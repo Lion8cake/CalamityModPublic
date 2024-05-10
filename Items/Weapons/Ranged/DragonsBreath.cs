@@ -14,8 +14,9 @@ namespace CalamityMod.Items.Weapons.Ranged
     public class DragonsBreath : ModItem, ILocalizedModType
     {
         public new string LocalizationCategory => "Items.Weapons.Ranged";
-        
+
         public static readonly SoundStyle FireballSound = new("CalamityMod/Sounds/Custom/Yharon/YharonFireball", 3) { PitchVariance = 0.3f, Volume = 0.75f };
+        public static readonly SoundStyle WeldingStart = new("CalamityMod/Sounds/Item/DragonsBreathStrongStart") { Volume = 1.75f };
         public static readonly SoundStyle WeldingBurn = new("CalamityMod/Sounds/Item/WeldingBurn") { Volume = 0.65f };
         public static readonly SoundStyle WeldingShoot = new("CalamityMod/Sounds/Item/WeldingShoot") { Volume = 0.45f };
 
@@ -28,13 +29,14 @@ namespace CalamityMod.Items.Weapons.Ranged
         public bool StrongShotMode = false;
         public int DragonsBreathSetUseTime = 5;
         public int DragonsBreathSetUseAnimation = 9;
+        private Player Owner;
 
         public override void SetDefaults()
         {
+            Item.width = 124;
+            Item.height = 72;
             Item.damage = 478;
             Item.DamageType = DamageClass.Ranged;
-            Item.width = 94;
-            Item.height = 72;
             Item.useTime = DragonsBreathSetUseTime;
             Item.useAnimation = DragonsBreathSetUseAnimation;
             Item.reuseDelay = BetweenShotsPause;
@@ -49,11 +51,11 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.useAmmo = AmmoID.Gel;
 
             Item.rare = ModContent.RarityType<Violet>();
-            Item.value = CalamityGlobalItem.Rarity15BuyPrice;
+            Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
         }
         public override bool CanConsumeAmmo(Item ammo, Player player) => !StrongShotMode && Main.rand.NextFloat() > 0.80f;
 
-        public override Vector2? HoldoutOffset() => new Vector2(18, 10.5f);
+        public override Vector2? HoldoutOffset() => new Vector2(27, 10);
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -83,19 +85,19 @@ namespace CalamityMod.Items.Weapons.Ranged
                     StrongShotMode = true;
                     DragonsBreathSetUseTime = 2;
                     DragonsBreathSetUseAnimation = 2;
-                    SoundEngine.PlaySound(ScorchedEarth.ShootSound, player.Center);
+                    SoundEngine.PlaySound(WeldingStart, player.Center);
                 }
             }
             else if (StrongShotMode)
             {
                 if (SoundEngine.TryGetActiveSound(WeldSoundSlot, out var WeldSound) && WeldSound.IsPlaying)
                     WeldSound.Position = player.Center;
-                if (player.Calamity().DragonsBreathAudioCooldown2 == 0)
+                if ((player.Calamity().DragonsBreathAudioCooldown2 == 0) && (WeldingShots < 45))
                 {
                     player.Calamity().DragonsBreathAudioCooldown2 = 30;
                     WeldSoundSlot = SoundEngine.PlaySound(WeldingShoot, player.Center);
                 }
-                Projectile.NewProjectile(source, position, velocity * 1.5f, ModContent.ProjectileType<DragonsBreathFlames>(), damage, knockback, player.whoAmI, 1);
+                Projectile.NewProjectile(source, position, velocity * 2f, ModContent.ProjectileType<DragonsBreathFlames>(), damage, knockback, player.whoAmI, 1);
                 WeldingShots--;
                 if (WeldingShots <= 0)
                 {
@@ -110,7 +112,7 @@ namespace CalamityMod.Items.Weapons.Ranged
                     StrongShotMode = false;
                     DragonsBreathSetUseTime = 5;
                     DragonsBreathSetUseAnimation = 9;
-    }
+                }
             }
             return false;
         }
@@ -120,7 +122,7 @@ namespace CalamityMod.Items.Weapons.Ranged
             float itemRotation = player.compositeFrontArm.rotation + MathHelper.PiOver2 * player.gravDir;
 
             Vector2 itemPosition = player.MountedCenter + itemRotation.ToRotationVector2() * 7f;
-            Vector2 itemSize = new Vector2(94, 72);
+            Vector2 itemSize = new Vector2(124, 72);
             Vector2 itemOrigin = new Vector2(-17, 3);
 
             CalamityUtils.CleanHoldStyle(player, itemRotation, itemPosition, itemSize, itemOrigin);

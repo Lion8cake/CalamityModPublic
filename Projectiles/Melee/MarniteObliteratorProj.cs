@@ -1,9 +1,9 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Tools;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -66,7 +66,7 @@ namespace CalamityMod.Projectiles.Melee
                 if (MoveInIntervals > 0f)
                     MoveInIntervals -= 1f;
 
-            if (!Owner.channel || Owner.noItems || Owner.CCed)
+            if (Owner.CantUseHoldout())
                 Projectile.Kill();
 
             else if (MoveInIntervals <= 0f)
@@ -179,7 +179,7 @@ namespace CalamityMod.Projectiles.Melee
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Texture2D tex = TextureAssets.Projectile[Projectile.type].Value;
+            Texture2D tex = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = new Vector2(9f, tex.Height / 2f);
             SpriteEffects effect = SpriteEffects.None;
             if (Owner.direction * Owner.gravDir < 0)

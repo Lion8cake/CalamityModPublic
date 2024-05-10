@@ -1,17 +1,17 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Audio;
+﻿using System;
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Melee;
-using Terraria.Graphics.Shaders;
-using static CalamityMod.CalamityUtils;
-using static Terraria.ModLoader.ModContent;
-using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using CalamityMod.Graphics.Primitives;
+using Terraria;
+using Terraria.Audio;
+using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
+using static CalamityMod.CalamityUtils;
+using static Terraria.ModLoader.ModContent;
 
 namespace CalamityMod.Projectiles.Melee
 {
@@ -63,7 +63,7 @@ namespace CalamityMod.Projectiles.Melee
 
                     else
                     {
-                        Vector2 idealVelocity = Projectile.SafeDirectionTo(Main.npc[TargetIndex].Center) * (Projectile.velocity.Length() + 3.5f);
+                        Vector2 idealVelocity = Projectile.SafeDirectionTo(Main.npc[TargetIndex].Center) * (Projectile.velocity.Length() + 6.5f);
                         Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, 0.08f);
                     }
                 }

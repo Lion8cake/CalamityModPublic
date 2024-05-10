@@ -15,17 +15,17 @@ namespace CalamityMod.Items.Weapons.Ranged
         public static readonly SoundStyle Nanomachines = new("CalamityMod/Sounds/Item/NanoSwarm") { PitchVariance = 0.45f, Volume = 0.4f };
         public override void SetDefaults()
         {
-            Item.damage = 52;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 76;
             Item.height = 36;
+            Item.damage = 52;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = 19;
             Item.useAnimation = 19;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 1.5f;
             Item.UseSound = SoundID.Item34;
-            Item.value = CalamityGlobalItem.Rarity8BuyPrice;
+            Item.value = CalamityGlobalItem.RarityYellowBuyPrice;
             Item.rare = ItemRarityID.Yellow;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<BlightFlames>();

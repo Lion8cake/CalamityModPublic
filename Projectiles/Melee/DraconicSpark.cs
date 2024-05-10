@@ -1,6 +1,6 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -65,7 +65,7 @@ namespace CalamityMod.Projectiles.Melee
             if (foundTarget)
             {
                 float speed = HomingVelocity;
-                Vector2 projCenter = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+                Vector2 projCenter = Projectile.Center;
                 float xDist = targetX - projCenter.X;
                 float yDist = targetY - projCenter.Y;
                 float dist = (float)Math.Sqrt((double)(xDist * xDist + yDist * yDist));
@@ -93,7 +93,7 @@ namespace CalamityMod.Projectiles.Melee
             if (Projectile.ai[0] == 0) // daybroken spark
             {
                 int dustID = 244;
-                if (Main.rand.Next(3) != 0)
+                if (!Main.rand.NextBool(3))
                 {
                     float scale = Main.rand.NextFloat(0.8f, 1.4f);
                     int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustID);
@@ -104,7 +104,7 @@ namespace CalamityMod.Projectiles.Melee
             else if (Projectile.ai[0] == 1) // abyssal flames spark
             {
                 int dustID = 235;
-                if (Main.rand.Next(3) != 0)
+                if (!Main.rand.NextBool(3))
                 {
                     float scale = Main.rand.NextFloat(0.6f, 1.2f);
                     int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustID, 0f, 0f, 100, default, scale);
@@ -115,7 +115,7 @@ namespace CalamityMod.Projectiles.Melee
             else if (Projectile.ai[0] == 2) // holy flames spark
             {
                 int dustID = 246;
-                if (Main.rand.Next(3) != 0)
+                if (!Main.rand.NextBool(3))
                 {
                     float scale = Main.rand.NextFloat(0.8f, 1.4f);
                     int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, dustID);

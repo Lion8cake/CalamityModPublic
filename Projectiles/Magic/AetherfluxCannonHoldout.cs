@@ -14,7 +14,6 @@ namespace CalamityMod.Projectiles.Magic
         private const int FramesPerFireRateIncrease = 36;
 
         private Player Owner => Main.player[Projectile.owner];
-        private bool OwnerCanShoot => Owner.channel && Owner.HasAmmo(Owner.ActiveItem()) && !Owner.noItems && !Owner.CCed;
 
         private ref float DeployedFrames => ref Projectile.ai[0];
         private ref float AnimationRate => ref Projectile.ai[1];
@@ -43,7 +42,7 @@ namespace CalamityMod.Projectiles.Magic
             Vector2 gunBarrelPos = armPosition + Projectile.velocity * Projectile.height * 0.4f;
 
             // If the player is unable to continue using the holdout, delete it.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout() || !Owner.HasAmmo(Owner.ActiveItem()))
             {
                 Projectile.Kill();
                 return;
@@ -52,7 +51,7 @@ namespace CalamityMod.Projectiles.Magic
             // Play a sound frame 1.
             if (DeployedFrames <= 0f)
             {
-                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = SoundID.DD2_DarkMageCastHeal.Volume * 1.5f}, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = SoundID.DD2_DarkMageCastHeal.Volume * 1.5f }, Projectile.Center);
             }
 
             // Update damage based on curent magic damage stat (so Mana Sickness affects it)
@@ -101,7 +100,7 @@ namespace CalamityMod.Projectiles.Magic
                     // Dust chaotically sheds off the crystal while charging or firing.
                     float dustInaccuracy = 0.045f;
 
-                    for (int i = -1; i <= 1 ; i += 2)
+                    for (int i = -1; i <= 1; i += 2)
                     {
                         Vector2 laserStartPos = gunBarrelPos + i * perp + Main.rand.NextVector2CircularEdge(6f, 6f);
                         Vector2 dustOnlySpread = Main.rand.NextVector2Circular(shootSpeed, shootSpeed);

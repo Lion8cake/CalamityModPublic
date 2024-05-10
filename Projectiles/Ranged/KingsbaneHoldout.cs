@@ -1,8 +1,5 @@
 ﻿using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
-using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -15,7 +12,6 @@ namespace CalamityMod.Projectiles.Ranged
     {
         // Take the name and texture from the weapon
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<Kingsbane>();
-        private bool OwnerCanShoot => Owner.channel && !Owner.noItems && !Owner.CCed;
         public override string Texture => "CalamityMod/Projectiles/Ranged/KingsbaneWindUp";
         private Player Owner => Main.player[Projectile.owner];
 
@@ -47,7 +43,7 @@ namespace CalamityMod.Projectiles.Ranged
                 soundTimer++;
             Projectile.frameCounter++;
 
-            if (Projectile.frameCounter > windupAnim && OwnerCanShoot)
+            if (Projectile.frameCounter > windupAnim && !Owner.CantUseHoldout())
             {
                 if (Projectile.frame == 1 && Time < 85)
                 {
@@ -59,7 +55,7 @@ namespace CalamityMod.Projectiles.Ranged
                     windupAnim--;
                 Projectile.frameCounter = 0;
             }
-            else if (!OwnerCanShoot)
+            else if (Owner.CantUseHoldout())
             {
                 Projectile.frame++;
             }
@@ -74,14 +70,14 @@ namespace CalamityMod.Projectiles.Ranged
             }
 
             Vector2 armPosition = Owner.RotatedRelativePoint(Owner.MountedCenter, true);
-            Vector2 tipPosition = armPosition + Projectile.velocity * Projectile.width * 0.85f + new Vector2 (0, 3.8f);
+            Vector2 tipPosition = armPosition + Projectile.velocity * Projectile.width * 0.85f + new Vector2(0, 3.8f);
             Vector2 shootVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 15;
 
             int bulletAMMO = ProjectileID.Bullet;
             Owner.PickAmmo(Owner.ActiveItem(), out bulletAMMO, out float SpeedNoUse, out int bulletDamage, out float kBackNoUse, out int _);
 
             // Fire Auric Bullets if the owner stops channeling or otherwise cannot use the weapon.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout())
             {
                 if (fullRev && fullRevShots > 0)
                 {
@@ -125,13 +121,13 @@ namespace CalamityMod.Projectiles.Ranged
                             dust3.scale = Main.rand.NextFloat(0.9f, 1.6f);
                         }
                         Projectile.NewProjectile(Projectile.GetSource_FromThis(), Owner.Center, shootVelocity.RotatedByRandom(MathHelper.ToRadians(1.5f)), bulletAMMO, Projectile.damage, Projectile.knockBack, Projectile.owner);
-                        SoundEngine.PlaySound(SoundID.Item41 with { Volume = 0.75f}, Projectile.Center);
+                        SoundEngine.PlaySound(SoundID.Item41 with { Volume = 0.75f }, Projectile.Center);
                         framesBetweenShots = 3;
                     }
                     if (framesBetweenShots > 0)
                         framesBetweenShots--;
                 }
-                
+
             }
             UpdateProjectileHeldVariables(armPosition);
             ManipulatePlayerVariables();
@@ -150,12 +146,12 @@ namespace CalamityMod.Projectiles.Ranged
                     Projectile.netUpdate = true;
                 }
             }
-            Projectile.Center = armPosition + Projectile.velocity * MathHelper.Clamp(47f - (framesBetweenShots * 2), 0f, 47f) + new Vector2 (0, 5);
+            Projectile.Center = armPosition + Projectile.velocity * MathHelper.Clamp(47f - (framesBetweenShots * 2), 0f, 47f) + new Vector2(0, 5);
             Projectile.rotation = Projectile.velocity.ToRotation() + (Projectile.spriteDirection == -1 ? MathHelper.Pi : 0f);
             Projectile.spriteDirection = Projectile.direction;
 
             // Rumble
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout())
             {
                 Projectile.position += Main.rand.NextVector2Circular(4.5f, 4.5f);
             }

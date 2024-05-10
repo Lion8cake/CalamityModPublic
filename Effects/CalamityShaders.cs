@@ -179,6 +179,7 @@ namespace CalamityMod.Effects
         #region Aqua's Shaders
         internal static Effect CircularGradientWithEdge;
         internal static Effect WavyOpacity;
+        internal static Effect HellBall;
         #endregion
 
         //
@@ -190,6 +191,10 @@ namespace CalamityMod.Effects
         internal static Effect PrimitiveClearShader;
         internal static Effect HolyInfernoShader;
         internal static Effect DeerclopsShadowShader;
+        #endregion
+
+        #region YuH's Shaders
+        internal static Effect TeslaTrailShader;
         #endregion
 
         // Shorthand to register a loaded shader in Terraria's graphics engine
@@ -393,6 +398,8 @@ namespace CalamityMod.Effects
             RegisterMiscShader(CircularGradientWithEdge, "CircularGradientWithEdgePass", "CircularGradientWithEdge");
             WavyOpacity = LoadShader("WavyOpacity");
             RegisterMiscShader(WavyOpacity, "WavyOpacityPass", "WavyOpacity");
+            HellBall = LoadShader("HellBall");
+            RegisterScreenShader(HellBall, "HellBallPass", "HellBall");
             #endregion
 
             #region Loading Amber's Shaders
@@ -405,6 +412,11 @@ namespace CalamityMod.Effects
             DeerclopsShadowShader = LoadShader("ScreenShaders/DeerclopsShadowShader");
             RegisterMiscShader(DeerclopsShadowShader, "ShadowPass", "DeerclopsShadowShader");
 
+            #endregion
+
+            #region Loading YuH's Shaders
+            TeslaTrailShader = LoadShader("TeslaTrail");
+            RegisterMiscShader(TeslaTrailShader, "TrailPass", "TeslaTrail");
             #endregion
         }
     }

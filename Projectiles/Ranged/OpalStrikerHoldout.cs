@@ -1,8 +1,8 @@
-﻿using CalamityMod.Items.Weapons.Ranged;
+﻿using System;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Localization;
@@ -16,7 +16,7 @@ namespace CalamityMod.Projectiles.Ranged
         public override LocalizedText DisplayName => CalamityUtils.GetItemName<OpalStriker>();
         public override string Texture => "CalamityMod/Items/Weapons/Ranged/OpalStriker";
 
-        public static float ChargedDamageMult = 4.3f;
+        public static float ChargedDamageMult = 5f;
         public static float ChargedKBMult = 3f;
         public static float BulletSpeed = 12f;
 
@@ -26,7 +26,6 @@ namespace CalamityMod.Projectiles.Ranged
         private ref float CurrentChargingFrames => ref Projectile.ai[0];
         private bool FullyCharged => CurrentChargingFrames >= OpalStriker.FullChargeFrames;
         public int Time = 0;
-        private bool OwnerCanShoot => Owner.channel && !Owner.noItems && !Owner.CCed;
 
         public override void SetDefaults()
         {
@@ -59,7 +58,7 @@ namespace CalamityMod.Projectiles.Ranged
                 ChargeSound.Position = Projectile.Center;
 
             // Fire if the owner stops channeling or otherwise cannot use the weapon.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout())
             {
                 if (Projectile.ai[1] != 1f)
                 {
@@ -146,7 +145,7 @@ namespace CalamityMod.Projectiles.Ranged
 
             // Rumble (only while channeling)
             float rumble = MathHelper.Clamp(CurrentChargingFrames, 0f, OpalStriker.FullChargeFrames);
-            if (OwnerCanShoot)
+            if (!Owner.CantUseHoldout())
                 Projectile.position += Main.rand.NextVector2Circular(rumble / 30f, rumble / 30f);
         }
 

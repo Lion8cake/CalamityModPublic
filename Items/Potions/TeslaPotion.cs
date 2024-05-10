@@ -13,16 +13,16 @@ namespace CalamityMod.Items.Potions
     {
         public new string LocalizationCategory => "Items.Potions";
         public override void SetStaticDefaults()
-	{
-	    Item.ResearchUnlockCount = 20;
-	    Main.RegisterItemAnimation(Type, new DrawAnimationVertical(6, 8));
+        {
+            Item.ResearchUnlockCount = 20;
+            Main.RegisterItemAnimation(Type, new DrawAnimationVertical(5, 14));
             ItemID.Sets.AnimatesAsSoul[Type] = true;
-	}
+        }
 
         public override void SetDefaults()
         {
-            Item.width = 34;
-            Item.height = 34;
+            Item.width = 32;
+            Item.height = 32;
             Item.useTurn = true;
             Item.maxStack = 9999;
             Item.rare = ItemRarityID.Orange;
@@ -38,6 +38,7 @@ namespace CalamityMod.Items.Potions
 
         public override void AddRecipes()
         {
+            Condition evil2Dead = new(CalamityUtils.GetText("Condition.DownedEvil2Boss"), () => DownedBossSystem.downedHiveMind || DownedBossSystem.downedPerforator);
             CreateRecipe(5).
                 AddIngredient(ItemID.BottledWater).
                 AddIngredient<AerialiteOre>(2).
@@ -45,6 +46,7 @@ namespace CalamityMod.Items.Potions
                 AddIngredient<PearlShard>().
                 AddIngredient<StormlionMandible>().
                 AddTile(TileID.Bottles).
+                AddDecraftCondition(evil2Dead).
                 Register();
 
             CreateRecipe().

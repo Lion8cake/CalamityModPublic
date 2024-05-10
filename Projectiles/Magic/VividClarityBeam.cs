@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace CalamityMod.Projectiles.Magic
@@ -20,6 +21,7 @@ namespace CalamityMod.Projectiles.Magic
             Projectile.penetrate = 10;
             Projectile.extraUpdates = 100;
             Projectile.timeLeft = 300;
+            Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 10;
         }
@@ -27,6 +29,10 @@ namespace CalamityMod.Projectiles.Magic
         public override void AI()
         {
             Vector2 rotateVector = new Vector2(5f, 10f);
+            if (Projectile.position.Y > Main.player[Projectile.owner].position.Y - 50f)
+            {
+                Projectile.tileCollide = true;
+            }
             Projectile.ai[0] += 1f;
             if (Projectile.ai[0] == 48f)
             {
@@ -38,7 +44,7 @@ namespace CalamityMod.Projectiles.Magic
                 {
                     Vector2 dustRotation = Vector2.UnitX * -12f;
                     dustRotation = -Vector2.UnitY.RotatedBy((double)(Projectile.ai[0] * 0.1308997f + (float)i * 3.14159274f), default) * rotateVector - Projectile.rotation.ToRotationVector2() * 10f;
-                    int exo = Dust.NewDust(Projectile.Center, 0, 0, 66, 0f, 0f, 160, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB), 1f);
+                    int exo = Dust.NewDust(Projectile.Center, 0, 0, DustID.RainbowTorch, 0f, 0f, 160, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB), 1f);
                     Main.dust[exo].scale = 0.75f;
                     Main.dust[exo].noGravity = true;
                     Main.dust[exo].position = Projectile.Center + dustRotation;
@@ -47,10 +53,10 @@ namespace CalamityMod.Projectiles.Magic
             }
 
             Projectile.localAI[1] += 1f;
-            if (Projectile.localAI[1] >= 29f && Projectile.owner == Main.myPlayer)
+            if (Projectile.localAI[1] >= 49f && Projectile.owner == Main.myPlayer)
             {
                 Projectile.localAI[1] = 0f;
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ModContent.ProjectileType<VividOrb>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 0f);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center.X, Projectile.Center.Y, 0f, 0f, ModContent.ProjectileType<VividOrb>(), (int)(Projectile.damage * 0.66f), Projectile.knockBack, Projectile.owner, 0f, 0f);
             }
 
             Projectile.localAI[0] += 1f;
@@ -60,7 +66,7 @@ namespace CalamityMod.Projectiles.Magic
                 {
                     Vector2 projPos = Projectile.position;
                     projPos -= Projectile.velocity * ((float)j * 0.25f);
-                    int exod = Dust.NewDust(projPos, 1, 1, 66, 0f, 0f, 0, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB), 1f);
+                    int exod = Dust.NewDust(projPos, 1, 1, DustID.RainbowTorch, 0f, 0f, 0, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB), 1f);
                     Main.dust[exod].noGravity = true;
                     Main.dust[exod].position = projPos;
                     Main.dust[exod].scale = (float)Main.rand.Next(70, 110) * 0.013f;

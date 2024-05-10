@@ -1,39 +1,50 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
+﻿using System;
+using System.Linq;
+using CalamityMod.BiomeManagers;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
-using CalamityMod.Items.Placeables.Banners;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Materials;
+using CalamityMod.Items.Placeables.Banners;
 using CalamityMod.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Shaders;
-using System.Linq;
-using CalamityMod.Graphics.Primitives;
-using CalamityMod.BiomeManagers;
 
 namespace CalamityMod.NPCs.AcidRain
 {
     public class AcidEel : ModNPC
     {
         public Player Target => Main.player[NPC.target];
+        public static Asset<Texture2D> BodyTexture;
+        public static Asset<Texture2D> TailTexture;
+        public static Asset<Texture2D> BestiaryTexture;
 
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 6;
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.TrailCacheLength[NPC.type] = 12;
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 PortraitPositionXOverride = 0
             };
             value.Position.X += 15;
             NPCID.Sets.NPCBestiaryDrawOffset[Type] = value;
+            if (!Main.dedServ)
+            {
+                BodyTexture = ModContent.Request<Texture2D>(Texture + "Body", AssetRequestMode.ImmediateLoad);
+                TailTexture = ModContent.Request<Texture2D>(Texture + "Tail", AssetRequestMode.AsyncLoad);
+                BestiaryTexture = ModContent.Request<Texture2D>(Texture + "Bestiary", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -74,6 +85,10 @@ namespace CalamityMod.NPCs.AcidRain
             NPC.Calamity().VulnerableToElectricity = true;
             NPC.Calamity().VulnerableToWater = false;
             SpawnModBiomes = new int[1] { ModContent.GetInstance<AcidRainBiome>().Type };
+
+            // Scale stats in Expert and Master
+            CalamityGlobalNPC.AdjustExpertModeStatScaling(NPC);
+            CalamityGlobalNPC.AdjustMasterModeStatScaling(NPC);
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -180,14 +195,14 @@ namespace CalamityMod.NPCs.AcidRain
             Vector2 headDrawPosition = NPC.Center - screenPos;
             if (NPC.IsABestiaryIconDummy)
             {
-                Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AcidRain/AcidEelBestiary").Value;
+                Texture2D texture = BestiaryTexture.Value;
                 Rectangle eelArea = NPC.frame with { Width = 74 };
                 Main.EntitySpriteDraw(texture, headDrawPosition, eelArea, NPC.GetAlpha(Color.White), NPC.rotation, eelArea.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0);
                 return false;
             }
 
-            Texture2D headTexture = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D tailTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AcidRain/AcidEelTail").Value;
+            Texture2D headTexture = TextureAssets.Npc[NPC.type].Value;
+            Texture2D tailTexture = TailTexture.Value;
             Vector2[] segmentPositions = (Vector2[])NPC.oldPos.Clone();
 
             Vector2 segmentAreaTopLeft = Vector2.One * 999999f;
@@ -217,7 +232,7 @@ namespace CalamityMod.NPCs.AcidRain
             float offsetAngle = (NPC.position - NPC.oldPos[1]).ToRotation();
             Vector2 primitiveArea = (segmentAreaTopRight - segmentAreaTopLeft).RotatedBy(offsetAngle);
             Rectangle tailArea = NPC.frame with { Width = 28 };
-            GameShaders.Misc["CalamityMod:PrimitiveTexture"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/NPCs/AcidRain/AcidEelBody"));
+            GameShaders.Misc["CalamityMod:PrimitiveTexture"].SetShaderTexture(BodyTexture);
             GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["uPrimitiveSize"].SetValue(primitiveArea);
             GameShaders.Misc["CalamityMod:PrimitiveTexture"].Shader.Parameters["flipVertically"].SetValue(NPC.velocity.X > 0f);
 
@@ -239,7 +254,7 @@ namespace CalamityMod.NPCs.AcidRain
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int k = 0; k < 8; k++)
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, (int)CalamityDusts.SulfurousSeaAcid, hit.HitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, (int)CalamityDusts.SulphurousSeaAcid, hit.HitDirection, -1f, 0, default, 1f);
             if (NPC.life <= 0)
             {
                 if (Main.netMode != NetmodeID.Server)
@@ -249,7 +264,7 @@ namespace CalamityMod.NPCs.AcidRain
                     Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("AcidEelGore3").Type, NPC.scale);
                 }
                 for (int k = 0; k < 20; k++)
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, (int)CalamityDusts.SulfurousSeaAcid, hit.HitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, (int)CalamityDusts.SulphurousSeaAcid, hit.HitDirection, -1f, 0, default, 1f);
             }
         }
 

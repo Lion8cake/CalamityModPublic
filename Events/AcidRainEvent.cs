@@ -1,12 +1,12 @@
-﻿using CalamityMod.NPCs.AcidRain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.UI;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using CalamityMod.Items.Accessories;
-using CalamityMod.NPCs.SulphurousSea;
 using CalamityMod.Items.Potions;
+using CalamityMod.NPCs.SulphurousSea;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -286,7 +286,8 @@ namespace CalamityMod
         /// Adds all the common potions for fishing crates, alongside scaling mana and regen potions
         /// </summary>
         /// <param name="loot">The ILoot interface for the loot table.</param>
-        public static void AddCratePotionRules(this ILoot loot)
+        /// <param name="hardMode">Whether or not the crate is considered a hardmode crate.</param>
+        public static void AddCratePotionRules(this ILoot loot, bool hardMode = true)
         {
             loot.Add(ItemID.ObsidianSkinPotion, 10, 1, 3);
             loot.Add(ItemID.SwiftnessPotion, 10, 1, 3);
@@ -311,14 +312,23 @@ namespace CalamityMod
             var lcrRegularPotion = new LeadingConditionRule(If(() => NPC.downedBoss3));
 
             // Actually chain all the LCRs together
-            lcrSupremePotion.Add(supremePots);
-            lcrSupremePotion.OnFailedConditions(lcrSuperPotion);
-            lcrSuperPotion.Add(superPots);
-            lcrSuperPotion.OnFailedConditions(lcrGreaterPotion);
-            lcrGreaterPotion.Add(greaterPots);
-            lcrGreaterPotion.OnFailedConditions(lcrRegularPotion);
+            // Greater potions upwards are only chained if the crate is marked as Hardmode
+            if (hardMode)
+            {
+                lcrSupremePotion.Add(supremePots);
+                lcrSupremePotion.OnFailedConditions(lcrSuperPotion);
+                lcrSuperPotion.Add(superPots);
+                lcrSuperPotion.OnFailedConditions(lcrGreaterPotion);
+                lcrGreaterPotion.Add(greaterPots);
+                lcrGreaterPotion.OnFailedConditions(lcrRegularPotion);
+            }
             lcrRegularPotion.Add(regularPots);
             lcrRegularPotion.OnFailedConditions(lesserPots);
+            // Add the chain starting from regular potions if marked as a Pre-Hardmode crate
+            if (!hardMode)
+            {
+                loot.Add(lcrRegularPotion);
+            }
         }
         #endregion
 
@@ -556,9 +566,9 @@ namespace CalamityMod
 
         public static IItemDropRuleCondition RevNoMaster = If((info) => !Main.masterMode && CalamityWorld.revenge, () => !Main.masterMode && CalamityWorld.revenge, CalamityUtils.GetTextValue("Condition.Drops.IsRev"));
         public static IItemDropRuleCondition RevAndMaster = If((info) => Main.masterMode || CalamityWorld.revenge, () => Main.masterMode || CalamityWorld.revenge, () =>
-		{
-			return Main.masterMode ? Language.GetTextValue("Bestiary_ItemDropConditions.IsMasterMode") : CalamityUtils.GetTextValue("Condition.Drops.IsRev");
-		});
+        {
+            return Main.masterMode ? Language.GetTextValue("Bestiary_ItemDropConditions.IsMasterMode") : CalamityUtils.GetTextValue("Condition.Drops.IsRev");
+        });
 
         #region Boss Defeat Conditionals
         public static IItemDropRuleCondition PostKS(bool ui = true) => If(() => NPC.downedSlimeKing, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedKS"));
@@ -585,7 +595,6 @@ namespace CalamityMod
         public static IItemDropRuleCondition Post3Mechs(bool ui = true) => If(() => NPC.downedMechBoss1 && NPC.downedMechBoss2 && NPC.downedMechBoss3, ui, CalamityUtils.GetTextValue("Condition.Drops.Downed3Mechs"));
         public static IItemDropRuleCondition PostCal(bool ui = true) => If(() => DownedBossSystem.downedCalamitasClone, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedCal"));
         public static IItemDropRuleCondition PostPlant(bool ui = true) => If(() => NPC.downedPlantBoss, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedPlant"));
-        public static IItemDropRuleCondition PostCalPlant(bool ui = true) => If(() => DownedBossSystem.downedCalamitasClone || NPC.downedPlantBoss, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedCalPlant"));
         public static IItemDropRuleCondition PostLevi(bool ui = true) => If(() => DownedBossSystem.downedLeviathan, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedLebi"));
         public static IItemDropRuleCondition PostAureus(bool ui = true) => If(() => DownedBossSystem.downedAstrumAureus, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedAureus"));
         public static IItemDropRuleCondition PostGolem(bool ui = true) => If(() => NPC.downedGolemBoss, ui, CalamityUtils.GetTextValue("Condition.Drops.DownedGolem"));
@@ -1111,7 +1120,7 @@ namespace CalamityMod
             // You can customize this duration as you see fit. Calamity defaults it to 5 minutes.
             private const int DefaultDropProtectionTime = 18000; // 5 minutes
             private int protectionTime;
-            
+
             public PerPlayerDropRule(int itemID, int denominator, int minQuantity = 1, int maxQuantity = 1, int numerator = 1, int protectFrames = DefaultDropProtectionTime)
                 : base(itemID, denominator, minQuantity, maxQuantity, numerator)
             {

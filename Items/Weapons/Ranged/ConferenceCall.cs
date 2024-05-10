@@ -12,17 +12,17 @@ namespace CalamityMod.Items.Weapons.Ranged
         public new string LocalizationCategory => "Items.Weapons.Ranged";
         public override void SetDefaults()
         {
-            Item.damage = 36;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 66;
             Item.height = 26;
-            Item.useTime = 32;
-            Item.useAnimation = 32;
+            Item.damage = 53;
+            Item.DamageType = DamageClass.Ranged;
+            Item.useTime = 42;
+            Item.useAnimation = 42;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 4.5f;
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = CalamityGlobalItem.RarityRedBuyPrice;
+            Item.rare = ItemRarityID.Red;
             Item.UseSound = SoundID.Item38;
             Item.autoReuse = true;
             Item.shootSpeed = 12f;
@@ -54,7 +54,7 @@ namespace CalamityMod.Items.Weapons.Ranged
                 Main.projectile[proj].extraUpdates += 2;
             }
 
-            int maxTargets = 12;
+            int maxTargets = 7;
             int[] targets = new int[maxTargets];
             int targetArrayIndex = 0;
             Rectangle rectangle = new Rectangle((int)player.Center.X - 960, (int)player.Center.Y - 540, 1920, 1080);
@@ -88,10 +88,10 @@ namespace CalamityMod.Items.Weapons.Ranged
                 targetPosition.X = (targetPosition.X + player.Center.X) / 2f + Main.rand.Next(-200, 201);
                 targetPosition.Y -= 100 * j;
 
-                Vector2 extraBulletVel = CalamityUtils.CalculatePredictiveAimToTarget(targetPosition, Main.npc[targets[j]], Item.shootSpeed);
+                Vector2 extraBulletVel = Vector2.Normalize(Main.npc[targets[j]].Center - targetPosition) * Item.shootSpeed;
 
                 int proj = Projectile.NewProjectile(source, targetPosition, extraBulletVel, type, extraBulletDamage, knockback, player.whoAmI);
-                Main.projectile[proj].extraUpdates += 2;
+                Main.projectile[proj].extraUpdates += 14;
                 Main.projectile[proj].tileCollide = false;
                 Main.projectile[proj].timeLeft /= 2;
             }
@@ -111,7 +111,7 @@ namespace CalamityMod.Items.Weapons.Ranged
                 Vector2 extraBulletVel = Vector2.Normalize(Main.npc[targets[randomTarget]].Center - targetPosition) * Item.shootSpeed;
 
                 int proj = Projectile.NewProjectile(source, targetPosition, extraBulletVel, type, extraBulletDamage, knockback, player.whoAmI);
-                Main.projectile[proj].extraUpdates += 2;
+                Main.projectile[proj].extraUpdates += 14;
                 Main.projectile[proj].tileCollide = false;
                 Main.projectile[proj].timeLeft /= 2;
             }

@@ -22,13 +22,13 @@ namespace CalamityMod.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
-            Item.damage = 120;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 56;
             Item.height = 24;
+            Item.damage = 110;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = 2;
-            Item.useAnimation = 18;
-            Item.reuseDelay = 6;
+            Item.useAnimation = 12;
+            Item.reuseDelay = 12;
             Item.useLimitPerAnimation = 9;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
@@ -73,11 +73,11 @@ namespace CalamityMod.Items.Weapons.Ranged
                 {
                     rotation -= 2;
                 }
-                if (rotation >= 15)
+                if (rotation >= 11)
                 {
                     limit = false;
                 }
-                else if (rotation <= -15)
+                else if (rotation <= -11)
                 {
                     limit = true;
                 }
@@ -100,11 +100,11 @@ namespace CalamityMod.Items.Weapons.Ranged
                 {
                     rotation -= 2;
                 }
-                if (rotation >= 15)
+                if (rotation >= 11)
                 {
                     limit = false;
                 }
-                else if (rotation <= -15)
+                else if (rotation <= -11)
                 {
                     limit = true;
                 }

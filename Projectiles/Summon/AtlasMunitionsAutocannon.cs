@@ -1,14 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.IO;
+using CalamityMod.Items.Weapons.Summon;
+using CalamityMod.Particles;
+using CalamityMod.Sounds;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using CalamityMod.Items.Weapons.Summon;
-using Terraria.Audio;
-using CalamityMod.Sounds;
-using System.IO;
-using CalamityMod.Particles;
 
 namespace CalamityMod.Projectiles.Summon
 {
@@ -32,7 +32,6 @@ namespace CalamityMod.Projectiles.Summon
         }
 
         public ref float CannonFrame => ref Projectile.localAI[0];
-
         public ref float HeatInterpolant => ref Projectile.localAI[1];
 
         public ref float CannonDirection => ref Projectile.ai[0];
@@ -42,8 +41,6 @@ namespace CalamityMod.Projectiles.Summon
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 5;
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true;
-            ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
         }
 
         public override void SetDefaults()
@@ -53,11 +50,10 @@ namespace CalamityMod.Projectiles.Summon
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.netImportant = true;
-            Projectile.sentry = true;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 90000;
+            Projectile.timeLeft = Projectile.SentryLifeTime;
             Projectile.DamageType = DamageClass.Summon;
             Projectile.Opacity = 0f;
+            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -166,7 +162,7 @@ namespace CalamityMod.Projectiles.Summon
                 int laserShootRate = 3;
                 if (wrappedAttackTimer == 1f)
                     SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound with { Volume = 0.25f }, CannonCenter);
-                
+
                 if (wrappedAttackTimer < laserCount * laserShootRate && wrappedAttackTimer % laserShootRate == 1f)
                 {
                     if (Main.myPlayer == Projectile.owner)
@@ -193,7 +189,8 @@ namespace CalamityMod.Projectiles.Summon
                 Projectile heldCannon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Main.LocalPlayer.Center, Vector2.UnitX, ModContent.ProjectileType<AtlasMunitionsAutocannonHeld>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
                 heldCannon.ModProjectile<AtlasMunitionsAutocannonHeld>().HeatInterpolant = HeatInterpolant * 0.65f;
                 heldCannon.originalDamage = Projectile.originalDamage;
-                
+                heldCannon.ai[2] = Projectile.ai[2];
+
                 CannonIsMounted = false;
                 Projectile.netUpdate = true;
                 return;
@@ -225,17 +222,20 @@ namespace CalamityMod.Projectiles.Summon
             // If a cannon is not mounted, die if the owner goes very, very far away.
             else if (!Projectile.WithinRange(Owner.Center, 7200f))
             {
-                int podID = ModContent.ProjectileType<AtlasMunitionsDropPod>();
-                int podUpperID = ModContent.ProjectileType<AtlasMunitionsDropPodUpper>();
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    bool validID = Main.projectile[i].type == podID || Main.projectile[i].type == podUpperID;
+                    bool validID = Main.projectile[i].type == ModContent.ProjectileType<AtlasMunitionsDropPod>();
                     if (Main.projectile[i].active && validID && Main.projectile[i].owner == Projectile.owner)
                         Main.projectile[i].Kill();
                 }
 
                 Projectile.Kill();
             }
+
+            // Destroy the cannon if the pod (base sentry) got replaced by other sentries
+            Projectile parent = Main.projectile[(int)Projectile.ai[2]];
+            if (parent.type != ModContent.ProjectileType<AtlasMunitionsDropPod>() || !parent.active)
+                Projectile.Kill();
         }
 
         public void FireLaserAtTarget(NPC target, float laserOffsetInterpolant)
@@ -313,7 +313,7 @@ namespace CalamityMod.Projectiles.Summon
 
         // Don't die on tile collision.
         public override bool OnTileCollide(Vector2 oldVelocity) => false;
-        
+
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
             fallThrough = false;

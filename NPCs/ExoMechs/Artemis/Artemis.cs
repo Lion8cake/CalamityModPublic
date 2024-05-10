@@ -1,4 +1,7 @@
-﻿using CalamityMod.Events;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod.Events;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Potions;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -10,10 +13,8 @@ using CalamityMod.UI.VanillaBossBars;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Utilities;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -40,6 +41,8 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
         public static readonly SoundStyle LaserShotgunSound = new("CalamityMod/Sounds/Custom/ExoMechs/ArtemisShotgunLaser") { Volume = 1.2f };
 
         public static readonly SoundStyle SpinLaserbeamSound = new("CalamityMod/Sounds/Custom/ExoMechs/ArtemisSpinLaserbeam") { Volume = 1.3f };
+
+        public static Asset<Texture2D> GlowTexture;
 
         internal static void LoadHeadIcons()
         {
@@ -168,6 +171,10 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                 Rotation = MathHelper.Pi - MathHelper.PiOver4
             };
             NPCID.Sets.NPCBestiaryDrawOffset[Type] = value;
+            if (!Main.dedServ)
+            {
+                GlowTexture = ModContent.Request<Texture2D>(Texture + "Glow", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -724,6 +731,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                 // Fly to the left of the target
                 case (int)Phase.Normal:
 
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
+
                     if (!stopRotatingAndSlowDown)
                     {
                         // Set charge variable to default
@@ -859,6 +869,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                                     }
                                     else
                                     {
+                                        // Set damage
+                                        NPC.damage = NPC.defDamage;
+
                                         // Charge until a certain distance is reached and then return to normal phase
                                         SoundEngine.PlaySound(ChargeSound, NPC.Center);
                                         AIState = (float)Phase.Charge;
@@ -877,6 +890,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                 // Charge
                 case (int)Phase.Charge:
 
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
+
                     // Allow the charge flash to happen
                     shouldDoChargeFlash = true;
 
@@ -884,6 +900,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                     calamityGlobalNPC.newAI[2] += 1f;
                     if (calamityGlobalNPC.newAI[2] >= chargeDuration)
                     {
+                        // Avoid cheap bullshit
+                        NPC.damage = 0;
+
                         // Decelerate
                         NPC.velocity *= decelerationVelocityMult;
 
@@ -900,6 +919,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
 
                 // Laser shotgun barrage
                 case (int)Phase.LaserShotgun:
+
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
 
                     // Smooth movement towards the location Artemis is meant to be at
                     CalamityUtils.SmoothMovement(NPC, movementDistanceGateValue, distanceFromDestination, baseVelocity, 0f, false);
@@ -960,6 +982,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
 
                 // Fly above target, fire deathray and move in a circle around the target
                 case (int)Phase.Deathray:
+
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
 
                     // Fly above, stop doing this if in the proper position
                     // Stop rotating and spin around a target point
@@ -1178,6 +1203,9 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                 // Phase transition animation, that's all this exists for
                 case (int)Phase.PhaseTransition:
 
+                    // Avoid cheap bullshit
+                    NPC.damage = 0;
+
                     // Smooth movement towards the location Artemis is meant to be at
                     CalamityUtils.SmoothMovement(NPC, movementDistanceGateValue, distanceFromDestination, baseVelocity, 0f, false);
 
@@ -1255,7 +1283,7 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
             if (hitboxBotRight < minDist)
                 minDist = hitboxBotRight;
 
-            return minDist <= 100f && NPC.Opacity == 1f && AIState == (float)Phase.Charge;
+            return minDist <= 100f && NPC.Opacity == 1f;
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
@@ -1470,7 +1498,7 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
                 }
             }
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Artemis/ArtemisGlow").Value;
+            texture = GlowTexture.Value;
             if (CalamityConfig.Instance.Afterimages && !NPC.IsABestiaryIconDummy)
             {
                 for (int i = 1; i < numAfterimages; i += 2)
@@ -1536,7 +1564,7 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
 
             if (NPC.soundDelay == 0)
             {
@@ -1548,14 +1576,14 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                 }
                 for (int j = 0; j < 20; j++)
                 {
-                    int plasmaDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
+                    int plasmaDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
                     Main.dust[plasmaDust].noGravity = true;
                     Main.dust[plasmaDust].velocity *= 3f;
-                    plasmaDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    plasmaDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                     Main.dust[plasmaDust].velocity *= 2f;
                     Main.dust[plasmaDust].noGravity = true;
                 }
@@ -1598,7 +1626,7 @@ namespace CalamityMod.NPCs.ExoMechs.Artemis
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance * bossAdjustment);
             NPC.damage = (int)(NPC.damage * NPC.GetExpertDamageMultiplier());
         }
     }

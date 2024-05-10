@@ -1,11 +1,11 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Projectiles.Rogue;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,7 +37,6 @@ namespace CalamityMod.NPCs.SupremeCalamitas
             NPC.alpha = 255;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.canGhostHeal = false;
             NPC.hide = true;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath1;

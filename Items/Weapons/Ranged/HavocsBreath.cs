@@ -13,10 +13,10 @@ namespace CalamityMod.Items.Weapons.Ranged
         public new string LocalizationCategory => "Items.Weapons.Ranged";
         public override void SetDefaults()
         {
-            Item.damage = 70;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 68;
             Item.height = 26;
+            Item.damage = 74;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = 5;
             Item.useAnimation = 35;
             Item.reuseDelay = 20;
@@ -24,7 +24,7 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.noMelee = true;
             Item.knockBack = 1.5f;
             Item.UseSound = SoundID.Item34;
-            Item.value = CalamityGlobalItem.Rarity7BuyPrice;
+            Item.value = CalamityGlobalItem.RarityLimeBuyPrice;
             Item.rare = ItemRarityID.Lime;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<BrimstoneFireFriendly>();
@@ -39,7 +39,7 @@ namespace CalamityMod.Items.Weapons.Ranged
         {
             for (int i = 0; i <= 2; i++)
             {
-                Projectile.NewProjectile(source, position + velocity * 4f, velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(0.9f, 1.25f), type, damage , knockback, player.whoAmI);
+                Projectile.NewProjectile(source, position + velocity * 4f, velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(0.9f, 1.25f), type, damage, knockback, player.whoAmI);
             }
             return false;
         }

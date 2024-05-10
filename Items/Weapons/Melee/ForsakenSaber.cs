@@ -1,7 +1,7 @@
-﻿using Terraria.DataStructures;
-using CalamityMod.Projectiles.Melee;
+﻿using CalamityMod.Projectiles.Melee;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,6 +13,7 @@ namespace CalamityMod.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.width = 46;
+            Item.height = 56;
             Item.damage = 80;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = Item.useTime = 15;
@@ -21,8 +22,7 @@ namespace CalamityMod.Items.Weapons.Melee
             Item.knockBack = 6;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
-            Item.height = 56;
-            Item.value = CalamityGlobalItem.Rarity5BuyPrice;
+            Item.value = CalamityGlobalItem.RarityPinkBuyPrice;
             Item.rare = ItemRarityID.Pink;
             Item.shoot = ModContent.ProjectileType<SandBlade>();
             Item.shootSpeed = 15f;
@@ -43,7 +43,7 @@ namespace CalamityMod.Items.Weapons.Melee
         {
             if (Main.rand.NextBool(3))
             {
-                int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, 159);
+                int dust = Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.Teleporter);
             }
         }
 

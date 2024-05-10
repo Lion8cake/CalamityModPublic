@@ -1,5 +1,6 @@
-using CalamityMod.Items.Materials;
+﻿using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.FurnitureAshen;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 namespace CalamityMod.Items.Placeables.Furniture.CraftingStations
@@ -23,10 +24,10 @@ namespace CalamityMod.Items.Placeables.Furniture.CraftingStations
             Item.createTile = ModContent.TileType<Tiles.Furniture.CraftingStations.AshenAltar>();
         }
 
-		public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
-		{
-			itemGroup = ContentSamples.CreativeHelper.ItemGroup.CraftingObjects;
-		}
+        public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
+        {
+            itemGroup = ContentSamples.CreativeHelper.ItemGroup.CraftingObjects;
+        }
 
         public override void AddRecipes()
         {
@@ -34,6 +35,7 @@ namespace CalamityMod.Items.Placeables.Furniture.CraftingStations
                 AddIngredient<SmoothBrimstoneSlag>(10).
                 AddIngredient<UnholyCore>(10).
                 AddTile(TileID.Anvils).
+                AddDecraftCondition(Condition.DownedMechBossAny).
                 Register();
         }
     }

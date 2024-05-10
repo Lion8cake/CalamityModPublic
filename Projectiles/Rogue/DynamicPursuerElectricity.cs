@@ -1,6 +1,6 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using CalamityMod.Graphics.Primitives;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

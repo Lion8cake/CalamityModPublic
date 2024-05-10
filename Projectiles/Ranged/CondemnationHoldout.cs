@@ -18,7 +18,6 @@ namespace CalamityMod.Projectiles.Ranged
         private ref float ArrowsLoaded => ref Projectile.ai[1];
         private ref float FramesToLoadNextArrow => ref Projectile.localAI[0];
 
-        private bool OwnerCanShoot => Owner.channel && !Owner.noItems && !Owner.CCed;
         private float storedVelocity = 1f;
         public const float velocityMultiplier = 1.2f;
         public bool homing = false;
@@ -42,7 +41,7 @@ namespace CalamityMod.Projectiles.Ranged
             Vector2 tipPosition = armPosition + Projectile.velocity * Projectile.width * 0.5f;
 
             // Fire arrows if the owner stops channeling or otherwise cannot use the weapon.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout())
             {
                 // No arrows left to shoot? The bow disappears.
                 if (ArrowsLoaded <= 0f)
@@ -114,7 +113,7 @@ namespace CalamityMod.Projectiles.Ranged
         {
             if (Main.dedServ)
                 return;
-            
+
             //Special visuals for the final loaded arrow
             if (ArrowsLoaded >= Condemnation.MaxLoadedArrows - 1f)
             {

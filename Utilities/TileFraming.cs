@@ -1,4 +1,6 @@
-﻿using CalamityMod.Tiles.Abyss;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Astral;
 using CalamityMod.Tiles.AstralDesert;
@@ -9,8 +11,6 @@ using CalamityMod.Tiles.Ores;
 using CalamityMod.Tiles.SunkenSea;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -302,7 +302,7 @@ namespace CalamityMod
                     return;
                 }
             }
-            
+
             // If the tile above is an identical vine, nothing else needs to be done.
             if (northType == myType)
                 return;
@@ -1195,7 +1195,7 @@ namespace CalamityMod
             #endregion
         }
 
-        internal static void SlopedGlowmask(int i, int j, int type, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color drawColor, Vector2 positionOffset,  bool overrideTileFrame = false)
+        internal static void SlopedGlowmask(int i, int j, int type, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color drawColor, Vector2 positionOffset, bool overrideTileFrame = false)
         {
             Tile tile = Main.tile[i, j];
 
@@ -1897,7 +1897,7 @@ namespace CalamityMod
                 TileID.Sets.ChecksForMerge[myType] = true;
 
                 // Properly frame the adjacent tile given this constraint.
-                CustomMergeFrameExplicit(x + 1, y, east.TileType, myType, out _, out forceSameRight , out _, out _, false, false, false, false, false);
+                CustomMergeFrameExplicit(x + 1, y, east.TileType, myType, out _, out forceSameRight, out _, out _, false, false, false, false, false);
             }
             if (south != null && south.HasTile && tileMergeTypes[myType][south.TileType])
             {
@@ -1941,7 +1941,7 @@ namespace CalamityMod
             // 02OCT2023: MishiroUsui: The below code resulted in 30 fps drops in sulph sea, and general performance issues across the board in cal biomes
             // DO NOT RE-ENABLE UNTIL THE ISSUE IS RESOLVED AND VERIFIED.
             return;
-            #pragma warning disable CS0162 // Disable unreachable code errors while this code is disabled
+#pragma warning disable CS0162 // Disable unreachable code errors while this code is disabled
 
             Texture2D blendLayer = ModContent.Request<Texture2D>(blendSheetPath).Value;
             Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
@@ -2301,7 +2301,7 @@ namespace CalamityMod
                 Main.spriteBatch.Draw(blendLayer, drawOffset, new Rectangle?(new Rectangle(18 + randomFrameX36 + subFrameX, 54 + subFrameY, 18, 18)), shadingColour, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0f);
             }
             #endregion
-            #pragma warning restore CS0162 // Disable unreachable code errors while this code is disabled
+#pragma warning restore CS0162 // Disable unreachable code errors while this code is disabled
         }
 
         /// <summary>

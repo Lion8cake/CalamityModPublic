@@ -1,10 +1,10 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using System.IO;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
@@ -91,7 +91,6 @@ namespace CalamityMod.Projectiles.Melee.Spears
 
         public void DeterminePlayerVariables()
         {
-            bool spearStillInUse = Owner.channel && !Owner.noItems && !Owner.CCed;
             Owner.ChangeDir((Math.Cos(Projectile.rotation - MathHelper.Pi + MathHelper.PiOver4) > 0f).ToDirectionInt());
             Owner.heldProj = Projectile.whoAmI;
             Owner.itemTime = Owner.itemAnimation = 2;
@@ -99,7 +98,7 @@ namespace CalamityMod.Projectiles.Melee.Spears
             Projectile.Center = Owner.Center;
 
             // Die if the spear is no longer in use.
-            if (!spearStillInUse)
+            if (Owner.CantUseHoldout())
                 Projectile.Kill();
         }
 
@@ -153,7 +152,7 @@ namespace CalamityMod.Projectiles.Melee.Spears
             bool portalIsInteractable = portalOpacity >= 1f;
             Vector2 portalDrawPosition = Owner.Center + InitialDirection.ToRotationVector2() * 130f - Main.screenPosition;
 
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             if (portalIsInteractable)
             {
                 Main.spriteBatch.EnterShaderRegion();

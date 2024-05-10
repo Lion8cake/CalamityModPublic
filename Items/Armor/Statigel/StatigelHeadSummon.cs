@@ -52,7 +52,7 @@ namespace CalamityMod.Items.Armor.Statigel
                 var minionID = -1;
 
                 // 08DEC2023: Ozzatron: Corruption and Crimson Slimes spawned with Old Fashioned active will retain their bonus damage indefinitely. Oops. Don't care.
-                var baseDamage = player.ApplyArmorAccDamageBonusesTo(33);
+                var baseDamage = player.ApplyArmorAccDamageBonusesTo(18);
                 var minionDamage = (int)player.GetTotalDamage<SummonDamageClass>().ApplyTo(baseDamage);
 
                 if (WorldGen.crimson && player.ownedProjectileCounts[ModContent.ProjectileType<CrimsonSlimeGodMinion>()] < 1)

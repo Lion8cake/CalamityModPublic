@@ -1,8 +1,8 @@
-﻿using CalamityMod.CalPlayer;
+﻿using System.Linq;
+using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 

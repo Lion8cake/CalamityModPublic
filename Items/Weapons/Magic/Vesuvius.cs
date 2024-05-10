@@ -1,6 +1,6 @@
-﻿using CalamityMod.Projectiles.Magic;
+﻿using System;
+using CalamityMod.Projectiles.Magic;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -20,6 +20,7 @@ namespace CalamityMod.Items.Weapons.Magic
         public override void SetDefaults()
         {
             Item.width = 62;
+            Item.height = 62;
             Item.damage = 50;
             Item.mana = 7;
             Item.DamageType = DamageClass.Magic;
@@ -29,11 +30,10 @@ namespace CalamityMod.Items.Weapons.Magic
             Item.knockBack = 3f;
             Item.UseSound = SoundID.Item88;
             Item.autoReuse = true;
-            Item.height = 62;
             Item.shootSpeed = 20f;
             Item.shoot = ModContent.ProjectileType<AsteroidMolten>();
 
-            Item.value = CalamityGlobalItem.Rarity8BuyPrice;
+            Item.value = CalamityGlobalItem.RarityYellowBuyPrice;
             Item.rare = ItemRarityID.Yellow;
         }
 

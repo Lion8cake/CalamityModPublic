@@ -10,7 +10,7 @@ namespace CalamityMod.Systems
     {
         public static bool GottaGoFast = false;
         public static int GottaGoFastSpeed = 5;
-        
+
         public static BossRushDialoguePhase Phase = BossRushDialoguePhase.None;
         private static BossRushDialogueEvent[] currentSequence = null;
         private static int currentSequenceIndex = 0;
@@ -54,13 +54,13 @@ namespace CalamityMod.Systems
 
         internal static Dictionary<BossRushDialoguePhase, BossRushDialogueEvent[]> BossRushDialogue;
 
-        
+
         public override void Load()
         {
             //
             // Dialogue times were timed by Ozzatron reading them aloud with a stopwatch.
             //
-            
+
             // Dialogue that occurs the first time you start Boss Rush
             BossRushDialogueEvent[] startDialogues = new BossRushDialogueEvent[]
             {
@@ -171,7 +171,7 @@ namespace CalamityMod.Systems
             // If the phase isn't defined properly, don't do anything.
             if (Phase == BossRushDialoguePhase.None)
                 return;
-            
+
             if (currentSequenceIndex < currentSequence.Length)
             {
                 // If it's time to display dialogue, do so.
@@ -224,7 +224,7 @@ namespace CalamityMod.Systems
         private static bool GetNextUnskippedDialogue(BossRushDialogueEvent[] sequence, int index, out int newIndex)
         {
             int tryIndex = index;
-            while(tryIndex < sequence.Length)
+            while (tryIndex < sequence.Length)
             {
                 BossRushDialogueEvent lineToTry = currentSequence[tryIndex];
                 if (lineToTry.skipCondition is not null && lineToTry.skipCondition.Invoke())

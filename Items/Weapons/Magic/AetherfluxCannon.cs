@@ -18,11 +18,11 @@ namespace CalamityMod.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
+            Item.width = 94;
+            Item.height = 54;
             Item.damage = 285;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 7;
-            Item.width = 94;
-            Item.height = 54;
             Item.useTime = Item.useAnimation = UseTime;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
@@ -34,7 +34,7 @@ namespace CalamityMod.Items.Weapons.Magic
             Item.shootSpeed = 24f;
 
             Item.rare = ModContent.RarityType<Violet>();
-            Item.value = CalamityGlobalItem.Rarity15BuyPrice;
+            Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0;

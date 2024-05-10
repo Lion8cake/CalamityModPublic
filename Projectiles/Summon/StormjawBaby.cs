@@ -1,7 +1,7 @@
-﻿using CalamityMod.Buffs.Summon;
+﻿using System;
+using CalamityMod.Buffs.Summon;
 using CalamityMod.Projectiles.Melee;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -67,7 +67,7 @@ namespace CalamityMod.Projectiles.Summon
                     Vector2 source = Vector2.Normalize(Projectile.velocity) * new Vector2((float)Projectile.width / 2f, (float)Projectile.height) * 0.75f;
                     source = source.RotatedBy((double)((float)(d - (dustAmt / 2 - 1)) * MathHelper.TwoPi / (float)dustAmt), default) + Projectile.Center;
                     Vector2 dustVel = source - Projectile.Center;
-                    int spark = Dust.NewDust(source + dustVel, 0, 0, 132, dustVel.X * 1.1f, dustVel.Y * 1.1f, 100, default, 1.4f);
+                    int spark = Dust.NewDust(source + dustVel, 0, 0, DustID.Firework_Blue, dustVel.X * 1.1f, dustVel.Y * 1.1f, 100, default, 1.4f);
                     Main.dust[spark].noGravity = true;
                     Main.dust[spark].noLight = true;
                     Main.dust[spark].velocity = dustVel;
@@ -134,8 +134,8 @@ namespace CalamityMod.Projectiles.Summon
             {
                 Projectile.tileCollide = false;
                 Vector2 returnPos = player.Center - Projectile.Center;
-                returnPos.X -= (float) (40 * player.direction);
-                returnPos.X -= (float) (40 * Projectile.minionPos * player.direction);
+                returnPos.X -= (float)(40 * player.direction);
+                returnPos.X -= (float)(40 * Projectile.minionPos * player.direction);
                 returnPos.Y -= 60f;
                 float playerDist = returnPos.Length();
                 float returnSpeed = 12f;
@@ -273,25 +273,15 @@ namespace CalamityMod.Projectiles.Summon
                 if (Projectile.velocity.Y > 10f)
                     Projectile.velocity.Y = 10f;
 
-                sparkCounter += Main.rand.Next(1,4);
+                sparkCounter += Main.rand.Next(1, 4);
                 if (sparkCounter >= 20)
                 {
                     if (Main.myPlayer == Projectile.owner)
                     {
-                        for (int i = 0; i < Main.rand.Next(1,4); i++)
+                        for (int i = 0; i < Main.rand.Next(1, 4); i++)
                         {
                             Vector2 sparkS = new Vector2(Main.rand.NextFloat(-5f, 5f), Main.rand.NextFloat(-5f, 5f));
-                            int spark = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkS, ModContent.ProjectileType<Spark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                            if (spark.WithinBounds(Main.maxProjectiles))
-                            {
-                                Main.projectile[spark].DamageType = DamageClass.Summon;
-                                Main.projectile[spark].originalDamage = Projectile.originalDamage;
-                                Main.projectile[spark].timeLeft = 120;
-                                Main.projectile[spark].penetrate = 3;
-                                Main.projectile[spark].usesIDStaticNPCImmunity = true;
-                                Main.projectile[spark].idStaticNPCHitCooldown = 10;
-                                Main.projectile[spark].usesLocalNPCImmunity = false;
-                            }
+                            int spark = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkS, ModContent.ProjectileType<StormjawSpark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                         }
                         sparkCounter = 0;
                     }
@@ -317,12 +307,12 @@ namespace CalamityMod.Projectiles.Summon
                         Rectangle rect = npc.getRect();
                         if (rectangle.Intersects(rect) && (npc.noTileCollide || player.CanHit(npc)))
                         {
-                            sparkCounter += Main.rand.Next(1,3);
+                            sparkCounter += Main.rand.Next(1, 3);
                             if (sparkCounter >= 20)
                             {
                                 if (Main.myPlayer == Projectile.owner)
                                 {
-                                    for (int j = 0; j < Main.rand.Next(1,4); j++)
+                                    for (int j = 0; j < Main.rand.Next(1, 4); j++)
                                     {
                                         Vector2 sparkS = new Vector2(Main.rand.NextFloat(-5f, 5f), Main.rand.NextFloat(-5f, 5f));
                                         int spark = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkS, ModContent.ProjectileType<Spark>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
@@ -462,7 +452,7 @@ namespace CalamityMod.Projectiles.Summon
                 {
                     int xPos = (int)Projectile.Center.X / 16;
                     int yPos = (int)Projectile.position.Y / 16;
-                    int x = xPos + direction + (int) Projectile.velocity.X;
+                    int x = xPos + direction + (int)Projectile.velocity.X;
                     for (int y = yPos; y < yPos + Projectile.height / 16 + 1; ++y)
                     {
                         if (WorldGen.InWorld(x, y) && WorldGen.SolidTile(x, y))
@@ -558,7 +548,7 @@ namespace CalamityMod.Projectiles.Summon
                 Projectile.velocity.Y += 0.4f;
                 if (Projectile.velocity.Y > 10f)
                     Projectile.velocity.Y = 10f;
-            }            
+            }
         }
 
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)

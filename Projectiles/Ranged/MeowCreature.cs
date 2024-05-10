@@ -1,9 +1,9 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using System.Linq;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -63,7 +63,7 @@ namespace CalamityMod.Projectiles.Ranged
         public override void PostDraw(Color lightColor)
         {
             PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(WidthFunction, ColorFunction, (_) => Projectile.Size * 0.5f), 30);
-            Texture2D glow = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glow = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, glow.Size() * 0.5f, Projectile.scale, SpriteEffects.None);
         }
     }

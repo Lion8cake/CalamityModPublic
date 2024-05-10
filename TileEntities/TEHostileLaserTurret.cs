@@ -1,7 +1,7 @@
-﻿using CalamityMod.Projectiles.Turret;
+﻿using System.IO;
+using CalamityMod.Projectiles.Turret;
 using CalamityMod.Tiles.DraedonStructures;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 

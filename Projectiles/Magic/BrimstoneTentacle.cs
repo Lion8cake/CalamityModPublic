@@ -1,7 +1,7 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 namespace CalamityMod.Projectiles.Magic
@@ -19,6 +19,8 @@ namespace CalamityMod.Projectiles.Magic
             Projectile.penetrate = 5;
             Projectile.MaxUpdates = 3;
             Projectile.DamageType = DamageClass.Magic;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 5;
         }
 
         public override void AI()
@@ -78,7 +80,7 @@ namespace CalamityMod.Projectiles.Magic
                 int scaleLoopCheck = 0;
                 while ((float)scaleLoopCheck < Projectile.scale * 10f)
                 {
-                    int brimDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, Projectile.velocity.X, Projectile.velocity.Y, 100, default, 1.5f);
+                    int brimDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, Projectile.velocity.X, Projectile.velocity.Y, 100, default, 1.5f);
                     Main.dust[brimDust].position = (Main.dust[brimDust].position + Projectile.Center) / 2f;
                     Main.dust[brimDust].noGravity = true;
                     Main.dust[brimDust].velocity *= 0.1f;
@@ -88,11 +90,6 @@ namespace CalamityMod.Projectiles.Magic
                     scaleLoopCheck++;
                 }
             }
-        }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            target.immune[Projectile.owner] = 5;
         }
     }
 }

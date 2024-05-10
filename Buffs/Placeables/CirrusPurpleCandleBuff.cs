@@ -7,7 +7,7 @@ namespace CalamityMod.Buffs.Placeables
     public class CirrusPurpleCandleBuff : ModBuff
     {
         public static float DefenseRatioBonus = 0.15f;
-        
+
         public override void SetStaticDefaults()
         {
             Main.buffNoTimeDisplay[Type] = true;

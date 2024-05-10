@@ -1,11 +1,11 @@
-﻿using CalamityMod.DataStructures;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.DataStructures;
 using CalamityMod.Items.Materials;
 using CalamityMod.Projectiles.Typeless;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -20,7 +20,7 @@ namespace CalamityMod.Items.Accessories
     public class WulfrumAcrobaticsPack : ModItem, ILocalizedModType
     {
         public new string LocalizationCategory => "Items.Accessories";
-        public static readonly SoundStyle ShootSound = new("CalamityMod/Sounds/Custom/WulfrumHookShoot") { Volume = 0.7f,  MaxInstances = 1, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest};
+        public static readonly SoundStyle ShootSound = new("CalamityMod/Sounds/Custom/WulfrumHookShoot") { Volume = 0.7f, MaxInstances = 1, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
         public static readonly SoundStyle GrabSound = new("CalamityMod/Sounds/Custom/WulfrumHookGrapple") { Volume = 0.7f, MaxInstances = 1, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
         public static readonly SoundStyle ReleaseSound = new("CalamityMod/Sounds/Custom/WulfrumHookDisengage") { Volume = 0.7f, MaxInstances = 1, SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest };
 
@@ -29,7 +29,7 @@ namespace CalamityMod.Items.Accessories
         {
             Item.width = 20;
             Item.height = 22;
-            Item.value = CalamityGlobalItem.Rarity1BuyPrice;
+            Item.value = CalamityGlobalItem.RarityBlueBuyPrice;
             Item.accessory = true;
             Item.rare = ItemRarityID.Blue;
         }
@@ -40,7 +40,7 @@ namespace CalamityMod.Items.Accessories
             player.GetModPlayer<WulfrumPackPlayer>().WulfrumPackEquipped = true;
             player.GetModPlayer<WulfrumPackPlayer>().PackItem = Item;
 
-            Lighting.AddLight(player.Center, Color.Lerp(Color.DeepSkyBlue,Color.GreenYellow, (float)Math.Sin( Main.GlobalTimeWrappedHourly * 2f) * 0.5f + 0.5f).ToVector3());
+            Lighting.AddLight(player.Center, Color.Lerp(Color.DeepSkyBlue, Color.GreenYellow, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2f) * 0.5f + 0.5f).ToVector3());
         }
 
         public override void AddRecipes()
@@ -155,7 +155,7 @@ namespace CalamityMod.Items.Accessories
         public static float SafetyHookAngle = MathHelper.PiOver2 * 1.2f;
         public static float SafetyHookAngleResolution = 50f;
 
-        public bool PlayerOnGround => Collision.SolidCollision(Player.position + Vector2.UnitY* 2f * Player.gravDir, Player.width, Player.height, false);
+        public bool PlayerOnGround => Collision.SolidCollision(Player.position + Vector2.UnitY * 2f * Player.gravDir, Player.width, Player.height, false);
 
         public override void ResetEffects()
         {
@@ -341,7 +341,7 @@ namespace CalamityMod.Items.Accessories
 
                     for (float angle = -halfSpread; angle < halfSpread; angle += SafetyHookAngle / SafetyHookAngleResolution)
                     {
-                        for (int i = 0; i < (int)(WulfrumHook.MaxReach / 16f); i++ )
+                        for (int i = 0; i < (int)(WulfrumHook.MaxReach / 16f); i++)
                         {
                             Vector2 checkSpot = Player.Center + (-Vector2.UnitY * Player.gravDir * i * 16f).RotatedBy(angle);
                             Point tilePos = checkSpot.ToSafeTileCoordinates();
@@ -456,7 +456,7 @@ namespace CalamityMod.Items.Accessories
                         float angleToUpright = (Player.Center - p.Center).AngleBetween(-Vector2.UnitY);
                         bool canJumpOffHook = angleToUpright > MathHelper.PiOver2 || Player.Distance(p.Center) < 38;// Don't do any jump stuff if the player is jumping from above the hook.
 
-                        if (canJumpOffHook) 
+                        if (canJumpOffHook)
                         {
                             Vector2 velocityBoost = Vector2.Zero;
 

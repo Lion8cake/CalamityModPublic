@@ -1,10 +1,10 @@
 ﻿//using CalamityMod.Tiles.Abyss.AbyssAmbient;
+using System;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -52,7 +52,7 @@ namespace CalamityMod.Tiles.Abyss
 
         public override void RandomUpdate(int i, int j)
         {
-            
+
             int vineLength = WorldGen.genRand.Next((int)Main.rockLayer, (int)(Main.rockLayer + (double)Main.maxTilesY * 0.143));
             int nearbyVineCount = 0;
             for (int x = i - 15; x <= i + 15; x++)
@@ -112,7 +112,7 @@ namespace CalamityMod.Tiles.Abyss
             Tile up2 = Main.tile[i, j - 2];
 
             // Place sulphur tentacle corals
-            if (WorldGen.genRand.Next(10) == 0 && !up.HasTile && !up2.HasTile && up.LiquidAmount > 0 && up2.LiquidAmount > 0 && !tile.LeftSlope && !tile.RightSlope && !tile.IsHalfBlock)
+            if (WorldGen.genRand.NextBool(10)&& !up.HasTile && !up2.HasTile && up.LiquidAmount > 0 && up2.LiquidAmount > 0 && !tile.LeftSlope && !tile.RightSlope && !tile.IsHalfBlock)
             {
                 up.TileType = (ushort)ModContent.TileType<SulphurTentacleCorals>();
                 up.HasTile = true;

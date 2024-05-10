@@ -77,17 +77,17 @@ namespace CalamityMod.Projectiles.Summon
 
         public void FollowState()
         {
-            // If the minion starts to get far, force the minion to go to you.
-            if (!Projectile.WithinRange(Owner.Center, AncientIceChunk.MaxDistanceFromOwner))
+            // Teleport to the owner if sufficiently far away.
+            if (!Projectile.WithinRange(Owner.Center, 1200f))
             {
-                Projectile.velocity = (Projectile.velocity + Projectile.SafeDirectionTo(Owner.Center)) * 0.9f;
+                Projectile.Center = Owner.Center;
                 SyncVariables();
             }
 
-            // Teleport to the owner if sufficiently far away.
-            else if (!Projectile.WithinRange(Owner.Center, 1200f))
+            // If the minion starts to get far, force the minion to go to you.
+            else if (!Projectile.WithinRange(Owner.Center, AncientIceChunk.MaxDistanceFromOwner))
             {
-                Projectile.Center = Owner.Center;
+                Projectile.velocity = (Projectile.velocity + Projectile.SafeDirectionTo(Owner.Center)) * 0.9f;
                 SyncVariables();
             }
 
@@ -189,7 +189,7 @@ namespace CalamityMod.Projectiles.Summon
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;

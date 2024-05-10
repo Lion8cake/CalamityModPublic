@@ -1,5 +1,5 @@
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 namespace CalamityMod.Projectiles.Magic
@@ -48,7 +48,7 @@ namespace CalamityMod.Projectiles.Magic
             {
                 Projectile.alpha = 0;
             }
-            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             float projX = Projectile.position.X;
             float projY = Projectile.position.Y;
             float homingRange = 100000f;
@@ -81,7 +81,7 @@ namespace CalamityMod.Projectiles.Magic
             }
 
             float projVelModifier = 0.1f;
-            Vector2 projDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+            Vector2 projDirection = Projectile.Center;
             float xDest = projX - projDirection.X;
             float yDest = projY - projDirection.Y;
             float destinationDist = (float)Math.Sqrt((double)(xDest * xDest + yDest * yDest));

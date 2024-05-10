@@ -15,7 +15,6 @@ namespace CalamityMod.Projectiles.Magic
         private static int[] LaserOffsetByAnimationFrame = { 4, 3, 0, 3 };
 
         private Player Owner => Main.player[Projectile.owner];
-        private bool OwnerCanShoot => Owner.channel && Owner.HasAmmo(Owner.ActiveItem()) && !Owner.noItems && !Owner.CCed;
         private ref float DeployedFrames => ref Projectile.ai[0];
         private ref float ChargeTowardsNextShot => ref Projectile.ai[1];
 
@@ -41,7 +40,7 @@ namespace CalamityMod.Projectiles.Magic
             Vector2 gunBarrelPos = armPosition + Projectile.velocity * Projectile.height * 0.5f;
 
             // If the player is unable to continue using the holdout, delete it.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout() || !Owner.HasAmmo(Owner.ActiveItem()))
             {
                 Projectile.Kill();
                 return;

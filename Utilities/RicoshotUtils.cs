@@ -24,7 +24,7 @@ namespace CalamityMod
 
         public bool IsValid => type != RicoshotTargetType.None;
     }
-    
+
     public static partial class CalamityUtils
     {
         public static int GetActiveRicoshotCoinCount(this Player player)

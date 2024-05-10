@@ -114,7 +114,7 @@ namespace CalamityMod.Projectiles.Boss
                     if (Main.rand.NextBool(var))
                     {
                         dustOffset = dustOffset.RotatedBy(angleIncrement);
-                        int dust = Dust.NewDust(Projectile.Center, 1, 1, (int)CalamityDusts.SulfurousSeaAcid);
+                        int dust = Dust.NewDust(Projectile.Center, 1, 1, (int)CalamityDusts.SulphurousSeaAcid);
                         Main.dust[dust].position = Projectile.Center + dustOffset;
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].velocity = Vector2.Normalize(Projectile.Center - Main.dust[dust].position) * 24f;

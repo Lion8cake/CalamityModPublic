@@ -1,10 +1,10 @@
-﻿using CalamityMod.Dusts;
+﻿using System;
+using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace CalamityMod.Projectiles.Summon
 {
@@ -61,11 +61,11 @@ namespace CalamityMod.Projectiles.Summon
                 }
                 for (int j = 0; j < 10; j++)
                 {
-                    int fire = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 246, 0f, 0f, 100, default, 3f);
+                    int fire = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.GoldCoin, 0f, 0f, 100, default, 3f);
                     Main.dust[fire].noGravity = true;
                     Main.dust[fire].velocity *= 5f;
                     Main.dust[fire].position = Projectile.Center;
-                    fire = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 246, 0f, 0f, 100, default, 2f);
+                    fire = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.GoldCoin, 0f, 0f, 100, default, 2f);
                     Main.dust[fire].velocity *= 2f;
                     Main.dust[fire].position = Projectile.Center;
                 }
@@ -140,7 +140,7 @@ namespace CalamityMod.Projectiles.Summon
                         ModContent.ProjectileType<FlameBurst>()
                     });
                     float speed = 25f;
-                    Vector2 fireDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+                    Vector2 fireDirection = Projectile.Center;
                     float fireXVel = projXStore - fireDirection.X;
                     float fireYVel = projYStore - fireDirection.Y;
                     float fireVelocity = (float)Math.Sqrt((double)(fireXVel * fireXVel + fireYVel * fireYVel));

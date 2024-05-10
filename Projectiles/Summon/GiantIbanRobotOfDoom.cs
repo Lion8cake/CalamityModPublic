@@ -1,13 +1,13 @@
-﻿using CalamityMod.Buffs.Mounts;
+﻿using System;
+using CalamityMod.Buffs.Mounts;
 using CalamityMod.Items;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Summon.AndromedaUI;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using Terraria.Audio;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 
 namespace CalamityMod.Projectiles.Summon
 {
@@ -114,13 +114,13 @@ namespace CalamityMod.Projectiles.Summon
 
                     Vector2 center = player.Center + new Vector2(6f, -2f).RotatedBy(player.velocity.ToRotation());
 
-                    int idx = Dust.NewDust(center, 0, 0, 226, 0f, 0f, 100, default, 0.5f);
+                    int idx = Dust.NewDust(center, 0, 0, DustID.Electric, 0f, 0f, 100, default, 0.5f);
                     Main.dust[idx].noGravity = true;
                     Main.dust[idx].position = center + spinningPoint;
                     Main.dust[idx].velocity = Vector2.Zero;
                     spinningPoint *= -1f;
 
-                    idx = Dust.NewDust(center, 0, 0, 226, 0f, 0f, 100, default, 0.5f);
+                    idx = Dust.NewDust(center, 0, 0, DustID.Electric, 0f, 0f, 100, default, 0.5f);
                     Main.dust[idx].noGravity = true;
                     Main.dust[idx].position = center + spinningPoint;
                     Main.dust[idx].velocity = Vector2.Zero;
@@ -171,7 +171,7 @@ namespace CalamityMod.Projectiles.Summon
                 {
                     if (Main.myPlayer == player.whoAmI)
                     {
-                        Projectile ui = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), 
+                        Projectile ui = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(),
                                                  Main.MouseWorld,
                                                  Vector2.Zero,
                                                  ModContent.ProjectileType<AndromedaUI_Background>(),

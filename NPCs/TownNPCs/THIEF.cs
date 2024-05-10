@@ -1,4 +1,5 @@
-﻿using CalamityMod.Items;
+﻿using System.Collections.Generic;
+using CalamityMod.Items;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Pets;
 using CalamityMod.Items.Weapons.Rogue;
@@ -6,9 +7,10 @@ using CalamityMod.Projectiles.Rogue;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.Personalities;
@@ -22,6 +24,8 @@ namespace CalamityMod.NPCs.TownNPCs
     [AutoloadHead]
     public class THIEF : ModNPC
     {
+        public static Asset<Texture2D> AltTexture;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 23;
@@ -37,10 +41,15 @@ namespace CalamityMod.NPCs.TownNPCs
                 .SetBiomeAffection<JungleBiome>(AffectionLevel.Dislike)
                 .SetNPCAffection(NPCID.GoblinTinkerer, AffectionLevel.Like)
                 .SetNPCAffection(NPCID.Dryad, AffectionLevel.Dislike);
-            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
+            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers()
+            {
                 Velocity = 1f // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifiers);
+            if (!Main.dedServ)
+            {
+                AltTexture = ModContent.Request<Texture2D>(Texture + "Alt", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -62,9 +71,9 @@ namespace CalamityMod.NPCs.TownNPCs
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] 
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
-                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Desert,                   
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Desert,
                 new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.THIEF")
             });
         }
@@ -102,6 +111,7 @@ namespace CalamityMod.NPCs.TownNPCs
             "Goose", // <@!591421917706321962> (DullElili#8016)
             "Jackson", // <@!525827730646892549> (ChowChow, Sin of Sleep Schedules#1235)
             "Altarca", // <@!1140673052108128337> (altarca_27226_49175)
+            "Jackie", // <@!353241811717718016> (jackalchan)
 
             // Original names
             this.GetLocalizedValue("Name.Laura"),
@@ -128,7 +138,7 @@ namespace CalamityMod.NPCs.TownNPCs
         {
             if (Main.bloodMoon)
                 return this.GetLocalizedValue("Chat.BloodMoon" + Main.rand.Next(1, 4 + 1));
-            
+
             WeightedRandom<string> dialogue = new WeightedRandom<string>();
 
             dialogue.Add(this.GetLocalizedValue("Chat.Normal1"));
@@ -153,7 +163,7 @@ namespace CalamityMod.NPCs.TownNPCs
             int cirrusIndex = NPC.FindFirstNPC(ModContent.NPCType<FAP>());
             if (cirrusIndex != -1)
                 dialogue.Add(this.GetLocalization("Chat.DrunkPrincess").Format(Main.npc[cirrusIndex].GivenName));
-            
+
             int merchantIndex = NPC.FindFirstNPC(NPCID.Merchant);
             if (merchantIndex != -1)
                 dialogue.Add(this.GetLocalization("Chat.Merchant").Format(Main.npc[merchantIndex].GivenName));
@@ -236,14 +246,14 @@ namespace CalamityMod.NPCs.TownNPCs
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             var something = NPC.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(ModContent.Request<Texture2D>(Texture + (BirthdayParty.PartyIsUp ? "Alt" : "")).Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY) - new Vector2(0f, 6f), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, something, 0);
+            spriteBatch.Draw(BirthdayParty.PartyIsUp ? AltTexture.Value : TextureAssets.Npc[NPC.type].Value, NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY) - new Vector2(0f, 6f), NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, NPC.scale, something, 0);
             return false;
         }
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
             button = Language.GetTextValue("LegacyInterface.28");
-            button2 = this.GetLocalizedValue("RefundButton");;
+            button2 = this.GetLocalizedValue("RefundButton"); ;
         }
 
         public override void OnChatButtonClicked(bool firstButton, ref string shopName)

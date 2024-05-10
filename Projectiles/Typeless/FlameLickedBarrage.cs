@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace CalamityMod.Projectiles.Typeless
 {
-public class FlameLickedBarrage : ModProjectile, ILocalizedModType
+    public class FlameLickedBarrage : ModProjectile, ILocalizedModType
     {
         public new string LocalizationCategory => "Projectiles.Typeless";
         public override string Texture => "CalamityMod/Projectiles/Boss/BrimstoneBarrage";
@@ -48,7 +48,7 @@ public class FlameLickedBarrage : ModProjectile, ILocalizedModType
 
             if (Projectile.timeLeft < 60)
                 Projectile.Opacity = MathHelper.Clamp(Projectile.timeLeft / 60f, 0f, 1f);
-            
+
 
             Lighting.AddLight(Projectile.Center, 0.75f * Projectile.Opacity, 0f, 0f);
         }

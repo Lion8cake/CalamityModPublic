@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.NPCs.NormalNPCs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -31,7 +31,7 @@ namespace CalamityMod.Projectiles.Ranged
                 {
                     float x = Projectile.position.X - Projectile.velocity.X / 10f * (float)num134;
                     float y = Projectile.position.Y - Projectile.velocity.Y / 10f * (float)num134;
-                    int dust = Dust.NewDust(new Vector2(x, y), 1, 1, 160, 0f, 0f, 0, default, 2f);
+                    int dust = Dust.NewDust(new Vector2(x, y), 1, 1, DustID.MagnetSphere, 0f, 0f, 0, default, 2f);
                     Main.dust[dust].alpha = Projectile.alpha;
                     Main.dust[dust].position.X = x;
                     Main.dust[dust].position.Y = y;

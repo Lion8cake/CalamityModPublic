@@ -1,4 +1,6 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using System.IO;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Effects;
 using CalamityMod.Events;
 using CalamityMod.Items.Accessories;
@@ -24,16 +26,15 @@ using CalamityMod.UI.VanillaBossBars;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
+using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace CalamityMod.NPCs.Cryogen
 {
@@ -52,6 +53,12 @@ namespace CalamityMod.NPCs.Cryogen
         public static readonly SoundStyle TransitionSound = new("CalamityMod/Sounds/NPCHit/CryogenPhaseTransitionCrack");
         public static readonly SoundStyle ShieldRegenSound = new("CalamityMod/Sounds/Custom/CryogenShieldRegenerate");
         public static readonly SoundStyle DeathSound = new("CalamityMod/Sounds/NPCKilled/CryogenDeath");
+
+        public static Asset<Texture2D> Phase2Texture;
+        public static Asset<Texture2D> Phase3Texture;
+        public static Asset<Texture2D> Phase4Texture;
+        public static Asset<Texture2D> Phase5Texture;
+        public static Asset<Texture2D> Phase6Texture;
 
         public FireParticleSet FireDrawer = null;
 
@@ -73,7 +80,15 @@ namespace CalamityMod.NPCs.Cryogen
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(Type);
-			NPCID.Sets.MPAllowedEnemies[Type] = true;
+            NPCID.Sets.MPAllowedEnemies[Type] = true;
+            if (!Main.dedServ)
+            {
+                Phase2Texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Cryogen/Cryogen_Phase2", AssetRequestMode.AsyncLoad);
+                Phase3Texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Cryogen/Cryogen_Phase3", AssetRequestMode.AsyncLoad);
+                Phase4Texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Cryogen/Cryogen_Phase4", AssetRequestMode.AsyncLoad);
+                Phase5Texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Cryogen/Cryogen_Phase5", AssetRequestMode.AsyncLoad);
+                Phase6Texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Cryogen/Cryogen_Phase6", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -85,7 +100,7 @@ namespace CalamityMod.NPCs.Cryogen
             NPC.height = 88;
             NPC.defense = 15;
             NPC.DR_NERD(0.3f);
-            NPC.LifeMaxNERB(30000, 36000, 300000);
+            NPC.LifeMaxNERB(40000, 48000, 300000);
             double HPBoost = CalamityConfig.Instance.BossHealthBoost * 0.01;
             NPC.lifeMax += (int)(NPC.lifeMax * HPBoost);
             NPC.aiStyle = -1;
@@ -127,10 +142,10 @@ namespace CalamityMod.NPCs.Cryogen
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] 
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Snow,
-				new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.Cryogen")
+                new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.Cryogen")
             });
         }
 
@@ -212,7 +227,7 @@ namespace CalamityMod.NPCs.Cryogen
             bool phase7 = lifeRatio < (death ? 0.25f : 0.15f) && revenge;
 
             // Projectile and sound variables
-            int iceBlast = Main.zenithWorld ? ModContent.ProjectileType<BrimstoneBarrage>() :  ModContent.ProjectileType<IceBlast>();
+            int iceBlast = Main.zenithWorld ? ModContent.ProjectileType<BrimstoneBarrage>() : ModContent.ProjectileType<IceBlast>();
             int iceBomb = Main.zenithWorld ? ModContent.ProjectileType<SCalBrimstoneFireblast>() : ModContent.ProjectileType<IceBomb>();
             int iceRain = Main.zenithWorld ? ModContent.ProjectileType<BrimstoneBarrage>() : ModContent.ProjectileType<IceRain>();
             int dustType = Main.zenithWorld ? 235 : 67;
@@ -220,9 +235,6 @@ namespace CalamityMod.NPCs.Cryogen
             SoundStyle frostSound = Main.zenithWorld ? SoundID.Item20 : SoundID.Item28;
             NPC.HitSound = Main.zenithWorld ? SoundID.NPCHit41 : HitSound;
             NPC.DeathSound = Main.zenithWorld ? SoundID.NPCDeath14 : DeathSound;
-
-            // Reset damage
-            NPC.damage = NPC.defDamage;
 
             if ((int)NPC.ai[0] + 1 > currentPhase)
                 HandlePhaseTransition((int)NPC.ai[0] + 1);
@@ -360,6 +372,9 @@ namespace CalamityMod.NPCs.Cryogen
 
             if (NPC.ai[0] == 0f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 NPC.rotation = NPC.velocity.X * 0.1f;
 
                 NPC.localAI[0] += 1f;
@@ -378,11 +393,15 @@ namespace CalamityMod.NPCs.Cryogen
                             int type = iceBlast;
                             int damage = NPC.GetProjectileDamage(type);
                             float velocity = 9f + enrageScale;
+                            float projectileVelocityToPass = 0f;
+                            if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                projectileVelocityToPass = velocity * 2f;
+
                             Vector2 spinningPoint = new Vector2(0f, -velocity);
                             for (int k = 0; k < totalProjectiles; k++)
                             {
                                 Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, 0f, projectileVelocityToPass);
                             }
                         }
                     }
@@ -417,6 +436,9 @@ namespace CalamityMod.NPCs.Cryogen
             }
             else if (NPC.ai[0] == 1f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 if (NPC.ai[1] < chargePhaseGateValue)
                 {
                     NPC.ai[1] += 1f;
@@ -439,11 +461,15 @@ namespace CalamityMod.NPCs.Cryogen
                                 int type = iceBlast;
                                 int damage = NPC.GetProjectileDamage(type);
                                 float velocity2 = 9f + enrageScale;
+                                float projectileVelocityToPass = 0f;
+                                if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                    projectileVelocityToPass = velocity2 * 2f;
+
                                 Vector2 spinningPoint = new Vector2(0f, -velocity2);
                                 for (int k = 0; k < totalProjectiles; k++)
                                 {
                                     Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, 0f, projectileVelocityToPass);
                                 }
                             }
                         }
@@ -520,6 +546,10 @@ namespace CalamityMod.NPCs.Cryogen
                                 {
                                     float radians = MathHelper.TwoPi / totalProjectilesShot;
                                     float newVelocity = velocity - (velocity * 0.5f * i);
+                                    float projectileVelocityToPass = 0f;
+                                    if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                        projectileVelocityToPass = velocity * 2f;
+
                                     double angleA = radians * 0.5;
                                     double angleB = MathHelper.ToRadians(90f) - angleA;
                                     float velocityX = (float)(newVelocity * Math.Sin(angleA) / Math.Sin(angleB));
@@ -527,7 +557,7 @@ namespace CalamityMod.NPCs.Cryogen
                                     for (int k = 0; k < totalProjectilesShot; k++)
                                     {
                                         Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, velocity);
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, type == ModContent.ProjectileType<BrimstoneBarrage>() ? 0f : velocity, projectileVelocityToPass);
                                     }
                                 }
                             }
@@ -540,6 +570,9 @@ namespace CalamityMod.NPCs.Cryogen
                 }
                 else
                 {
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
+
                     if (NPC.ai[1] == chargeGateValue)
                     {
                         float chargeVelocity = Vector2.Distance(NPC.Center, player.Center) / chargeDuration * 2f;
@@ -593,6 +626,9 @@ namespace CalamityMod.NPCs.Cryogen
             }
             else if (NPC.ai[0] == 2f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 if (NPC.ai[1] < chargePhaseGateValue)
                 {
                     NPC.ai[1] += 1f;
@@ -615,11 +651,15 @@ namespace CalamityMod.NPCs.Cryogen
                                 int type = iceBlast;
                                 int damage = NPC.GetProjectileDamage(type);
                                 float velocity = 9f + enrageScale;
+                                float projectileVelocityToPass = 0f;
+                                if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                    projectileVelocityToPass = velocity * 2f;
+
                                 Vector2 spinningPoint = new Vector2(0f, -velocity);
                                 for (int k = 0; k < totalProjectiles; k++)
                                 {
                                     Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer);
+                                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, 0f, projectileVelocityToPass);
                                 }
                             }
                         }
@@ -668,6 +708,10 @@ namespace CalamityMod.NPCs.Cryogen
                                 {
                                     float radians = MathHelper.TwoPi / totalProjectilesShot;
                                     float newVelocity = velocity - (velocity * 0.33f * i);
+                                    float projectileVelocityToPass = 0f;
+                                    if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                        projectileVelocityToPass = velocity * 2f;
+
                                     double angleA = radians * 0.5;
                                     double angleB = MathHelper.ToRadians(90f) - angleA;
                                     float velocityX = (float)(newVelocity * Math.Sin(angleA) / Math.Sin(angleB));
@@ -675,7 +719,7 @@ namespace CalamityMod.NPCs.Cryogen
                                     for (int k = 0; k < totalProjectilesShot; k++)
                                     {
                                         Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, velocity);
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, type == ModContent.ProjectileType<BrimstoneBarrage>() ? 0f : velocity, projectileVelocityToPass);
                                     }
                                 }
                             }
@@ -688,6 +732,9 @@ namespace CalamityMod.NPCs.Cryogen
                 }
                 else
                 {
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
+
                     if (NPC.ai[1] == chargeGateValue)
                     {
                         float chargeVelocity = Vector2.Distance(NPC.Center, player.Center) / chargeDuration * 2f;
@@ -748,6 +795,9 @@ namespace CalamityMod.NPCs.Cryogen
             }
             else if (NPC.ai[0] == 3f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 NPC.rotation = NPC.velocity.X * 0.1f;
 
                 NPC.localAI[0] += 1f;
@@ -765,11 +815,15 @@ namespace CalamityMod.NPCs.Cryogen
                             int type = iceBlast;
                             int damage = NPC.GetProjectileDamage(type);
                             float velocity = 10f + enrageScale;
+                            float projectileVelocityToPass = 0f;
+                            if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                projectileVelocityToPass = velocity * 2f;
+
                             Vector2 spinningPoint = new Vector2(0f, -velocity);
                             for (int k = 0; k < totalProjectiles; k++)
                             {
                                 Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer);
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, 0f, projectileVelocityToPass);
                             }
                         }
                     }
@@ -835,16 +889,13 @@ namespace CalamityMod.NPCs.Cryogen
                             teleportLocationX = playerTileX;
                             calamityGlobalNPC.newAI[2] = playerTileY;
                             NPC.netUpdate = true;
-                            Block:
+Block:
                             ;
                         }
                     }
                 }
                 else if (NPC.ai[1] == 1f)
                 {
-                    // Avoid cheap bullshit
-                    NPC.damage = 0;
-
                     Vector2 position = new Vector2(teleportLocationX * 16f - (NPC.width / 2), calamityGlobalNPC.newAI[2] * 16f - (NPC.height / 2));
                     for (int m = 0; m < 5; m++)
                     {
@@ -879,6 +930,10 @@ namespace CalamityMod.NPCs.Cryogen
                                     int totalProjectiles = bossRush ? 9 : 6;
                                     float radians = MathHelper.TwoPi / totalProjectiles;
                                     float newVelocity = velocity - (velocity * 0.33f * i);
+                                    float projectileVelocityToPass = 0f;
+                                    if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                        projectileVelocityToPass = velocity * 2f;
+
                                     float velocityX = 0f;
                                     if (i > 0)
                                     {
@@ -890,7 +945,7 @@ namespace CalamityMod.NPCs.Cryogen
                                     for (int k = 0; k < totalProjectiles; k++)
                                     {
                                         Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, velocity);
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, 0f, type == ModContent.ProjectileType<BrimstoneBarrage>() ? 0f : velocity, projectileVelocityToPass);
                                     }
                                 }
                             }
@@ -902,9 +957,6 @@ namespace CalamityMod.NPCs.Cryogen
                 }
                 else if (NPC.ai[1] == 2f)
                 {
-                    // Avoid cheap bullshit
-                    NPC.damage = 0;
-
                     NPC.Opacity += 0.2f;
                     if (NPC.Opacity >= 1f)
                     {
@@ -918,7 +970,7 @@ namespace CalamityMod.NPCs.Cryogen
                 {
                     NPC.TargetClosest();
                     NPC.ai[0] = 4f;
-                    NPC.ai[1] = 0f;
+                    NPC.ai[1] = 150f;
                     NPC.ai[3] = 0f;
                     NPC.localAI[0] = 0f;
                     NPC.localAI[2] = 0f;
@@ -943,9 +995,12 @@ namespace CalamityMod.NPCs.Cryogen
             }
             else if (NPC.ai[0] == 4f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 if (phase6)
                 {
-                    if (NPC.ai[1] == 60f)
+                    if (NPC.ai[1] == 60f) // Spawn homing ice blasts on charge
                     {
                         NPC.velocity = Vector2.Normalize(player.Center - NPC.Center) * (18f + enrageScale * 2f);
 
@@ -964,6 +1019,10 @@ namespace CalamityMod.NPCs.Cryogen
                                     int totalProjectiles = bossRush ? 3 : 2;
                                     float radians = MathHelper.TwoPi / totalProjectiles;
                                     float newVelocity = velocity - (velocity * (phase7 ? 0.25f : 0.5f) * i);
+                                    float projectileVelocityToPass = 0f;
+                                    if (type == ModContent.ProjectileType<BrimstoneBarrage>())
+                                        projectileVelocityToPass = velocity * 12f;
+
                                     float velocityX = 0f;
                                     float ai = Main.zenithWorld ? 2f : NPC.target;
                                     if (i > 0)
@@ -976,7 +1035,7 @@ namespace CalamityMod.NPCs.Cryogen
                                     for (int k = 0; k < totalProjectiles; k++)
                                     {
                                         Vector2 projSpreadRotation = spinningPoint.RotatedBy(radians * k);
-                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, ai, 1f);
+                                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + Vector2.Normalize(projSpreadRotation) * 30f, projSpreadRotation, type, damage, 0f, Main.myPlayer, ai, type == ModContent.ProjectileType<BrimstoneBarrage>() ? 0f : 1f, projectileVelocityToPass);
                                     }
                                 }
                             }
@@ -984,7 +1043,7 @@ namespace CalamityMod.NPCs.Cryogen
                     }
 
                     NPC.ai[1] -= 1f;
-                    if (NPC.ai[1] <= 0f)
+                    if (NPC.ai[1] <= 0f) // Set the next charge, or switch back to floating above the player
                     {
                         NPC.ai[3] += 1f;
                         NPC.TargetClosest();
@@ -1000,13 +1059,23 @@ namespace CalamityMod.NPCs.Cryogen
 
                         NPC.rotation = NPC.velocity.X * 0.1f;
                     }
-                    else if (NPC.ai[1] <= 15f)
+                    else if (NPC.ai[1] <= 15f) // Slow down in preparation for the next charge
                     {
                         NPC.velocity *= 0.95f;
                         NPC.rotation = NPC.velocity.X * 0.15f;
                     }
-                    else
+                    else if (NPC.ai[1] > 60f) // Only used for when phase 6 first starts to prevent insta-charges
+                    {
+                        NPC.velocity *= 0.98f;
+                        NPC.rotation += (150f - NPC.ai[1]) * 0.01f * NPC.direction;
+                    }
+                    else // Charge
+                    {
+                        // Set damage
+                        NPC.damage = NPC.defDamage;
+
                         NPC.rotation += NPC.direction * 0.5f;
+                    }
 
                     return;
                 }
@@ -1027,6 +1096,9 @@ namespace CalamityMod.NPCs.Cryogen
 
                 if (playerDistance < chargeStartDistance || calamityGlobalNPC.newAI[2] > 0f)
                 {
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
+
                     if (playerDistance < chargeStartDistance)
                         calamityGlobalNPC.newAI[2] = chargeCooldown;
 
@@ -1062,6 +1134,9 @@ namespace CalamityMod.NPCs.Cryogen
             }
             else
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 NPC.rotation = NPC.velocity.X * 0.1f;
 
                 calamityGlobalNPC.newAI[3] += 1f;
@@ -1207,8 +1282,29 @@ namespace CalamityMod.NPCs.Cryogen
             else
                 FireDrawer = null;
 
-            string phase = "CalamityMod/NPCs/Cryogen/Cryogen_Phase" + currentPhase;
-            Texture2D texture = ModContent.Request<Texture2D>(phase).Value;
+
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            switch (currentPhase)
+            {
+                case 2:
+                    texture = Phase2Texture.Value;
+                    break;
+                case 3:
+                    texture = Phase3Texture.Value;
+                    break;
+                case 4:
+                    texture = Phase4Texture.Value;
+                    break;
+                case 5:
+                    texture = Phase5Texture.Value;
+                    break;
+                case 6:
+                    texture = Phase6Texture.Value;
+                    break;
+                default:
+                    texture = TextureAssets.Npc[NPC.type].Value;
+                    break;
+            }
 
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (NPC.spriteDirection == 1)
@@ -1228,7 +1324,7 @@ namespace CalamityMod.NPCs.Cryogen
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
-            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance);
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.8f * balance * bossAdjustment);
             NPC.damage = (int)(NPC.damage * NPC.GetExpertDamageMultiplier());
         }
 
@@ -1251,7 +1347,7 @@ namespace CalamityMod.NPCs.Cryogen
             {
                 for (int i = 0; i < 40; i++)
                 {
-                    int icyDust = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 2f);
+                    int icyDust = Dust.NewDust(NPC.position, NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 2f);
                     Main.dust[icyDust].velocity *= 3f;
                     if (Main.rand.NextBool())
                     {
@@ -1261,10 +1357,10 @@ namespace CalamityMod.NPCs.Cryogen
                 }
                 for (int j = 0; j < 70; j++)
                 {
-                    int icyDust2 = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 3f);
+                    int icyDust2 = Dust.NewDust(NPC.position, NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 3f);
                     Main.dust[icyDust2].noGravity = true;
                     Main.dust[icyDust2].velocity *= 5f;
-                    icyDust2 = Dust.NewDust(new Vector2(NPC.position.X, NPC.position.Y), NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 2f);
+                    icyDust2 = Dust.NewDust(NPC.position, NPC.width, NPC.height, dusttype, 0f, 0f, 100, default, 2f);
                     Main.dust[icyDust2].velocity *= 2f;
                 }
                 if (Main.netMode != NetmodeID.Server && !Main.zenithWorld)

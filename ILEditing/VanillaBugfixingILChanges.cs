@@ -1,8 +1,8 @@
-﻿using CalamityMod.NPCs;
+﻿using System;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Renderers;
@@ -45,6 +45,18 @@ namespace CalamityMod.ILEditing
             cursor.Emit(OpCodes.Brfalse, ret);
         }
         #endregion Fixing Splitting Worm Banner Spam in Deathmode
+
+        #region Fixing Splitting Worm Interaction in Deathmode
+        // CONTEXT FOR FIX: In Death Mode, normal worms are capable of splitting similarly to the Eater of Worlds. This comes with problems with bestiary entries. The entries are incremented only when
+        // the killed npc is the head segment and it has been interacted at least once. These two conditions may be violated because NPC.NPCLoot only triggers once because of the above fix.
+        // The fix for former condition is in CalamityGlobalNPCLoot.OnKill. For the latter condition, NPC.PlayerInteraction should broadcast interaction to every other worm segments.
+        // This is already done for vanilla worm enemies like EOW.
+        private static void FixSplittingWormInteraction(On_NPC.orig_PlayerInteraction orig, NPC npc, int player)
+        {
+            orig(npc, player);
+            CalamityGlobalNPC.SplittingWormBroadcastInteractionWrapper(npc, player);
+        }
+        #endregion
 
         #region Fixing Vanilla Not Accounting For Spritebatch Modification in Held Projectiles
         private static bool HasLoggedHeldProjectileBlendStateCatch = false;

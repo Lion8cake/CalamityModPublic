@@ -1,4 +1,7 @@
-﻿using CalamityMod.Dusts;
+﻿using System;
+using System.IO;
+using System.Linq;
+using CalamityMod.Dusts;
 using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
@@ -6,9 +9,6 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
@@ -130,7 +130,7 @@ namespace CalamityMod.Projectiles.DraedonsArsenal
                 // In addition to typical channel cancellation criteria, the sword fizzles out if it runs out of charge.
                 Item playerItem = player.ActiveItem();
                 bool hasCharge = modItem.Charge > 0f;
-                if (player.channel && !player.noItems && !player.CCed && playerItem.type == ModContent.ItemType<Phaseslayer>() && hasCharge)
+                if (!player.CantUseHoldout() && playerItem.type == ModContent.ItemType<Phaseslayer>() && hasCharge)
                 {
                     // The distance ratio ranges from 0 (your mouse is directly on the player) to 1 (your mouse is at the max range considered, or any further distance).
                     float mouseDistance = Projectile.Distance(Main.MouseWorld);
@@ -296,7 +296,7 @@ namespace CalamityMod.Projectiles.DraedonsArsenal
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D bladeTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/DraedonsArsenal/PhaseslayerBlade").Value;
-            Texture2D hiltTexture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D hiltTexture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             if (IsSmall)
                 bladeTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/DraedonsArsenal/PhaseslayerBladeSmall").Value;
 

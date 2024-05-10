@@ -1,7 +1,7 @@
-﻿using Terraria.ID;
+﻿using CalamityMod.Items.Materials;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.Items.Materials;
 
 namespace CalamityMod.Items
 {
@@ -12,14 +12,14 @@ namespace CalamityMod.Items
         {
             Item.width = 44;
             Item.height = 34;
-            Item.value = CalamityGlobalItem.Rarity1BuyPrice;
+            Item.value = CalamityGlobalItem.RarityBlueBuyPrice;
             Item.rare = ItemRarityID.Blue;
         }
 
-		public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
-		{
-			itemGroup = (ContentSamples.CreativeHelper.ItemGroup)CalamityResearchSorting.SpawnPrevention;
-		}
+        public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
+        {
+            itemGroup = (ContentSamples.CreativeHelper.ItemGroup)CalamityResearchSorting.SpawnPrevention;
+        }
 
         public override void UpdateInventory(Player player)
         {

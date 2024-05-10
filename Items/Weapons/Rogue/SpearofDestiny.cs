@@ -1,11 +1,11 @@
-﻿using Terraria.DataStructures;
+﻿using CalamityMod.Items.Accessories;
 using CalamityMod.Projectiles.Rogue;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod.Items.Accessories;
 
 namespace CalamityMod.Items.Weapons.Rogue
 {
@@ -18,6 +18,7 @@ namespace CalamityMod.Items.Weapons.Rogue
         public override void SetDefaults()
         {
             Item.width = 52;
+            Item.height = 52;
             Item.damage = 50;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -27,8 +28,7 @@ namespace CalamityMod.Items.Weapons.Rogue
             Item.knockBack = 2f;
             Item.UseSound = ThrowSound;
             Item.autoReuse = true;
-            Item.height = 52;
-            Item.value = CalamityGlobalItem.Rarity6BuyPrice;
+            Item.value = CalamityGlobalItem.RarityLightPurpleBuyPrice;
             Item.rare = ItemRarityID.LightPurple;
             Item.shoot = ModContent.ProjectileType<SpearofDestinyProjectile>();
             Item.shootSpeed = 10f;

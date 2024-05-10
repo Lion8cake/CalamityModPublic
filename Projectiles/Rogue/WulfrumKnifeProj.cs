@@ -1,15 +1,15 @@
 ﻿using System;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-using Terraria.Audio;
-using CalamityMod.Graphics.Primitives;
 
 namespace CalamityMod.Projectiles.Rogue
 {
@@ -119,7 +119,7 @@ namespace CalamityMod.Projectiles.Rogue
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D tex = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             float opacitey = StealthEffectOpacity;
 
             if (Projectile.Calamity().stealthStrike)

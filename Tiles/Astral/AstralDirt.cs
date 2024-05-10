@@ -16,7 +16,7 @@ namespace CalamityMod.Tiles.Astral
         {
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
-			TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Dirt"]);
+            TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Dirt"]);
 
             CalamityUtils.MergeWithGeneral(Type);
             CalamityUtils.MergeAstralTiles(Type);

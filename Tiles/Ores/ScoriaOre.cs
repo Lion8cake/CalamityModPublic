@@ -45,11 +45,11 @@ namespace CalamityMod.Tiles.Ores
             if (closer && Main.rand.NextBool(30) && !up.HasTile && !up2.HasTile)
             {
                 Dust dust;
-                dust = Main.dust[Dust.NewDust(new Vector2(i * 16f, j * 16f), 16, 16, 127, 0f, -10f, 47, new Color(255, 255, 255), 1.0465117f)];
+                dust = Main.dust[Dust.NewDust(new Vector2(i * 16f, j * 16f), 16, 16, DustID.Flare, 0f, -10f, 47, new Color(255, 255, 255), 1.0465117f)];
                 dust.noGravity = true;
                 dust.fadeIn = 1.2209302f;
 
-                dust = Main.dust[Dust.NewDust(new Vector2(i * 16f, j * 16f), 16, 16, 31, 0f, -1.9069767f, 195, new Color(255, 255, 255), 1f)];
+                dust = Main.dust[Dust.NewDust(new Vector2(i * 16f, j * 16f), 16, 16, DustID.Smoke, 0f, -1.9069767f, 195, new Color(255, 255, 255), 1f)];
                 dust.noGravity = false;
                 dust.fadeIn = 1.4209302f;
 
@@ -81,7 +81,7 @@ namespace CalamityMod.Tiles.Ores
         {
             num = fail ? 1 : 3;
         }
-        
+
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             r = 0.04f;
@@ -112,7 +112,7 @@ namespace CalamityMod.Tiles.Ores
             TileFraming.DrawUniversalMergeFrames(i, j, secondTileAdjacency, "CalamityMod/Tiles/Merges/PyreMantleMerge");
             TileFraming.DrawUniversalMergeFrames(i, j, TileAdjacency, "CalamityMod/Tiles/Merges/AbyssGravelMerge");
         }
-        
+
         private Color GetDrawColour(int i, int j, Color colour)
         {
             int colType = Main.tile[i, j].TileColor;

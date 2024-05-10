@@ -18,8 +18,8 @@ namespace CalamityMod.Items.Accessories
         {
             Item.width = 26;
             Item.height = 26;
-            Item.value = CalamityGlobalItem.Rarity7BuyPrice;
-            Item.rare = ItemRarityID.Lime;
+            Item.value = CalamityGlobalItem.RarityYellowBuyPrice;
+            Item.rare = ItemRarityID.Yellow;
             Item.accessory = true;
             Item.defense = 10;
         }
@@ -46,7 +46,7 @@ namespace CalamityMod.Items.Accessories
                         player.buffTime[l] = 80;
                 }
             }
-            
+
             Lighting.AddLight(player.Center, 0.825f, 0.66f, 0f);
             if (Main.myPlayer == player.whoAmI)
             {
