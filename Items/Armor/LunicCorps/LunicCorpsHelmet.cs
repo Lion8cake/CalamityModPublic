@@ -2,6 +2,7 @@
 using CalamityMod.CalPlayer;
 using CalamityMod.DataStructures;
 using CalamityMod.Items.Materials;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -61,7 +62,7 @@ namespace CalamityMod.Items.Armor.LunicCorps
         {
             Item.width = 18;
             Item.height = 18;
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.defense = 14;
             Item.rare = ItemRarityID.Cyan;
             Item.Calamity().donorItem = true;
@@ -76,7 +77,10 @@ namespace CalamityMod.Items.Armor.LunicCorps
         {
             var modPlayer = player.Calamity();
             modPlayer.lunicCorpsSet = true;
-            player.setBonus = this.GetLocalizedValue("SetBonus");
+
+            // The localization is formatted strangely, but attempting to put the {0} on its own line will leave a blank space if given an empty string
+            string adrenTooltip = CalamityWorld.revenge ? "\n" + this.GetLocalizedValue("ShieldAdren") : "";
+            player.setBonus = this.GetLocalization("SetBonus").Format(adrenTooltip);
 
             player.bulletDamage += 0.1f;
             player.specialistDamage += 0.1f;

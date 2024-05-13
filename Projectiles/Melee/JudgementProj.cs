@@ -1,9 +1,9 @@
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 namespace CalamityMod.Projectiles.Melee
 {
     public class JudgementProj : ModProjectile, ILocalizedModType
@@ -22,6 +22,8 @@ namespace CalamityMod.Projectiles.Melee
             Projectile.penetrate = -1;
             Projectile.timeLeft = 60;
             Projectile.DamageType = DamageClass.Melee;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 10;
         }
 
         public override void AI()
@@ -54,7 +56,7 @@ namespace CalamityMod.Projectiles.Melee
 
             for (int i = 0; i < 2; i++)
             {
-                int shinyDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 91, 0f, 0f, 100, default, 1.25f);
+                int shinyDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GemDiamond, 0f, 0f, 100, default, 1.25f);
                 Main.dust[shinyDust].noGravity = true;
                 Main.dust[shinyDust].velocity *= 0.5f;
                 Main.dust[shinyDust].velocity += Projectile.velocity * 0.1f;

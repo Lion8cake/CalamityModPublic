@@ -13,8 +13,8 @@ namespace CalamityMod.Items.Weapons.Rogue
     {
         public override void SetDefaults()
         {
-            Item.damage = 300;
             Item.width = Item.height = 68;
+            Item.damage = 300;
             Item.useAnimation = Item.useTime = 9;
             Item.noMelee = true;
             Item.noUseGraphic = true;

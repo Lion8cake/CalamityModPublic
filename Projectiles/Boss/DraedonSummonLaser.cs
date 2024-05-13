@@ -1,13 +1,13 @@
-﻿using CalamityMod.World;
+﻿using System.Collections.Generic;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
-using CalamityMod.Graphics.Primitives;
 
 namespace CalamityMod.Projectiles.Boss
 {

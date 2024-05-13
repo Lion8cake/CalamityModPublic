@@ -14,15 +14,15 @@ namespace CalamityMod.Items.Weapons.Ranged
         public new string LocalizationCategory => "Items.Weapons.Ranged";
         public override void SetDefaults()
         {
-            Item.damage = 290;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 126;
             Item.height = 42;
+            Item.damage = 290;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = Item.useAnimation = 33;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 1.5f;
-            Item.value = CalamityGlobalItem.Rarity15BuyPrice;
+            Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
             Item.rare = ModContent.RarityType<Violet>();
             // No use sound is intentional
             Item.autoReuse = true;

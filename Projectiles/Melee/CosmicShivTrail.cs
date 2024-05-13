@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CalamityMod.Buffs.DamageOverTime;
@@ -94,7 +98,7 @@ namespace CalamityMod.Projectiles.Melee
                 float multiplier = Projectile.velocity.Length() < 4f ? Projectile.velocity.Length() + 1f : 1f;      // Probably a better way to do this, but just a bandaid fix for if the trail velocity ends up being low
                 targetVelocity *= Projectile.velocity.Length() + multiplier;
 
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVelocity, 0.12f);               
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, targetVelocity, 0.12f);
             }
 
             // lifespan timer
@@ -145,7 +149,7 @@ namespace CalamityMod.Projectiles.Melee
         // Very similar to CosmicShivBlade PreDraw
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Type].Value;
             Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Vector2 origin = sourceRectangle.Size() / 2f;
             float rotation = Projectile.rotation;
@@ -160,8 +164,8 @@ namespace CalamityMod.Projectiles.Melee
                 Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(sourceRectangle), color, rotation, origin, Projectile.scale * scaleMult, SpriteEffects.None, 0f);
                 scaleMult *= 0.9f;
             }
-            
-            return false; 
+
+            return false;
 
         }
 
@@ -175,7 +179,8 @@ namespace CalamityMod.Projectiles.Melee
             float speed = Main.rand.Next(6, 11);                            // Size
 
             int rand = Main.rand.Next(0, 10);   // 10% chance rose, 10% chance big wavy shape, and 80% chance small undetail wavy shape
-            if (rand == 0) { 
+            if (rand == 0)
+            {
                 for (float k = 0f; k < MathHelper.TwoPi; k += 0.03f)
                 {
                     float scale = Main.rand.NextFloat(1.1f, 1.4f);
@@ -191,7 +196,9 @@ namespace CalamityMod.Projectiles.Melee
                     dust2.noGravity = true;
                     dust2.fadeIn = -1f;
                 }
-            } else if (rand == 1) {
+            }
+            else if (rand == 1)
+            {
                 for (float k = 0f; k < MathHelper.TwoPi; k += 0.08f)
                 {
                     float scale = Main.rand.NextFloat(1.2f, 1.6f);
@@ -207,7 +214,9 @@ namespace CalamityMod.Projectiles.Melee
                     dust2.noGravity = true;
                     dust2.fadeIn = -1f;
                 }
-            } else {
+            }
+            else
+            {
                 for (float k = 0f; k < MathHelper.TwoPi; k += 0.2f)
                 {
                     float scale = Main.rand.NextFloat(1f, 1.2f);

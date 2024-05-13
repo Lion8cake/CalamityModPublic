@@ -18,8 +18,8 @@ namespace CalamityMod.Tiles.SunkenSea
             Main.tileLavaDeath[Type] = true;
             Main.tileWaterDeath[Type] = true;
             Main.tileFrameImportant[Type] = true;
-			TileID.Sets.ReplaceTileBreakUp[Type] = true;
-			TileID.Sets.SwaysInWindBasic[Type] = false;
+            TileID.Sets.ReplaceTileBreakUp[Type] = true;
+            TileID.Sets.SwaysInWindBasic[Type] = false;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(178, 28, 153));

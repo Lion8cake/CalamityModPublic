@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace CalamityMod.Projectiles.Summon
 {
@@ -20,7 +20,7 @@ namespace CalamityMod.Projectiles.Summon
             Projectile.width = Projectile.height = 20;
             Projectile.friendly = true;
             Projectile.netImportant = true;
-            Projectile.timeLeft = 150;
+            Projectile.timeLeft = 210;
             Projectile.extraUpdates = 1;
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Summon;
@@ -88,7 +88,7 @@ namespace CalamityMod.Projectiles.Summon
                 Projectile.velocity = (Projectile.velocity * 20f + moveDirection * 11f) / (21f);
             }
 
-            int pinkDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 73, 0f, 0f, 100, default, 0.6f);
+            int pinkDust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkFairy, 0f, 0f, 100, default, 0.6f);
             Main.dust[pinkDust].noGravity = true;
             Main.dust[pinkDust].velocity *= 0.5f;
             Main.dust[pinkDust].velocity += Projectile.velocity * 0.1f;
@@ -97,16 +97,16 @@ namespace CalamityMod.Projectiles.Summon
         public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item25, Projectile.position);
-            int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 73, 0f, 0f, 100, default, 1f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkFairy, 0f, 0f, 100, default, 1f);
             Main.dust[dust].velocity *= 0.5f;
             if (Main.rand.NextBool())
             {
                 Main.dust[dust].scale = 0.5f;
                 Main.dust[dust].fadeIn = 1f + (float)Main.rand.Next(10) * 0.1f;
             }
-            int dust2 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 73, 0f, 0f, 100, default, 1.4f);
+            int dust2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkFairy, 0f, 0f, 100, default, 1.4f);
             Main.dust[dust2].noGravity = true;
-            dust2 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 73, 0f, 0f, 100, default, 0.8f);
+            dust2 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.PinkFairy, 0f, 0f, 100, default, 0.8f);
         }
     }
 }

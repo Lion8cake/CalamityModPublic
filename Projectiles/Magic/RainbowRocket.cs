@@ -1,12 +1,12 @@
-﻿using CalamityMod.DataStructures;
+﻿using System;
+using CalamityMod.DataStructures;
+using CalamityMod.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod.Graphics.Primitives;
 
 namespace CalamityMod.Projectiles.Magic
 {
@@ -138,7 +138,7 @@ namespace CalamityMod.Projectiles.Magic
             Projectile.oldPos[0] = Projectile.position + Projectile.velocity.SafeNormalize(Vector2.Zero) * 50f;
             PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(WidthFunction, ColorFunction, (_) => Projectile.Size * 0.5f + Projectile.velocity), 80);
 
-            Texture2D rocketTexture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D rocketTexture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Main.EntitySpriteDraw(rocketTexture,
                              Projectile.Center - Main.screenPosition,
                              rocketTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame),

@@ -62,7 +62,7 @@ namespace CalamityMod.Projectiles.Summon
             dust.velocity *= 0f;
             dust.scale = 0.5f;
 
-            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             float projX = Projectile.position.X;
             float projY = Projectile.position.Y;
             float attackDistance = 100000f;
@@ -114,7 +114,7 @@ namespace CalamityMod.Projectiles.Summon
                 projY = Projectile.position.Y + (float)(Projectile.height / 2) + Projectile.velocity.Y * 100f;
             }
             float projVel = 0.16f;
-            Vector2 playerDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+            Vector2 playerDirection = Projectile.Center;
             float playerX = projX - playerDirection.X;
             float playerY = projY - playerDirection.Y;
             float playerDist = (float)Math.Sqrt((double)(playerX * playerX + playerY * playerY));

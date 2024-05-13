@@ -88,7 +88,7 @@ namespace CalamityMod.Projectiles.Melee
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             SoundEngine.PlaySound(WulfrumKnife.TileHitSound, Projectile.Center);
-            
+
 
             bool screwRegained = false;
 
@@ -151,12 +151,12 @@ namespace CalamityMod.Projectiles.Melee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-            
+            Texture2D tex = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+
             float distanceFromAim = Projectile.Center.ShortestDistanceToLine(Owner.MountedCenter, Main.MouseWorld);
             float distanceFromPlayerAcrossSightLine = (Owner.MountedCenter - Projectile.Center.ClosestPointOnLine(Owner.MountedCenter, Main.MouseWorld)).Length();
 
-            float opacity = MathHelper.Clamp(1f - distanceFromAim / 90f, 0f, 1f) * (1f -  Math.Clamp((float)Math.Pow(distanceFromPlayerAcrossSightLine / 300f, 9f) , 0f, 1f));
+            float opacity = MathHelper.Clamp(1f - distanceFromAim / 90f, 0f, 1f) * (1f - Math.Clamp((float)Math.Pow(distanceFromPlayerAcrossSightLine / 300f, 9f), 0f, 1f));
 
             //Draw a sightline before the player hits it.
             if (Owner.whoAmI == Main.myPlayer && BazingaTime == 0 && opacity > 0)
@@ -168,7 +168,7 @@ namespace CalamityMod.Projectiles.Melee
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
 
-                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Pow(opacity , 0.5f)); //Opacity increases as the screw gets close to the cursor
+                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Pow(opacity, 0.5f)); //Opacity increases as the screw gets close to the cursor
 
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(700f * 0.2f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue((Main.MouseWorld - Owner.MountedCenter).ToRotation() * -1);

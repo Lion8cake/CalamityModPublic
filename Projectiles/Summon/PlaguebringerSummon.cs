@@ -1,9 +1,9 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.Summon;
 using CalamityMod.CalPlayer;
 using CalamityMod.Projectiles.Typeless;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -78,7 +78,7 @@ namespace CalamityMod.Projectiles.Summon
                     for (int i = 0; i < beeCount; i++)
                     {
                         int beeType = Main.rand.NextBool(4) ? ModContent.ProjectileType<PlagueBeeSmall>() : Owner.beeType(); // 25% chance for plague bee, otherwise depends if Hive Pack or not
-                        Projectile bee = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(0.25f, 0.25f), beeType, Projectile.damage, Owner.beeKB(0f), Projectile.owner);
+                        Projectile bee = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(0.25f, 0.25f), beeType, Owner.beeDamage(Projectile.damage), Owner.beeKB(0f), Projectile.owner);
                         bee.usesLocalNPCImmunity = true;
                         bee.localNPCHitCooldown = 10;
                         bee.penetrate = 2;

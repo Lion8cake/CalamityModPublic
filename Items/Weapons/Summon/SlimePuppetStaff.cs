@@ -1,12 +1,12 @@
-﻿using Terraria.DataStructures;
+﻿using CalamityMod.Items.Materials;
+using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Projectiles.Summon;
+using CalamityMod.Tiles.Furniture.CraftingStations;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.SlimeGod;
-using CalamityMod.Tiles.Furniture.CraftingStations;
-using CalamityMod.Items.Materials;
 
 namespace CalamityMod.Items.Weapons.Summon
 {
@@ -15,15 +15,15 @@ namespace CalamityMod.Items.Weapons.Summon
         public new string LocalizationCategory => "Items.Weapons.Summon";
         public override void SetDefaults()
         {
-            Item.damage = 26;
-            Item.mana = 10;
             Item.width = 32;
             Item.height = 34;
+            Item.damage = 10;
+            Item.mana = 10;
             Item.useTime = Item.useAnimation = 29;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.noMelee = true;
             Item.knockBack = 3.6f;
-            Item.value = CalamityGlobalItem.Rarity4BuyPrice;
+            Item.value = CalamityGlobalItem.RarityLightRedBuyPrice;
             Item.rare = ItemRarityID.LightRed;
             Item.UseSound = SlimeGodCore.PossessionSound;
             Item.shoot = ModContent.ProjectileType<SlimePuppet>();

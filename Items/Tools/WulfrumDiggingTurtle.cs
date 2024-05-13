@@ -3,9 +3,9 @@ using CalamityMod.Projectiles.Typeless;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.DataStructures;
 
 namespace CalamityMod.Items.Tools
 {
@@ -14,18 +14,18 @@ namespace CalamityMod.Items.Tools
         public new string LocalizationCategory => "Items.Tools";
         public override void SetStaticDefaults()
         {
-                       Item.ResearchUnlockCount = 10;
+            Item.ResearchUnlockCount = 10;
         }
 
         public override void SetDefaults()
         {
+            Item.width = 30;
+            Item.height = 38;
             Item.useTime = Item.useAnimation = 8;
             Item.maxStack = 9999;
             Item.consumable = true;
             Item.shootSpeed = 20f;
             Item.shoot = ModContent.ProjectileType<WulfrumDiggingTurtleProjectile>();
-            Item.width = 30;
-            Item.height = 38;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.noUseGraphic = true;
@@ -34,10 +34,10 @@ namespace CalamityMod.Items.Tools
             Item.rare = ItemRarityID.Blue;
         }
 
-		public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
-		{
-			itemGroup = (ContentSamples.CreativeHelper.ItemGroup)CalamityResearchSorting.ToolsOther;
-		}
+        public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
+        {
+            itemGroup = (ContentSamples.CreativeHelper.ItemGroup)CalamityResearchSorting.ToolsOther;
+        }
 
         public override bool AltFunctionUse(Player player) => true;
 

@@ -13,18 +13,18 @@ namespace CalamityMod.Items.Weapons.Magic
         public new string LocalizationCategory => "Items.Weapons.Magic";
         public override void SetDefaults()
         {
+            Item.width = 28;
+            Item.height = 30;
             Item.damage = 110;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 8;
-            Item.width = 28;
-            Item.height = 30;
             Item.useTime = 5;
             Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 3.5f;
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ItemRarityID.Cyan;
+            Item.value = CalamityGlobalItem.RarityRedBuyPrice;
+            Item.rare = ItemRarityID.Red;
             Item.UseSound = SoundID.Item103;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<CosmicTentacle>();

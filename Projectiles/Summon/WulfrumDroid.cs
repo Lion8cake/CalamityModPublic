@@ -1,21 +1,21 @@
-﻿using CalamityMod.Buffs.Summon;
+﻿using System;
+using System.IO;
+using CalamityMod.Buffs.Summon;
 using CalamityMod.CalPlayer;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Items.Weapons.Summon;
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
+using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
-using Terraria.Audio;
-using CalamityMod.Particles;
-using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Accessories;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics.Effects;
 using static Terraria.ModLoader.ModContent;
-using ReLogic.Content;
-using System.IO;
-using CalamityMod.Graphics.Primitives;
 
 namespace CalamityMod.Projectiles.Summon
 {

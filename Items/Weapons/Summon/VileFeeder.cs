@@ -1,8 +1,7 @@
-﻿using Terraria.DataStructures;
-using CalamityMod.Projectiles.Summon;
+﻿using CalamityMod.Projectiles.Summon;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -11,62 +10,34 @@ namespace CalamityMod.Items.Weapons.Summon
     public class VileFeeder : ModItem, ILocalizedModType
     {
         public new string LocalizationCategory => "Items.Weapons.Summon";
-        public static int BaseDamage = 14;
+
+        public override void SetStaticDefaults() => Item.staff[Type] = true;
 
         public override void SetDefaults()
         {
-            Item.damage = BaseDamage;
-            Item.mana = 10;
-            Item.width = 66;
-            Item.height = 70;
-            Item.useTime = Item.useAnimation = 30;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.noMelee = true;
-            Item.knockBack = 0.5f;
-            Item.value = CalamityGlobalItem.Rarity2BuyPrice;
-            Item.rare = ItemRarityID.Green;
-            Item.UseSound = SoundID.Item2;
-            Item.autoReuse = true;
-            Item.shoot = ModContent.ProjectileType<VileFeederSummon>();
-            Item.shootSpeed = 10f;
+            Item.width = 40;
+            Item.height = 36;
+            Item.damage = 14;
             Item.DamageType = DamageClass.Summon;
+            Item.shoot = ModContent.ProjectileType<VileFeederSummon>();
+            Item.knockBack = 0.5f;
+
+            Item.useTime = Item.useAnimation = 30;
+            Item.mana = 10;
+            Item.noMelee = true;
+            Item.autoReuse = true;
+            Item.value = CalamityGlobalItem.RarityGreenBuyPrice;
+            Item.rare = ItemRarityID.Green;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = SoundID.Item2;
+
+            // This doesn't do anything, it's just so the item is held like a staff.
+            Item.shootSpeed = 1f;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse != 2)
-            {
-                int i = Main.myPlayer;
-                float projSpeed = Item.shootSpeed;
-                player.itemTime = Item.useTime;
-                Vector2 realPlayerPos = player.RotatedRelativePoint(player.MountedCenter, true);
-                float mouseXDist = (float)Main.mouseX + Main.screenPosition.X - realPlayerPos.X;
-                float mouseYDist = (float)Main.mouseY + Main.screenPosition.Y - realPlayerPos.Y;
-                if (player.gravDir == -1f)
-                {
-                    mouseYDist = Main.screenPosition.Y + (float)Main.screenHeight - (float)Main.mouseY - realPlayerPos.Y;
-                }
-                float mouseDistance = (float)Math.Sqrt((double)(mouseXDist * mouseXDist + mouseYDist * mouseYDist));
-                if ((float.IsNaN(mouseXDist) && float.IsNaN(mouseYDist)) || (mouseXDist == 0f && mouseYDist == 0f))
-                {
-                    mouseXDist = (float)player.direction;
-                    mouseYDist = 0f;
-                    mouseDistance = projSpeed;
-                }
-                else
-                {
-                    mouseDistance = projSpeed / mouseDistance;
-                }
-                mouseXDist *= mouseDistance;
-                mouseYDist *= mouseDistance;
-                realPlayerPos.X = (float)Main.mouseX + Main.screenPosition.X;
-                realPlayerPos.Y = (float)Main.mouseY + Main.screenPosition.Y;
-                Vector2 spinningpoint = new Vector2(mouseXDist, mouseYDist);
-                spinningpoint = spinningpoint.RotatedBy(MathHelper.PiOver2, default);
-                int p = Projectile.NewProjectile(source, realPlayerPos.X + spinningpoint.X, realPlayerPos.Y + spinningpoint.Y, spinningpoint.X, spinningpoint.Y, type, damage, knockback, i, 0f, 0f);
-                if (Main.projectile.IndexInRange(p))
-                    Main.projectile[p].originalDamage = Item.damage;
-            }
+            Projectile.NewProjectileDirect(source, Main.MouseWorld, Main.rand.NextVector2CircularEdge(5f, 5f), type, damage, knockback, player.whoAmI);
             return false;
         }
 

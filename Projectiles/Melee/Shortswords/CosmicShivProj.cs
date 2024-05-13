@@ -1,10 +1,10 @@
+using System;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics;
@@ -61,7 +61,9 @@ namespace CalamityMod.Projectiles.Melee.Shortswords
         {
             OnHitEffect();
 
-            if (NumHits < 3) {      // Just to avoid insanity from stacking so many super dummies or hitting many worm segments at once
+            if (NumHits < 3)
+            {
+                // Just to avoid insanity from stacking so many super dummies or hitting many worm segments at once
                 // 2x bonus for true melee hits (spawns an additional aura plus the one aura from the cosmic shiv ball)
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Vector2.Zero, ModContent.ProjectileType<CosmicShivAura>(), Projectile.damage, Projectile.knockBack, Projectile.owner, target.whoAmI);
                 NumHits++;
@@ -91,7 +93,7 @@ namespace CalamityMod.Projectiles.Melee.Shortswords
                     float scale = Main.rand.NextFloat(1.5f, 1.9f);
                     float randomWhitingValue = Main.rand.NextFloat(0.0f, 0.2f);
                     Color color = Color.Lerp(CosmicShivTrail.DustColors[Main.rand.Next(0, CosmicShivTrail.DustColors.Count)], Color.White, randomWhitingValue);  // Just for even more variety in colors idk
-                    Vector2 velocity = StarPolarEquation(petalCount, k, rand2PI) * speed * 2;
+                    Vector2 velocity = StarPolarEquation(petalCount, k, rand2PI) * speed * 2f;
                     Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.FireworksRGB, velocity, 0, color, scale);
                     dust.noGravity = true;
                     dust.fadeIn = -1f;      // I don't know if this does anything but it looks like the dust fades out faster with this

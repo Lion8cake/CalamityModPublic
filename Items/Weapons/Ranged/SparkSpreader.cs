@@ -11,6 +11,8 @@ namespace CalamityMod.Items.Weapons.Ranged
         public new string LocalizationCategory => "Items.Weapons.Ranged";
         public override void SetDefaults()
         {
+            Item.width = 56;
+            Item.height = 26;
             Item.damage = 10;
             Item.knockBack = 1f;
             Item.DamageType = DamageClass.Ranged;
@@ -22,12 +24,10 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.shootSpeed = 6f;
             Item.shoot = ModContent.ProjectileType<SparkSpreaderFire>();
 
-            Item.width = 56;
-            Item.height = 26;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.UseSound = SoundID.Item34;
-            Item.value = CalamityGlobalItem.Rarity1BuyPrice;
+            Item.value = CalamityGlobalItem.RarityBlueBuyPrice;
             Item.rare = ItemRarityID.Blue;
         }
 

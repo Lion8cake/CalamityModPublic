@@ -15,7 +15,7 @@ namespace CalamityMod.Projectiles.Typeless
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public Player Owner => Main.player[Projectile.owner];
         private static float ExplosionRadius = 85f;
-        public static readonly SoundStyle Slap = new("CalamityMod/Sounds/Custom/WetSlap", 4) { Volume = 0.8f, PitchVariance = 0.3f};
+        public static readonly SoundStyle Slap = new("CalamityMod/Sounds/Custom/WetSlap", 4) { Volume = 0.8f, PitchVariance = 0.3f };
 
         public override void SetDefaults()
         {

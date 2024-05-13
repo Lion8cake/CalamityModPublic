@@ -1,15 +1,11 @@
-using System;
+﻿using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.Buffs.DamageOverTime;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using Terraria.DataStructures;
-using Newtonsoft.Json.Linq;
-using Terraria.Graphics.Shaders;
-using Terraria.Graphics;
 
 namespace CalamityMod.Projectiles.Melee
 {
@@ -35,7 +31,7 @@ namespace CalamityMod.Projectiles.Melee
             Projectile.timeLeft = 6000;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
-            Projectile.extraUpdates = 2;
+            Projectile.extraUpdates = 3;
             Projectile.alpha = 0;
             Projectile.scale = 1.2f;
         }
@@ -64,19 +60,24 @@ namespace CalamityMod.Projectiles.Melee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Type].Value;
             Rectangle sourceRectangle = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Vector2 origin = sourceRectangle.Size() / 2f;
             float rotation = Projectile.rotation;
             Color randomColor = Projectile.GetAlpha(lightColor);
 
+            // Afterimages to make the blade look longer
             float scaleMult = 1.2f;
-            for (int i = 0; i < Projectile.oldPos.Length; i++)          // Afterimages to make the blade look longer
+            for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 Vector2 drawPos = Projectile.oldPos[i] + (Projectile.Size / 2f) - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
                 Color color = randomColor * ((float)(Projectile.oldPos.Length - i) / (float)Projectile.oldPos.Length);
-                Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(sourceRectangle), color, rotation, origin, Projectile.scale * scaleMult, SpriteEffects.None, 0f);                // Smaller, more visible layer
-                Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(sourceRectangle), color * 0.5f, rotation, origin, Projectile.scale * 1.6f * scaleMult, SpriteEffects.None, 0f);  // Bigger, less visible layer
+
+                // Smaller, more visible layer
+                Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(sourceRectangle), color, rotation, origin, Projectile.scale * scaleMult, SpriteEffects.None, 0f);
+
+                // Bigger, less visible layer
+                Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(sourceRectangle), color * 0.5f, rotation, origin, Projectile.scale * 1.6f * scaleMult, SpriteEffects.None, 0f);
                 scaleMult *= 0.95f;
             }
 
@@ -92,12 +93,14 @@ namespace CalamityMod.Projectiles.Melee
             }
         }
 
-        public override Color? GetAlpha(Color lightColor)       // Probably not the right way to use this function, but it works (hopefully)
+        // Probably not the right way to use this function, but it works (hopefully)
+        public override Color? GetAlpha(Color lightColor)
         {
+            // Take random color from a list and make it more white
             Color color = CosmicShivTrail.DustColors[ColorIndex] * Projectile.Opacity;
             color = Color.Lerp(color, Color.White, 0.6f);
             color.A = 0;
-            return color;   // Take random color from a list and make it more white
+            return color;
         }
     }
 }

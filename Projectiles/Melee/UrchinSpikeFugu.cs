@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,10 +24,10 @@ namespace CalamityMod.Projectiles.Melee
 
         public override void AI()
         {
-            Projectile.rotation = (float)Math.Atan2((double)Projectile.velocity.Y, (double)Projectile.velocity.X) + 1.57f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             if (Projectile.ai[0] == 0f)
             {
-                float maxRange = 100f;
+                float maxRange = Projectile.ai[1] == 1f ? 256f : 100f; // Increased homing range for Lionfish
                 int npcIndex = -1;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {

@@ -1,10 +1,10 @@
-﻿using CalamityMod.CalPlayer;
+﻿using System;
+using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace CalamityMod.Projectiles.Melee
 {
@@ -20,8 +20,8 @@ namespace CalamityMod.Projectiles.Melee
 
         public override void SetDefaults()
         {
-            Projectile.width = 56;
-            Projectile.height = 56;
+            Projectile.width = 36;
+            Projectile.height = 36;
             Projectile.alpha = 255;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Melee;
@@ -54,7 +54,7 @@ namespace CalamityMod.Projectiles.Melee
                     for (int i = 1; i <= 6; i++)
                     {
                         Vector2 dustspeed = new Vector2(3f, 3f).RotatedBy(MathHelper.ToRadians(dustvortex));
-                        int d = Dust.NewDust(Projectile.Center, Projectile.width / 2, Projectile.height / 2, 31, dustspeed.X, dustspeed.Y, 200, new Color(232, 251, 250, 200), 1.3f);
+                        int d = Dust.NewDust(Projectile.Center, Projectile.width / 2, Projectile.height / 2, DustID.Smoke, dustspeed.X, dustspeed.Y, 200, new Color(232, 251, 250, 200), 1.3f);
                         Main.dust[d].noGravity = true;
                         Main.dust[d].velocity = dustspeed;
                         dustvortex += 60;
@@ -109,12 +109,12 @@ namespace CalamityMod.Projectiles.Melee
 
         public override void OnKill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item60 with { Volume = SoundID.Item60.Volume * 0.6f}, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item60 with { Volume = SoundID.Item60.Volume * 0.6f }, Projectile.Center);
 
             for (int i = 0; i <= 360; i += 3)
             {
                 Vector2 dustspeed = new Vector2(3f, 3f).RotatedBy(MathHelper.ToRadians(i));
-                int d = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, 31, dustspeed.X, dustspeed.Y, 200, new Color(232, 251, 250, 200), 1.4f);
+                int d = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.Smoke, dustspeed.X, dustspeed.Y, 200, new Color(232, 251, 250, 200), 1.4f);
                 Main.dust[d].noGravity = true;
                 Main.dust[d].position = Projectile.Center;
                 Main.dust[d].velocity = dustspeed;

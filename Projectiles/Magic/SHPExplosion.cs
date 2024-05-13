@@ -1,5 +1,5 @@
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 namespace CalamityMod.Projectiles.Magic
@@ -20,7 +20,7 @@ namespace CalamityMod.Projectiles.Magic
             Projectile.penetrate = -1;
             Projectile.timeLeft = 60;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 10;
+            Projectile.localNPCHitCooldown = 15;
         }
 
         public override void AI()
@@ -63,7 +63,7 @@ namespace CalamityMod.Projectiles.Magic
                 {
                     randomDust = 187;
                 }
-                int EXPLODE = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, randomDust, 0f, 0f, 100, default, 2f);
+                int EXPLODE = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, randomDust, 0f, 0f, 100, default, 2f);
                 Main.dust[EXPLODE].noGravity = true;
                 Main.dust[EXPLODE].position.X = Projectile.Center.X;
                 Main.dust[EXPLODE].position.Y = Projectile.Center.Y;

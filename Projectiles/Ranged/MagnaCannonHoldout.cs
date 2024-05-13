@@ -1,8 +1,8 @@
-﻿using CalamityMod.Items.Weapons.Ranged;
+﻿using System;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Localization;
@@ -28,8 +28,6 @@ namespace CalamityMod.Projectiles.Ranged
         private ref float ShootTimer => ref Projectile.ai[2];
         private bool FullyCharged => CurrentChargingFrames >= MagnaCannon.FullChargeFrames;
         public int Time = 0;
-
-        private bool OwnerCanShoot => Owner.channel && !Owner.noItems && !Owner.CCed;
 
         public override void SetDefaults()
         {
@@ -62,7 +60,7 @@ namespace CalamityMod.Projectiles.Ranged
                 ChargeSound.Position = Projectile.Center;
 
             // Fire if the owner stops channeling or otherwise cannot use the weapon.
-            if (!OwnerCanShoot)
+            if (Owner.CantUseHoldout())
             {
                 if (ShotsLoaded > 0)
                 {
@@ -70,7 +68,7 @@ namespace CalamityMod.Projectiles.Ranged
                     Projectile.timeLeft = MagnaCannon.AftershotCooldownFrames;
                     ShootTimer--;
                 }
-                    
+
                 if (ShootTimer <= 0f)
                 {
                     ChargeSound?.Stop();
@@ -158,7 +156,7 @@ namespace CalamityMod.Projectiles.Ranged
 
             // Rumble (only while channeling)
             float rumble = MathHelper.Clamp(CurrentChargingFrames, 0f, MagnaCannon.FullChargeFrames);
-            if (OwnerCanShoot)
+            if (!Owner.CantUseHoldout())
                 Projectile.position += Main.rand.NextVector2Circular(rumble / 43f, rumble / 43f);
         }
 

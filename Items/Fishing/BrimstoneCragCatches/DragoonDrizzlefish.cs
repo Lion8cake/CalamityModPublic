@@ -19,21 +19,22 @@ namespace CalamityMod.Items.Fishing.BrimstoneCragCatches
         public int shotCounter = 0;
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
             Item.staff[Item.type] = true; //so it doesn't look weird af when holding it
         }
 
         public override void SetDefaults()
         {
-            Item.damage = 18;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 42;
             Item.height = 38;
+            Item.damage = 18;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 1.1f;
-            Item.value = CalamityGlobalItem.Rarity3BuyPrice;
+            Item.value = CalamityGlobalItem.RarityOrangeBuyPrice;
             Item.rare = ItemRarityID.Orange;
             Item.UseSound = SoundID.Item20;
             Item.autoReuse = true;
@@ -118,7 +119,7 @@ namespace CalamityMod.Items.Fishing.BrimstoneCragCatches
                         return false;
                     }
                 }
-                
+
                 velocity = velocity.RotatedByRandom(MathHelper.ToRadians(5.5f));
                 int shotType = ModContent.ProjectileType<DrizzlefishFireball>();
                 if (shotCounter < 3)
@@ -133,7 +134,7 @@ namespace CalamityMod.Items.Fishing.BrimstoneCragCatches
                 }
                 Projectile.NewProjectile(source, position, velocity, shotType, damage, knockback, player.whoAmI, 0f, Main.rand.Next(2));
             }
-            
+
             return false;
         }
     }

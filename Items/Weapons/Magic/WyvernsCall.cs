@@ -1,6 +1,6 @@
-﻿using CalamityMod.Projectiles.Magic;
+﻿using System;
+using CalamityMod.Projectiles.Magic;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -18,17 +18,17 @@ namespace CalamityMod.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
+            Item.width = 52;
+            Item.height = 74;
             Item.damage = 65;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 10;
-            Item.width = 52;
-            Item.height = 74;
             Item.useTime = 23;
             Item.useAnimation = 23;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 4.75f;
-            Item.value = CalamityGlobalItem.Rarity5BuyPrice;
+            Item.value = CalamityGlobalItem.RarityPinkBuyPrice;
             Item.rare = ItemRarityID.Pink;
             Item.UseSound = SoundID.Item102;
             Item.autoReuse = true;
@@ -110,7 +110,7 @@ namespace CalamityMod.Items.Weapons.Magic
             CreateRecipe().
                 AddIngredient<SkyGlaze>().
                 AddRecipeGroup("AnyMythrilBar", 5).
-                AddIngredient(ItemID.SoulofFlight, 15). 
+                AddIngredient(ItemID.SoulofFlight, 15).
                 AddTile(TileID.MythrilAnvil).
                 Register();
         }

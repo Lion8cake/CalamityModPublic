@@ -135,7 +135,7 @@ namespace CalamityMod.Projectiles.DraedonsArsenal
 
             for (int i = 0; i < 20; i++)
             {
-                Dust boomDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 261, Scale: 2f);
+                Dust boomDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.AncientLight, Scale: 2f);
                 boomDust.noGravity = true;
             }
 
@@ -179,7 +179,7 @@ namespace CalamityMod.Projectiles.DraedonsArsenal
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;

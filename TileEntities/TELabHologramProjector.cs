@@ -1,8 +1,8 @@
-﻿using CalamityMod.CalPlayer;
+﻿using System.IO;
+using System.Reflection;
+using CalamityMod.CalPlayer;
 using CalamityMod.Tiles.DraedonStructures;
 using Microsoft.Xna.Framework;
-using System.IO;
-using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;

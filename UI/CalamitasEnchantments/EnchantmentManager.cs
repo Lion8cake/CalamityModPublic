@@ -1,4 +1,7 @@
-﻿using CalamityMod.Items.Accessories;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
@@ -6,9 +9,6 @@ using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.Other;
 using CalamityMod.Projectiles.Melee;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -186,14 +186,14 @@ namespace CalamityMod.UI.CalamitasEnchants
                     "CalamityMod/UI/CalamitasEnchantments/CurseIcon_Resentful",
                     null,
                     player => player.Calamity().farProximityRewardEnchant = true,
-                    item => item.IsEnchantable() && item.damage > 0 && item.shoot > ProjectileID.None && !item.IsTrueMelee() && item.type != ModContent.ItemType<FinalDawn>()),
+                    item => item.IsEnchantable() && item.damage > 0 && item.shoot > ProjectileID.None && !item.IsTrueMelee() && item.type != ModContent.ItemType<TheFinalDawn>()),
 
                 new Enchantment(CalamityUtils.GetText("UI.Bloodthirsty.DisplayName"), CalamityUtils.GetText("UI.Bloodthirsty.Description"),
                     500,
                     "CalamityMod/UI/CalamitasEnchantments/CurseIcon_Bloodthirsty",
                     null,
                     player => player.Calamity().closeProximityRewardEnchant = true,
-                    item => item.IsEnchantable() && item.damage > 0 && item.shoot > ProjectileID.None && !item.IsTrueMelee() && item.type != ModContent.ItemType<FinalDawn>()),
+                    item => item.IsEnchantable() && item.damage > 0 && item.shoot > ProjectileID.None && !item.IsTrueMelee() && item.type != ModContent.ItemType<TheFinalDawn>()),
 
                 new Enchantment(CalamityUtils.GetText("UI.Ephemeral.DisplayName"), CalamityUtils.GetText("UI.Ephemeral.Description"),
                     600,

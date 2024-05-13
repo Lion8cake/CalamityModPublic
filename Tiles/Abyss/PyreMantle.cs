@@ -1,10 +1,10 @@
-﻿using CalamityMod.Tiles.Abyss.AbyssAmbient;
+﻿using System;
+using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using Terraria.Audio;
-using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -40,7 +40,7 @@ namespace CalamityMod.Tiles.Abyss
 
         public override bool CreateDust(int i, int j, ref int type)
         {
-            Dust.NewDust(new Vector2(i, j) * 16f, 16, 16, 162, 0f, 0f, 1, new Color(128, 128, 128), 1f);
+            Dust.NewDust(new Vector2(i, j) * 16f, 16, 16, DustID.HeatRay, 0f, 0f, 1, new Color(128, 128, 128), 1f);
             return false;
         }
 

@@ -1,10 +1,10 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Melee;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -100,7 +100,7 @@ namespace CalamityMod.Projectiles.Melee
         {
             GameShaders.Misc["CalamityMod:PhaseslayerRipEffect"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
 
-            Texture2D spearProjectile = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D spearProjectile = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
 
             Player player = Main.player[Projectile.owner];
             List<Vector2> positions = new List<Vector2>();

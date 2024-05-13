@@ -2,11 +2,11 @@
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.TownNPCs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.Audio;
 
 namespace CalamityMod.Items.Mounts
 {
@@ -134,7 +134,7 @@ namespace CalamityMod.Items.Mounts
                     meme = new Color(25, 105, 255);
                 }
                 Rectangle rect = player.getRect();
-                int dust = Dust.NewDust(new Vector2(rect.X, rect.Y), rect.Width, rect.Height, 234, 0, 0, 0, meme);
+                int dust = Dust.NewDust(new Vector2(rect.X, rect.Y), rect.Width, rect.Height, DustID.BoneTorch, 0, 0, 0, meme);
                 Main.dust[dust].noGravity = true;
             }
 

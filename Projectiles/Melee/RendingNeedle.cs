@@ -1,14 +1,14 @@
-﻿using CalamityMod.Particles;
-using Terraria.Graphics.Shaders;
+﻿using System;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
+using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
-using Terraria.Audio;
-using CalamityMod.Graphics.Primitives;
 
 
 namespace CalamityMod.Projectiles.Melee

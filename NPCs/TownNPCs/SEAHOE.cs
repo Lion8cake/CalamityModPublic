@@ -1,13 +1,13 @@
-﻿using CalamityMod.Buffs.StatBuffs;
+﻿using System.Collections.Generic;
+using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.Items.Pets;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Summon;
-using CalamityMod.Items.Pets;
 using CalamityMod.Projectiles.Rogue;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
@@ -39,10 +39,11 @@ namespace CalamityMod.NPCs.TownNPCs
                 .SetNPCAffection(NPCID.Pirate, AffectionLevel.Like)
                 .SetNPCAffection(NPCID.Demolitionist, AffectionLevel.Dislike)
                 .SetNPCAffection(NPCID.Angler, AffectionLevel.Hate);
-			NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-				Velocity = 1f // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
-			};
-			NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifiers);
+            NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers()
+            {
+                Velocity = 1f // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifiers);
         }
 
         public override void SetDefaults()
@@ -63,16 +64,16 @@ namespace CalamityMod.NPCs.TownNPCs
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] 
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
-                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,   
-				new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.SEAHOE")
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Ocean,
+                new FlavorTextBestiaryInfoElement("Mods.CalamityMod.Bestiary.SEAHOE")
             });
         }
 
         public override bool CanTownNPCSpawn(int numTownNPCs) => DownedBossSystem.downedCLAM && DownedBossSystem.downedDesertScourge;
 
-		public override List<string> SetNPCNameList() => new List<string>() { this.GetLocalizedValue("Name.Amidias") };
+        public override List<string> SetNPCNameList() => new List<string>() { this.GetLocalizedValue("Name.Amidias") };
 
         public override void AI()
         {

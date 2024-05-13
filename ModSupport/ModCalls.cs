@@ -2,22 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalamityMod.CalPlayer;
-using CalamityMod.Cooldowns;
 using CalamityMod.Events;
-using CalamityMod.ExtraJumps;
 using CalamityMod.Items;
 using CalamityMod.NPCs;
-using CalamityMod.Particles;
+using CalamityMod.NPCs.TownNPCs;
 using CalamityMod.Systems;
 using CalamityMod.UI;
 using CalamityMod.UI.CalamitasEnchants;
 using CalamityMod.UI.DraedonSummoning;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
-using Terraria.ModLoader;
 
 namespace CalamityMod
 {
@@ -553,6 +550,23 @@ namespace CalamityMod
             DifficultyModeSystem.Difficulties.Add(newMode);
             DifficultyModeSystem.CalculateDifficultyData();
         }
+
+        public static void AddWorldScreenDifficulty(string name, Func<AWorldListItem, bool> function, Color color, int index = -1)
+        {
+            // Construct the difficulty
+            WorldSelectionDifficultySystem.WorldDifficulty difficulty = new WorldSelectionDifficultySystem.WorldDifficulty(name, function, color);
+
+            // Add the new difficulty 
+            // If no index was provided, just add it to the end of the list, otherwise insert it at the desired spot on the list
+            if (index == -1)
+            {
+                WorldSelectionDifficultySystem.WorldDifficulties.Add(difficulty);
+            }
+            else
+            {
+                WorldSelectionDifficultySystem.WorldDifficulties.Insert(index, difficulty);
+            }
+        }
         #endregion
 
         #region Rogue Class
@@ -586,6 +600,8 @@ namespace CalamityMod
         }
 
         public static bool GetStealthProjectile(Projectile projectile) => projectile?.Calamity()?.stealthStrike ?? false;
+
+        public static void ConsumeStealth(Player player) => player?.Calamity()?.ConsumeStealthByAttacking();
         #endregion
 
         #region Rippers
@@ -976,6 +992,63 @@ namespace CalamityMod
         }
         #endregion
 
+        #region Permanent Boosters
+        // [Aliases("GetPermanentPowerup", "GetPowerup", "HasPermanentBooster", "GetPermanentBooster", "GetBooster")]
+        public static bool HasPermanentPowerup(Player player, string powerupName)
+        {
+            return powerupName switch
+            {
+                "BloodOrange" => player.Calamity().bOrange,
+                "MiracleFruit" => player.Calamity().mFruit,
+                "Elderberry" => player.Calamity().eBerry,
+                "Dragonfruit" => player.Calamity().dFruit,
+
+                "CometShard" => player.Calamity().cShard,
+                "EtherealCore" => player.Calamity().eCore,
+                "PhantomHeart" => player.Calamity().pHeart,
+
+                "MushroomPlasmaRoot" => player.Calamity().rageBoostOne,
+                "InfernalBlood" => player.Calamity().rageBoostTwo,
+                "RedLightningContainer" => player.Calamity().rageBoostThree,
+
+                "ElectrolyteGelPack" => player.Calamity().adrenalineBoostOne,
+                "StarlightFuelCell" => player.Calamity().adrenalineBoostTwo,
+                "Ectoheart" => player.Calamity().adrenalineBoostThree,
+
+                "CelestialOnion" => player.Calamity().extraAccessoryML,
+
+                _ => false, // Return false if no case is found
+            };
+        }
+
+        // [Aliases("SetPowerup", "SetPermanentBooster", "SetBooster")]
+        public static void SetPermanentPowerup(Player player, string powerupName, bool value)
+        {
+
+            switch (powerupName)
+            {
+                case "BloodOrange": player.Calamity().bOrange = value; break;
+                case "MiracleFruit": player.Calamity().mFruit = value; break;
+                case "Elderberry": player.Calamity().eBerry = value; break;
+                case "Dragonfruit": player.Calamity().dFruit = value; break;
+
+                case "CometShard": player.Calamity().cShard = value; break;
+                case "EtherealCore": player.Calamity().eCore = value; break;
+                case "PhantomHeart": player.Calamity().pHeart = value; break;
+
+                case "MushroomPlasmaRoot": player.Calamity().rageBoostOne = value; break;
+                case "InfernalBlood": player.Calamity().rageBoostTwo = value; break;
+                case "RedLightningContainer": player.Calamity().rageBoostThree = value; break;
+
+                case "ElectrolyteGelPack": player.Calamity().adrenalineBoostOne = value; break;
+                case "StarlightFuelCell": player.Calamity().adrenalineBoostTwo = value; break;
+                case "Ectoheart": player.Calamity().adrenalineBoostThree = value; break;
+
+                case "CelestialOnion": player.Calamity().extraAccessoryML = value; break;
+            };
+        }
+        #endregion
+
         #region Call
 
         public static object Call(params object[] args)
@@ -1102,6 +1175,36 @@ namespace CalamityMod
                         return new ArgumentException("ERROR: A class inheriting from 'DifficultyMode' must be provided.");
                     AddCustomDifficulty(mode);
                     return null;
+
+                case "AddWorldScreenDifficulty":
+                case "AddWorldSelectionDifficulty":
+                    {
+                        if (args.Length < 2)
+                            return new ArgumentNullException("ERROR: Must specify a difficulty mode name as a string.");
+                        if (args.Length < 3)
+                            return new ArgumentNullException("ERROR: Must specify a Func<AWorldListItem, bool>.");
+                        if (args.Length < 4)
+                            return new ArgumentNullException("ERROR: Must specify a Color.");
+
+                        if (args.Length >= 5)
+                        {
+                            if (!(args[4] is int))
+                                return new ArgumentException("ERROR: The fourth argument to \"AddWorldScreenDifficulty\" must be an int.");
+                        }
+                        if (!(args[3] is Color color))
+                            return new ArgumentException("ERROR: The third argument to \"AddWorldScreenDifficulty\" must be a Color.");
+                        if (!(args[2] is Func<AWorldListItem, bool> worldFunction))
+                            return new ArgumentException("ERROR: The second argument to \"AddWorldScreenDifficulty\" must be a Func<AWorldListItem, bool>.");
+                        if (!(args[1] is string))
+                            return new ArgumentException("ERROR: The first argument to \"AddWorldScreenDifficulty\" must be a string.");
+
+                        if (args.Length >= 5)
+                            AddWorldScreenDifficulty(args[1].ToString(), worldFunction, color, (int)args[4]);
+                        else
+                            AddWorldScreenDifficulty(args[1].ToString(), worldFunction, color);
+                        return null;
+                    }
+
 
                 case "GetLight":
                 case "GetLightLevel":
@@ -1289,6 +1392,18 @@ namespace CalamityMod
                         if (!isValidProjectileArg(args[1]))
                             return new ArgumentException("ERROR: The first argument to \"GetStealthProjectile\" must be a Projectile.");
                         return GetStealthProjectile(castProjectile(args[1]));
+                    }
+
+                case "ConsumeStealth":
+                case "ConsumeStealthByAttacking":
+                case "UseStealth":
+                    {
+                        if (args.Length < 2)
+                            return new ArgumentNullException("ERROR: Must specify a Player object (or int index of a Player).");
+                        if (!isValidPlayerArg(args[1]))
+                            return new ArgumentException("ERROR: The first argument to \"ConsumeStealth\" must be a Player or an int.");
+                        ConsumeStealth(castPlayer(args[1]));
+                        return null;
                     }
 
                 case "GetRage":
@@ -1919,17 +2034,11 @@ namespace CalamityMod
                     return null;
 
                 case "LoadParticleInstances":
-                    if (args.Length != 2 || !(args[1] is Mod))
-                        return new ArgumentNullException("ERROR: Must specify a Mod instance to load particles from.");
-
-                    GeneralParticleHandler.LoadModParticleInstances(args[1] as Mod);
+                    CalamityMod.Instance.Logger.Warn("This mod call is deprecated. Calamity automatically registers particles.");
                     return null;
 
                 case "RegisterModCooldowns":
-                    if (args.Length != 2 || !(args[1] is Mod))
-                        return new ArgumentNullException("ERROR: Must specify a Mod instance to register cooldowns from.");
-
-                    CooldownRegistry.RegisterModCooldowns(args[1] as Mod);
+                    CalamityMod.Instance.Logger.Warn("This mod call is deprecated. Calamity automatically registers cooldowns.");
                     return null;
 
                 case "GetSummonerNerfDisabledByItem":
@@ -2056,6 +2165,54 @@ namespace CalamityMod
                 case "GetBossHealthMultiplier":
                     return CalamityConfig.Instance.BossHealthBoost;
 
+                case "HasPermanentPowerup":
+                case "GetPermanentPowerup":
+                case "GetPowerup":
+                case "HasPermanentBooster":
+                case "GetPermanentBooster":
+                case "GetBooster":
+                    {
+                        if (!isValidPlayerArg(args[1]))
+                            return new ArgumentException("ERROR: The first argument to \"HasPermanentPowerup\" must be a Player.");
+                        if (args[2] is not string powerupName)
+                            return new ArgumentException("ERROR: The second argument to \"HasPermanentPowerup\" must be a string.");
+
+                        return HasPermanentPowerup(castPlayer(args[1]), powerupName);
+                    }
+
+                case "SetPermanentPowerup":
+                case "SetPowerup":
+                case "SetPermanentBooster":
+                case "SetBooster":
+                    {
+                        if (!isValidPlayerArg(args[1]))
+                            return new ArgumentException("ERROR: The first argument to \"HasPermanentPowerup\" must be a Player.");
+                        if (args[2] is not string powerupName)
+                            return new ArgumentException("ERROR: The second argument to \"HasPermanentPowerup\" must be a string.");
+                        if (args[3] is not bool value)
+                            return new ArgumentException("ERROR: The third argument to \"HasPermanentPowerup\" must be a bool.");
+
+                        SetPermanentPowerup(castPlayer(args[1]), powerupName, value);
+                        return null;
+                    }
+
+                case "RegisterAndroombaSolution":
+                case "RegisterAndroombaState":
+                case "RegisterAndroomba":
+                case "AddAndrombaSolution":
+                case "AddAndroombaState":
+                case "AddAndroomba":
+                    {
+                        if (args[1] is not int itemID)
+                            return new ArgumentException("ERROR: The first argument to \"RegisterAndroombaSolution\" must be the ID of a solution as an int.");
+                        if (args[2] is not string texturePath)
+                            return new ArgumentException("ERROR: The second argument to \"RegisterAndroombaSolution\" must be a string path.");
+                        if (args[3] is not Action<NPC> NPCaction)
+                            return new ArgumentException("ERROR: The third argument to \"RegisterAndroombaSolution\" must be an Action<NPC>.");
+
+                        AndroombaFriendly.customConversionTypes.Add((itemID, texturePath, NPCaction));
+                        return null;
+                    }
                 default:
                     return new ArgumentException("ERROR: Invalid method name.");
             }

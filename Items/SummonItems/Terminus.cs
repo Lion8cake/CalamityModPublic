@@ -13,9 +13,9 @@ namespace CalamityMod.Items.SummonItems
         public new string LocalizationCategory => "Items.SummonItems";
         public override void SetDefaults()
         {
-            Item.rare = ItemRarityID.Blue;
             Item.width = Main.zenithWorld ? 54 : 28;
             Item.height = Main.zenithWorld ? 78 : 28;
+            Item.rare = ItemRarityID.Blue;
             Item.useAnimation = 45;
             Item.useTime = 45;
             Item.channel = true;

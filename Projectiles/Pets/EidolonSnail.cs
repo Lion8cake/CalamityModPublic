@@ -1,9 +1,10 @@
+﻿using System;
 using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using System;
 
 namespace CalamityMod.Projectiles.Pets
 {
@@ -11,12 +12,16 @@ namespace CalamityMod.Projectiles.Pets
     {
         public new string LocalizationCategory => "Projectiles.Pets";
         private int playerStill = 0;
+        private bool idleAnimation = false;
         private bool fly = false;
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Projectile.type] = 8;
+            Main.projFrames[Projectile.type] = 12;
             Main.projPet[Projectile.type] = true;
+
+            ProjectileID.Sets.CharacterPreviewAnimations[Projectile.type] = ProjectileID.Sets.SimpleLoop(0, 4, 5)
+            .WithOffset(-18f, 0f).WithSpriteDirection(1).WhenNotSelected(0, 0);
         }
 
         public override void SetDefaults()
@@ -39,8 +44,8 @@ namespace CalamityMod.Projectiles.Pets
             int frameHeight = height * Projectile.frame;
             SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY + 2), 
-            new Microsoft.Xna.Framework.Rectangle?(new Rectangle(0, frameHeight, texture.Width, height)), lightColor, 
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY + 2),
+            new Microsoft.Xna.Framework.Rectangle?(new Rectangle(0, frameHeight, texture.Width, height)), lightColor,
             Projectile.rotation, new Vector2(texture.Width / 2f, height / 2f), Projectile.scale, spriteEffects, 0);
 
             return false;
@@ -54,8 +59,8 @@ namespace CalamityMod.Projectiles.Pets
             int frameHeight = height * Projectile.frame;
             SpriteEffects spriteEffects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY + 2), 
-            new Microsoft.Xna.Framework.Rectangle?(new Rectangle(0, frameHeight, texture.Width, height)), Color.White, 
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY + 2),
+            new Microsoft.Xna.Framework.Rectangle?(new Rectangle(0, frameHeight, texture.Width, height)), Color.White,
             Projectile.rotation, new Vector2(texture.Width / 2f, height / 2f), Projectile.scale, spriteEffects, 0);
         }
 
@@ -77,6 +82,7 @@ namespace CalamityMod.Projectiles.Pets
                 Projectile.active = false;
                 return;
             }
+
             CalamityPlayer modPlayer = player.Calamity();
             if (player.dead)
             {
@@ -154,27 +160,54 @@ namespace CalamityMod.Projectiles.Pets
                 //set frames when idle
                 if (Projectile.position.X == Projectile.oldPosition.X && Projectile.position.Y == Projectile.oldPosition.Y && Projectile.velocity.X == 0)
                 {
-                    Projectile.frame = 0;
-                    Projectile.frameCounter = 0;
+                    if (Main.rand.NextBool(200) && !idleAnimation)
+                    {
+                        idleAnimation = true;
+                    }
+
+                    if (idleAnimation)
+                    {
+                        Projectile.frameCounter++;
+                        if (Projectile.frameCounter > 8)
+                        {
+                            Projectile.frame++;
+                            Projectile.frameCounter = 0;
+                        }
+                        if (Projectile.frame > 4)
+                        {
+                            Projectile.frame = 0;
+                            idleAnimation = false;
+                        }
+                    }
+                    else
+                    {
+                        Projectile.frame = 0;
+                        Projectile.frameCounter = 0;
+                    }
                 }
                 //falling frame
                 else if (Projectile.velocity.Y > 0.3f && Projectile.position.Y != Projectile.oldPosition.Y)
                 {
-                    Projectile.frame = 4;
+                    Projectile.frame = 3;
                     Projectile.frameCounter = 0;
                 }
                 else if (Projectile.velocity.X != 0)
                 {
+                    if (Projectile.frame < 4)
+                    {
+                        Projectile.frame = 4;
+                    }
+
                     //moving animation
                     Projectile.frameCounter++;
-                    if (Projectile.frameCounter > 2)
+                    if (Projectile.frameCounter > 7 - (Projectile.velocity.X > 0 ? Projectile.velocity.X : -Projectile.velocity.X))
                     {
                         Projectile.frame++;
                         Projectile.frameCounter = 0;
                     }
-                    if (Projectile.frame > 4)
+                    if (Projectile.frame > 8)
                     {
-                        Projectile.frame = 1;
+                        Projectile.frame = 4;
                     }
                 }
 
@@ -191,7 +224,7 @@ namespace CalamityMod.Projectiles.Pets
             {
                 float flySpeed = 0.5f;
                 Projectile.tileCollide = false;
-                Vector2 flyDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+                Vector2 flyDirection = Projectile.Center;
                 float horiPos = Main.player[Projectile.owner].position.X + (float)(Main.player[Projectile.owner].width / 2) - flyDirection.X;
                 float vertiPos = Main.player[Projectile.owner].position.Y + (float)(Main.player[Projectile.owner].height / 2) - flyDirection.Y;
                 vertiPos += (float)Main.rand.Next(-10, 21);
@@ -291,14 +324,14 @@ namespace CalamityMod.Projectiles.Pets
 
                 //funny flying animation 
                 Projectile.frameCounter++;
-                if (Projectile.frameCounter > 3)
+                if (Projectile.frameCounter > 4)
                 {
                     Projectile.frame++;
                     Projectile.frameCounter = 0;
                 }
-                if (Projectile.frame > 7)
+                if (Projectile.frame > 11)
                 {
-                    Projectile.frame = 5;
+                    Projectile.frame = 9;
                 }
             }
         }

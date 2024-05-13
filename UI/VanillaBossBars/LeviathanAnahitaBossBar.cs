@@ -1,9 +1,9 @@
-﻿using CalamityMod.NPCs.Leviathan;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod.NPCs.Leviathan;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.BigProgressBar;
@@ -28,8 +28,8 @@ namespace CalamityMod.UI.VanillaBossBars
         {
             NPC target = Main.npc[info.npcIndexToAimAt];
 
-			if (!target.active && !FindTheRightFish(ref info))
-				return false;
+            if (!target.active && !FindTheRightFish(ref info))
+                return false;
 
             // Immediately grab the boss's health, whichever one it is. We will check later.
             life = target.life;
@@ -53,7 +53,7 @@ namespace CalamityMod.UI.VanillaBossBars
 
             // Determine Anahita's shield health only if she's solo (she can't just block Leviathan out of existence)
             if (target.type == NPCType<Anahita>() && !NPC.AnyNPCs(NPCType<Leviathan>()))
-            {       
+            {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC part = Main.npc[i];
@@ -70,20 +70,20 @@ namespace CalamityMod.UI.VanillaBossBars
         public bool FindTheRightFish(ref BigProgressBarInfo info)
         {
             for (int i = 0; i < Main.maxNPCs; i++)
-			{
-				NPC target = Main.npc[i];
-				if (target.active && target.type == NPCType<Anahita>())
-				{
-					info.npcIndexToAimAt = i;
-					return true;
-				}
+            {
+                NPC target = Main.npc[i];
+                if (target.active && target.type == NPCType<Anahita>())
+                {
+                    info.npcIndexToAimAt = i;
+                    return true;
+                }
                 else if (target.active && target.type == NPCType<Leviathan>())
                 {
                     info.npcIndexToAimAt = i;
                     return true;
                 }
-			}
-			return false;
+            }
+            return false;
         }
     }
 }

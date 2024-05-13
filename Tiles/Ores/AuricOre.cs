@@ -1,15 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using CalamityMod.Buffs.DamageOverTime;
+﻿using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Tiles.Astral;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ID;
-using ReLogic.Content;
 using Terraria.ObjectData;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.DataStructures;
 
 namespace CalamityMod.Tiles.Ores
 {
@@ -62,7 +62,7 @@ namespace CalamityMod.Tiles.Ores
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             if (!Animate)
-            {return;}
+            { return; }
             r = 0.24f;
             g = 0.40f;
             b = 0.47f;
@@ -70,8 +70,8 @@ namespace CalamityMod.Tiles.Ores
         public override void AnimateTile(ref int frame, ref int frameCounter)
         {
             if (!Animate)
-            {return;}
-                frameCounter++;
+            { return; }
+            frameCounter++;
             if (frameCounter > 4)
             {
                 frameCounter = 0;

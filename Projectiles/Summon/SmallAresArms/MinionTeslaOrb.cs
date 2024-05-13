@@ -1,10 +1,10 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod.Graphics.Primitives;
 using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

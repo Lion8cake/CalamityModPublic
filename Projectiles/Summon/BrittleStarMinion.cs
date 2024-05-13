@@ -45,7 +45,7 @@ namespace CalamityMod.Projectiles.Summon
                 if (starCount <= 1f)
                     starCount = 1f;
 
-                return MathHelper.TwoPi * StarIndex / starCount + AITimer * 0.018f;
+                return MathHelper.TwoPi * StarIndex / starCount + AITimer * 0.025f;
                 // "MathHelper.TwoPi / ProbeIndex * probeCount"s the position itself.
                 // "AITimer * [Modifier]"s how fast it spins.
             }
@@ -120,11 +120,11 @@ namespace CalamityMod.Projectiles.Summon
                 Projectile.alpha = 0;
                 HitCounter = 0;
                 Projectile.velocity = Vector2.Zero;
-                Vector2 idleDestination = Owner.Center + StarPositionAngle.ToRotationVector2() * (75f * MoveWidth);
+                Vector2 idleDestination = Owner.Center + StarPositionAngle.ToRotationVector2() * (90f * MoveWidth);
                 Projectile.Center = Vector2.Lerp(Projectile.Center, idleDestination, 0.15f);
                 AITimer++;
 
-                Owner.statDefense += 3;
+                Owner.statDefense += 5;
                 Projectile.rotation += MoveWidth * 0.2f;
             }
             if (!MinionBuffMode && !Reforming) // Minion when ramming

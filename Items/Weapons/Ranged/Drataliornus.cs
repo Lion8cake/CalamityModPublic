@@ -22,6 +22,8 @@ namespace CalamityMod.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
+            Item.width = 64;
+            Item.height = 84;
             Item.damage = 129;
             Item.knockBack = 1f;
             Item.shootSpeed = 18f;
@@ -30,11 +32,9 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.useAnimation = 24;
             Item.reuseDelay = 48;
             Item.useLimitPerAnimation = 2;
-            Item.width = 64;
-            Item.height = 84;
             Item.UseSound = SoundID.Item5;
             Item.shoot = ModContent.ProjectileType<DrataliornusBow>();
-            Item.value = CalamityGlobalItem.Rarity15BuyPrice;
+            Item.value = CalamityGlobalItem.RarityVioletBuyPrice;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Ranged;

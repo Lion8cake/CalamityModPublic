@@ -1,6 +1,6 @@
-﻿using CalamityMod.Graphics.Primitives;
+﻿using System;
+using CalamityMod.Graphics.Primitives;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,6 +24,7 @@ namespace CalamityMod.Projectiles.Magic
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
+            Projectile.extraUpdates = 1;
             Projectile.timeLeft = 210;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 1;

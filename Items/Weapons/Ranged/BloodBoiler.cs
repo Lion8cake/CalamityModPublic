@@ -13,16 +13,21 @@ namespace CalamityMod.Items.Weapons.Ranged
     public class BloodBoiler : ModItem, ILocalizedModType
     {
         public new string LocalizationCategory => "Items.Weapons.Ranged";
-        
+
         public static readonly SoundStyle Heartbeat = new("CalamityMod/Sounds/Item/Heartbeat") { PitchVariance = 0.2f, Volume = 0.55f };
-        
+
         public bool shotReturn = false;
+
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.IsRangedSpecialistWeapon[Item.type] = true;
+        }
         public override void SetDefaults()
         {
-            Item.damage = 115;
-            Item.DamageType = DamageClass.Ranged;
             Item.width = 60;
             Item.height = 30;
+            Item.damage = 115;
+            Item.DamageType = DamageClass.Ranged;
             Item.useTime = 5;
             Item.useAnimation = 25;
             Item.autoReuse = true;
@@ -30,7 +35,7 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 4f;
-            Item.value = CalamityGlobalItem.Rarity12BuyPrice;
+            Item.value = CalamityGlobalItem.RarityTurquoiseBuyPrice;
             Item.rare = ModContent.RarityType<Turquoise>();
             Item.shootSpeed = 9.5f;
             Item.shoot = ModContent.ProjectileType<BloodBoilerFire>();

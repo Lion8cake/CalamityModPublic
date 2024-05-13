@@ -1,7 +1,7 @@
-﻿using CalamityMod.Projectiles.Summon;
+﻿using System.Linq;
+using CalamityMod.Projectiles.Summon;
 using CalamityMod.Rarities;
 using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -12,19 +12,17 @@ namespace CalamityMod.Items.Weapons.Summon
     public class StaffoftheMechworm : ModItem, ILocalizedModType
     {
         public new string LocalizationCategory => "Items.Weapons.Summon";
-        // This value is also referenced by the God Slayer and Auric summoner helmets.
-        public const int BaseDamage = 100; // originally 325
         public override void SetDefaults()
         {
-            Item.damage = BaseDamage;
-            Item.mana = 10;
             Item.width = 68;
             Item.height = 68;
+            Item.damage = 100;
+            Item.mana = 10;
             Item.useTime = Item.useAnimation = 10; // 9 because of useStyle 1
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.knockBack = 2f;
-            Item.value = CalamityGlobalItem.Rarity14BuyPrice;
+            Item.value = CalamityGlobalItem.RarityDarkBlueBuyPrice;
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.UseSound = SoundID.Item113;
             Item.autoReuse = true;

@@ -1,11 +1,11 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Graphics.Primitives;
-using CalamityMod.Items.Weapons.Ranged;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Items.Weapons.Ranged;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
@@ -85,6 +85,10 @@ namespace CalamityMod.Projectiles.Ranged
                 SoundEngine.PlaySound(HeavenlyGale.LightningStrikeSound with { Volume = 0.3f }, Main.player[Projectile.owner].Center);
                 HasPlayedSound = true;
             }
+
+            // This projectile is forced to critically strike.
+            // This technically is a nerf, as it makes DSO's crits deal less damage.
+            Projectile.Calamity().forcedCrit = true;
 
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
             if (Projectile.frameCounter >= Projectile.extraUpdates * 2)

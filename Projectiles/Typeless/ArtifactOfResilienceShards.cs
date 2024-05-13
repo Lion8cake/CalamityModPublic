@@ -1,8 +1,8 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
+﻿using System.IO;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Damageable;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 

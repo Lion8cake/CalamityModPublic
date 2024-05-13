@@ -14,6 +14,8 @@ namespace CalamityMod.Items.Weapons.Ranged
 
         public override void SetDefaults()
         {
+            Item.width = 68;
+            Item.height = 32;
             Item.damage = 85;
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<MineralMortarHoldout>();
@@ -21,13 +23,11 @@ namespace CalamityMod.Items.Weapons.Ranged
             Item.shootSpeed = 25f;
             Item.knockBack = 20f;
 
-            Item.width = 68;
-            Item.height = 32;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.channel = true;
             Item.useAmmo = AmmoID.Rocket;
-            Item.value = CalamityGlobalItem.Rarity5BuyPrice;
+            Item.value = CalamityGlobalItem.RarityPinkBuyPrice;
             Item.rare = ItemRarityID.Pink;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = new SoundStyle("CalamityMod/Sounds/Item/DudFire") with { Volume = .4f, Pitch = -.9f, PitchVariance = 0.1f };

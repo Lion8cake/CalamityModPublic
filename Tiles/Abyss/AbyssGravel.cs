@@ -16,7 +16,7 @@ namespace CalamityMod.Tiles.Abyss
         public byte[,] secondTileAdjacency;
 
         public static readonly SoundStyle MineSound = new("CalamityMod/Sounds/Custom/AbyssGravelMine", 3);
-        
+
         public override void SetStaticDefaults()
         {
             Main.tileSolid[Type] = true;
@@ -44,7 +44,7 @@ namespace CalamityMod.Tiles.Abyss
         {
             num = fail ? 1 : 3;
         }
-        
+
         public override void RandomUpdate(int i, int j)
         {
             Tile tile = Main.tile[i, j];
@@ -62,7 +62,7 @@ namespace CalamityMod.Tiles.Abyss
                 up.TileFrameX = (short)(WorldGen.genRand.Next(16) * 18);
                 WorldGen.SquareTileFrame(i, j - 1, true);
 
-                if (Main.netMode == NetmodeID.Server) 
+                if (Main.netMode == NetmodeID.Server)
                     NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
             }
         }

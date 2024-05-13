@@ -1,21 +1,21 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using System;
+using System.IO;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
-using CalamityMod.Items.Accessories;
 using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 using Filters = Terraria.Graphics.Effects.Filters;
 
 namespace CalamityMod.NPCs.ProfanedGuardians
@@ -30,12 +30,15 @@ namespace CalamityMod.NPCs.ProfanedGuardians
         public static readonly SoundStyle RockShieldSpawnSound = new("CalamityMod/Sounds/Custom/ProfanedGuardians/GuardianRockShieldActivate");
         public static readonly SoundStyle ShieldDeathSound = new("CalamityMod/Sounds/Custom/ProfanedGuardians/GuardianShieldDeactivate");
 
+        public static Asset<Texture2D> Texture_Glow;
+        public static Asset<Texture2D> TextureNight_Glow;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 10;
             NPCID.Sets.TrailingMode[NPC.type] = 1;
             NPCID.Sets.BossBestiaryPriority.Add(Type);
-            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
             {
                 PortraitPositionXOverride = 0,
                 PortraitScale = 0.75f,
@@ -44,6 +47,11 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             value.Position.X += 25;
             value.Position.Y += 15;
             NPCID.Sets.NPCBestiaryDrawOffset[Type] = value;
+            if (!Main.dedServ)
+            {
+                Texture_Glow = ModContent.Request<Texture2D>(Texture + "Glow", AssetRequestMode.AsyncLoad);
+                TextureNight_Glow = ModContent.Request<Texture2D>(Texture + "GlowNight", AssetRequestMode.AsyncLoad);
+            }
         }
 
         public override void SetDefaults()
@@ -63,7 +71,6 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.canGhostHeal = false;
             AIType = -1;
             NPC.HitSound = SoundID.NPCHit52;
             NPC.DeathSound = SoundID.NPCDeath55;
@@ -71,6 +78,10 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             NPC.Calamity().VulnerableToCold = true;
             NPC.Calamity().VulnerableToSickness = false;
             NPC.Calamity().VulnerableToWater = true;
+
+            // Scale stats in Expert and Master
+            CalamityGlobalNPC.AdjustExpertModeStatScaling(NPC);
+            CalamityGlobalNPC.AdjustMasterModeStatScaling(NPC);
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -78,7 +89,7 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             int associatedNPCType = ModContent.NPCType<ProfanedGuardianCommander>();
             bestiaryEntry.UIInfoProvider = new CommonEnemyUICollectionInfoProvider(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds[associatedNPCType], quickUnlock: true);
 
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] 
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheHallow,
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.TheUnderworld,
@@ -182,7 +193,7 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                                 currentDustPos = Vector2.Lerp(dustLineStart, dustLineEnd, i / (float)maxHealDustIterations);
                                 Color dustColor = Main.hslToRgb(Main.rgbToHsl(new Color(255, 200, Math.Abs(Main.DiscoB - (int)(dustSpawned * 2.55f)))).X, 1f, 0.5f);
                                 dustColor.A = 255;
-                                int dust = Dust.NewDust(currentDustPos, 0, 0, 267, 0f, 0f, 0, dustColor, 1f);
+                                int dust = Dust.NewDust(currentDustPos, 0, 0, DustID.RainbowMk2, 0f, 0f, 0, dustColor, 1f);
                                 Main.dust[dust].position = currentDustPos;
                                 Main.dust[dust].velocity = spinningpoint.RotatedBy(MathHelper.TwoPi * i / maxHealDustIterations) * value5 * (0.8f + Main.rand.NextFloat() * 0.4f) + NPC.velocity;
                                 Main.dust[dust].noGravity = true;
@@ -381,7 +392,7 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                         Vector2 dustVelocity = dustSpawnPos - NPC.Center;
                         Color dustColor = Main.hslToRgb(Main.rgbToHsl(Color.Orange).X, 1f, 0.5f);
                         dustColor.A = 255;
-                        int dust = Dust.NewDust(dustSpawnPos + dustVelocity, 0, 0, 267, dustVelocity.X, dustVelocity.Y, 0, dustColor, 1.4f);
+                        int dust = Dust.NewDust(dustSpawnPos + dustVelocity, 0, 0, DustID.RainbowMk2, dustVelocity.X, dustVelocity.Y, 0, dustColor, 1.4f);
                         Main.dust[dust].noGravity = true;
                         Main.dust[dust].noLight = true;
                         Main.dust[dust].velocity = dustVelocity * (j * 0.1f + 0.1f);
@@ -406,6 +417,9 @@ namespace CalamityMod.NPCs.ProfanedGuardians
 
             if (NPC.ai[0] == 0f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 // Face the target
                 if (Math.Abs(NPC.Center.X - player.Center.X) > 10f)
                 {
@@ -475,6 +489,9 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             // Throw rocks, charge, summon holy bombs and shoot molten blasts
             else if (NPC.ai[0] == 1f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 // Face the target
                 if (Math.Abs(NPC.Center.X - player.Center.X) > 10f)
                 {
@@ -569,6 +586,9 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                 // Charge at target
                 if (NPC.ai[1] >= 0f)
                 {
+                    // Set damage
+                    NPC.damage = NPC.defDamage;
+
                     NPC.ai[0] = 2f;
                     NPC.ai[1] = 0f;
                     NPC.netUpdate = true;
@@ -599,6 +619,9 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             // Charge at the target and spawn holy bombs
             else if (NPC.ai[0] == 2f)
             {
+                // Set damage
+                NPC.damage = NPC.defDamage;
+
                 if (Math.Sign(NPC.velocity.X) != 0)
                     NPC.spriteDirection = -Math.Sign(NPC.velocity.X);
                 NPC.spriteDirection = Math.Sign(NPC.velocity.X);
@@ -664,6 +687,9 @@ namespace CalamityMod.NPCs.ProfanedGuardians
             // Slow down and pause for a bit
             else if (NPC.ai[0] == 3f)
             {
+                // Avoid cheap bullshit
+                NPC.damage = 0;
+
                 if (Math.Sign(NPC.velocity.X) != 0)
                     NPC.spriteDirection = -Math.Sign(NPC.velocity.X);
                 NPC.spriteDirection = Math.Sign(NPC.velocity.X);
@@ -745,11 +771,11 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                 drawLocation += halfSizeTexture * NPC.scale + new Vector2(0f, NPC.gfxOffY) + drawOffset;
                 spriteBatch.Draw(texture2D15, drawLocation, NPC.frame, colorOverride ?? NPC.GetAlpha(drawColor), NPC.rotation, halfSizeTexture, NPC.scale, spriteEffects, 0f);
 
-                texture2D15 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianDefenderGlow").Value;
+                texture2D15 = Texture_Glow.Value;
                 Color timeBasedGlowColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
                 if (Main.remixWorld)
                 {
-                    texture2D15 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianDefenderGlowNight").Value;
+                    texture2D15 = TextureNight_Glow.Value;
                     timeBasedGlowColor = Color.Cyan;
                 }
                 if (colorOverride != null)
@@ -853,7 +879,7 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                 color *= 0.6f;
                 color2 *= 0.6f;
                 float scaleMult = 1.2f + scaleDuringShieldDespawn;
-                
+
                 // The scale used for the noise overlay polygons also grows and shrinks
                 // This is intentionally out of sync with the shield, and intentionally desynced per player
                 // Don't put this anywhere less than 0.25f or higher than 1f. The higher it is, the denser / more zoomed out the noise overlay is.
@@ -865,23 +891,23 @@ namespace CalamityMod.NPCs.ProfanedGuardians
                 shieldEffect.Parameters["blowUpPower"].SetValue(2.8f);
                 shieldEffect.Parameters["blowUpSize"].SetValue(0.4f);
                 shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
-                
+
                 shieldEffect.Parameters["shieldOpacity"].SetValue(opacityScaleDuringShieldDespawn);
                 shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
-                
+
                 Color edgeColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 0.2f, color, color2);
-                
+
                 // Define shader parameters for shield color
                 shieldEffect.Parameters["shieldColor"].SetValue(color.ToVector3());
                 shieldEffect.Parameters["shieldEdgeColor"].SetValue(edgeColor.ToVector3());
-                
+
                 spriteBatch.Draw(shieldTexture, shieldDrawPos, shieldFrame, color, NPC.rotation, origin, shieldScale2 * scaleMult, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shieldTexture, shieldDrawPos, shieldFrame, color2, NPC.rotation, origin, shieldScale2 * scaleMult * 0.95f, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shieldTexture, shieldDrawPos, shieldFrame, color, NPC.rotation, origin, shieldScale * scaleMult, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shieldTexture, shieldDrawPos, shieldFrame, color2, NPC.rotation, origin, shieldScale * scaleMult * 0.95f, SpriteEffects.None, 0f);
-                
+
                 // The shield for the border MUST be drawn before the main shield, it becomes incredibly visually obnoxious otherwise.
-                
+
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, shieldEffect, Main.GameViewMatrix.TransformationMatrix);
                 // Fetch shield heat overlay texture (this is the neutrons fed to the shader)

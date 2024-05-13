@@ -1,9 +1,9 @@
-﻿using CalamityMod.Items.Weapons.Ranged;
+﻿using System;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -60,7 +60,7 @@ namespace CalamityMod.Projectiles.Ranged
 
             else if (SoundEngine.TryGetActiveSound(ChargeupSoundSlot, out var soundOut) && soundOut.IsPlaying)
             {
-                soundOut.Sound.Pitch = ChargeTimer * 2f ;
+                soundOut.Sound.Pitch = ChargeTimer * 2f;
                 soundOut.Position = Projectile.Center;
             }
 
@@ -128,7 +128,7 @@ namespace CalamityMod.Projectiles.Ranged
         {
             // Place the projectile directly into the player's hand at all times
             Projectile.Center = rrp;
-            
+
             // The gun is a holdout projectile, so change the player's variables to reflect that
             player.ChangeDir(Math.Sign(Projectile.rotation.ToRotationVector2().X));
             player.heldProj = Projectile.whoAmI;
@@ -136,7 +136,7 @@ namespace CalamityMod.Projectiles.Ranged
             player.itemAnimation = 2;
 
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
-            
+
         }
 
         private void FiringEffects(Color color)
@@ -149,7 +149,7 @@ namespace CalamityMod.Projectiles.Ranged
 
             if (Owner == Main.LocalPlayer && Owner.Calamity().GeneralScreenShakePower < 5)
             {
-                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = 1;
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = 1;
             }
 
             BounceBackPower = 1f;

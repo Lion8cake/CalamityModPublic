@@ -1,9 +1,9 @@
 ﻿using CalamityMod.Buffs.Summon;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace CalamityMod.Projectiles.Summon
 {
@@ -100,7 +100,7 @@ namespace CalamityMod.Projectiles.Summon
         {
             // Make an imp laugh sound every so often if you're the first seeker in the projectile array.
             if (Main.rand.NextBool(1600))
-			{
+            {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     Projectile seeker = Main.projectile[i];
@@ -111,7 +111,7 @@ namespace CalamityMod.Projectiles.Summon
                         break;
                     }
                 }
-			}
+            }
 
             Vector2 destination = Owner.Center + (MathHelper.TwoPi * CircleAngleRatio / Owner.ownedProjectileCounts[Type] - MathHelper.PiOver2).ToRotationVector2() * 310f;
             Projectile.Center = Vector2.Lerp(Projectile.Center, destination, 0.03f);

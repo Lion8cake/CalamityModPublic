@@ -1,6 +1,6 @@
+﻿using System;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -98,7 +98,7 @@ namespace CalamityMod.Projectiles.Rogue
                 HomingAI();
             }
 
-            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 89, 0f, 0f, 100, default, 2f);
+            int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GemEmerald, 0f, 0f, 100, default, 2f);
             Main.dust[dust].noGravity = true;
             Main.dust[dust].velocity.Y = -0.15f;
         }

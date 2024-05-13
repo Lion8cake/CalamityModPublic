@@ -1,5 +1,5 @@
-﻿using CalamityMod.Particles;
-using CalamityMod.Items.Weapons.Ranged;
+﻿using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -24,11 +24,14 @@ namespace CalamityMod.Projectiles.Ranged
             Projectile.timeLeft = 600;
             Projectile.extraUpdates = 5;
             Projectile.Calamity().pointBlankShotDuration = CalamityGlobalProjectile.DefaultPointBlankDuration;
-            Projectile.tileCollide = true;
-            Projectile.ArmorPenetration = 15;
+            Projectile.tileCollide = false; // Custom tile collision since the hitbox is large
+            Projectile.ArmorPenetration = 30;
         }
         public override void AI()
         {
+            if (Collision.SolidCollision(Projectile.Center, 5, 5))
+                Projectile.Kill();
+
             if (Projectile.timeLeft == 598)
             {
                 for (int i = 0; i <= 3; i++)

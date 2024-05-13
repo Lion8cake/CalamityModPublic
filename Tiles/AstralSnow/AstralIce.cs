@@ -17,7 +17,7 @@ namespace CalamityMod.Tiles.AstralSnow
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileBrick[Type] = true;
-			TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Ice"]);
+            TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Ice"]);
 
             CalamityUtils.MergeWithGeneral(Type);
             CalamityUtils.MergeWithSnow(Type);

@@ -1,11 +1,11 @@
-﻿using CalamityMod.Items.Weapons.Melee;
+﻿using System;
+using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Magic;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -67,7 +67,7 @@ namespace CalamityMod.Projectiles.Rogue
                 dust.noGravity = true;
                 dust.velocity = -Projectile.velocity * 0.5f;
             }
-            
+
             if (!InitialTileHit && Time > 45)
             {
                 if (Projectile.velocity.Y < 0)
@@ -164,7 +164,7 @@ namespace CalamityMod.Projectiles.Rogue
                     dust.noGravity = true;
                 }
                 Projectile.velocity = oldVelocity * 0.7f;
-                SoundEngine.PlaySound(SoundID.WormDig with { Volume = 1.5f, Pitch = 1.1f}, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.WormDig with { Volume = 1.5f, Pitch = 1.1f }, Projectile.Center);
                 InitialTileHit = true;
             }
             return false;

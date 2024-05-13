@@ -1,4 +1,9 @@
-﻿using CalamityMod.Items.Accessories;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using CalamityMod.DataStructures;
+using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Pets;
 using CalamityMod.Items.Tools.ClimateChange;
 using CalamityMod.Items.Weapons.Magic;
@@ -11,19 +16,14 @@ using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.FurnitureVoid;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
-using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.Generation;
 using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
-using Terraria.GameContent.Generation;
-using Terraria.DataStructures;
 using Terraria.WorldBuilding;
-using System.Diagnostics;
 
 namespace CalamityMod.World
 {
@@ -537,8 +537,8 @@ namespace CalamityMod.World
                     Tile tileLeft = Main.tile[abyssIndex - 1, abyssIndex2];
                     Tile tileRight = Main.tile[abyssIndex + 1, abyssIndex2];
 
-                    if (tile.TileType == ModContent.TileType<AbyssGravel>() || tile.TileType == ModContent.TileType<PyreMantle>() || 
-                    tile.TileType == ModContent.TileType<Voidstone>() || tile.TileType == ModContent.TileType<PlantyMush>() || 
+                    if (tile.TileType == ModContent.TileType<AbyssGravel>() || tile.TileType == ModContent.TileType<PyreMantle>() ||
+                    tile.TileType == ModContent.TileType<Voidstone>() || tile.TileType == ModContent.TileType<PlantyMush>() ||
                     tile.TileType == ModContent.TileType<ScoriaOre>() || tile.TileType == ModContent.TileType<SulphurousShale>())
                     {
                         //slope tiles
@@ -569,7 +569,7 @@ namespace CalamityMod.World
             //ambient tiles and pots
             for (int abyssIndex = abyssMinX + 5; abyssIndex < abyssMaxX - 5; abyssIndex++)
             {
-                for (int abyssIndex2 = 0; abyssIndex2 < (Main.remixWorld ? rockLayer : Main.maxTilesY - 200); abyssIndex2++)
+                for (int abyssIndex2 = 0; abyssIndex2 < (Main.remixWorld ? rockLayer : Main.UnderworldLayer); abyssIndex2++)
                 {
                     Tile tileToGrowVineOn = Main.tile[abyssIndex, abyssIndex2];
 
@@ -578,7 +578,7 @@ namespace CalamityMod.World
                         Tile tile = Main.tile[abyssIndex, abyssIndex2 + 1];
 
                         //above the 4th layer
-                        if (abyssIndex2 < (Main.remixWorld ? rockLayer : Main.maxTilesY - 200) && WorldGen.SolidTile(abyssIndex, abyssIndex2 + 1))
+                        if (abyssIndex2 < (Main.remixWorld ? rockLayer : Main.UnderworldLayer) && WorldGen.SolidTile(abyssIndex, abyssIndex2 + 1))
                         {
                             //sulphur shale stuff 
                             if (tile.TileType == ModContent.TileType<SulphurousShale>())
@@ -620,7 +620,7 @@ namespace CalamityMod.World
                                 if (WorldGen.genRand.NextBool(12))
                                 {
                                     ushort[] Ribs = new ushort[] { (ushort)ModContent.TileType<SulphurousRib1>(),
-                                    (ushort)ModContent.TileType<SulphurousRib2>(), (ushort)ModContent.TileType<SulphurousRib3>(), 
+                                    (ushort)ModContent.TileType<SulphurousRib2>(), (ushort)ModContent.TileType<SulphurousRib3>(),
                                     (ushort)ModContent.TileType<SulphurousRib4>(), (ushort)ModContent.TileType<SulphurousRib5>() };
 
                                     WorldGen.PlaceObject(abyssIndex, abyssIndex2, WorldGen.genRand.Next(Ribs));
@@ -732,7 +732,7 @@ namespace CalamityMod.World
                         }
 
                         //pots
-                        if ((tile.TileType == ModContent.TileType<AbyssGravel>() || tile.TileType == ModContent.TileType<PyreMantle>() || 
+                        if ((tile.TileType == ModContent.TileType<AbyssGravel>() || tile.TileType == ModContent.TileType<PyreMantle>() ||
                         tile.TileType == ModContent.TileType<Voidstone>()) && abyssIndex2 > (Main.remixWorld ? rockLayer - (int)((y - 200) * 0.8f) : rockLayer))
                         {
                             if (WorldGen.genRand.NextBool(5))
@@ -743,7 +743,7 @@ namespace CalamityMod.World
                         }
 
                         //sulphur pots
-                        else if (tile.TileType == ModContent.TileType<SulphurousShale>() && abyssIndex2 < (Main.remixWorld ? Main.maxTilesY - 200 : (int)Main.worldSurface))
+                        else if (tile.TileType == ModContent.TileType<SulphurousShale>() && abyssIndex2 < (Main.remixWorld ? Main.UnderworldLayer : (int)Main.worldSurface))
                         {
                             if (WorldGen.genRand.NextBool(3))
                             {
@@ -756,7 +756,7 @@ namespace CalamityMod.World
                     //esentially what this does is grow one vine on the bottom of a tile, then use the util to keep placing the vine until it decides to stop
                     if (tileToGrowVineOn.TileType == ModContent.TileType<PlantyMush>() && !Main.tile[abyssIndex, abyssIndex2 + 1].HasTile)
                     {
-                        if (WorldGen.genRand.Next(2) == 0)
+                        if (WorldGen.genRand.NextBool(2))
                         {
                             WorldGen.PlaceTile(abyssIndex, abyssIndex2 + 1, (ushort)ModContent.TileType<ViperVines>());
                         }
@@ -769,7 +769,7 @@ namespace CalamityMod.World
                     //same as above but for sulphur vines
                     if (tileToGrowVineOn.TileType == ModContent.TileType<SulphurousShale>() && !Main.tile[abyssIndex, abyssIndex2 + 1].HasTile)
                     {
-                        if (WorldGen.genRand.Next(5) == 0)
+                        if (WorldGen.genRand.NextBool(5))
                         {
                             WorldGen.PlaceTile(abyssIndex, abyssIndex2 + 1, (ushort)ModContent.TileType<SulphurousVines>());
                         }
@@ -931,7 +931,7 @@ namespace CalamityMod.World
                     }
                 }
             }
-            
+
             int sizeMinSmall2 = sizeMin2 / 8;
             int sizeMaxSmall2 = sizeMax2 / 8;
             islandWidth = WorldGen.genRand.Next(sizeMin2, sizeMax2);
@@ -1024,7 +1024,7 @@ namespace CalamityMod.World
                     GenAction blotchMod = new Modifiers.Blotches(2, 0.4);
 
                     int radius = (int)(WorldGen.genRand.Next(3, 5) * WorldGen.genRand.NextFloat(0.74f, 0.82f));
-                    
+
                     WorldUtils.Gen(new Point(clearX, clearY), new Shapes.Circle(radius), Actions.Chain(new GenAction[]
                     {
                         blotchMod.Output(circle)
@@ -1132,7 +1132,7 @@ namespace CalamityMod.World
                     GenAction blotchMod = new Modifiers.Blotches(2, 0.4);
 
                     int radius = (int)(WorldGen.genRand.Next(3, 5) * WorldGen.genRand.NextFloat(0.74f, 0.82f));
-                    
+
                     WorldUtils.Gen(new Point(clearX, clearY), new Shapes.Circle(radius), Actions.Chain(new GenAction[]
                     {
                         blotchMod.Output(circle)
@@ -1184,7 +1184,7 @@ namespace CalamityMod.World
                 }
 
                 var chestTile = Framing.GetTileSafely(chest.x, chest.y);
-                if (chestTile.HasTile && chestTile.TileType == ModContent.TileType<AbyssTreasureChest>() && Chest.IsLocked(chest.x, chest.y)) 
+                if (chestTile.HasTile && chestTile.TileType == ModContent.TileType<AbyssTreasureChest>() && Chest.IsLocked(chest.x, chest.y))
                 {
                     Chest.Unlock(chest.x, chest.y);
                 }

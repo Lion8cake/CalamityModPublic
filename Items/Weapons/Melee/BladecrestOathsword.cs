@@ -14,7 +14,7 @@ namespace CalamityMod.Items.Weapons.Melee
         {
             Item.width = 56;
             Item.height = 56;
-            Item.damage = 26;
+            Item.damage = 17;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = 21;
             Item.useTime = 21;
@@ -25,7 +25,7 @@ namespace CalamityMod.Items.Weapons.Melee
             Item.noUseGraphic = true;
             Item.useTurn = false;
             Item.channel = true;
-            Item.value = CalamityGlobalItem.Rarity3BuyPrice;
+            Item.value = CalamityGlobalItem.RarityOrangeBuyPrice;
             Item.rare = ItemRarityID.Orange;
             Item.shootSpeed = 6f;
             // Set so the item isn't classified as true melee

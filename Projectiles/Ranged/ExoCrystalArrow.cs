@@ -1,16 +1,16 @@
 ﻿using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Graphics.Primitives;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Particles;
+using CalamityMod.Sounds;
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod.Sounds;
-using CalamityMod.Particles;
-using Terraria.Graphics.Shaders;
-using Microsoft.Xna.Framework.Graphics;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Graphics.Primitives;
-using Microsoft.CodeAnalysis;
 
 namespace CalamityMod.Projectiles.Ranged
 {
@@ -92,7 +92,7 @@ namespace CalamityMod.Projectiles.Ranged
             GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"].UseSecondaryColor(secondaryColor);
             GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"].Apply();
             PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, (_) => trailOffset, shader: GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"]), 53);
-            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D tex = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = tex.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Main.spriteBatch.Draw(tex, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0f);

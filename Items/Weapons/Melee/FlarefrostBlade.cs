@@ -13,6 +13,7 @@ namespace CalamityMod.Items.Weapons.Melee
         public override void SetDefaults()
         {
             Item.width = 64;
+            Item.height = 66;
             Item.damage = 125;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = Item.useTime = 29;
@@ -21,8 +22,7 @@ namespace CalamityMod.Items.Weapons.Melee
             Item.knockBack = 6.25f;
             Item.UseSound = SoundID.Item1;
             Item.autoReuse = true;
-            Item.height = 66;
-            Item.value = CalamityGlobalItem.Rarity5BuyPrice;
+            Item.value = CalamityGlobalItem.RarityPinkBuyPrice;
             Item.rare = ItemRarityID.Pink;
             Item.shoot = ModContent.ProjectileType<Flarefrost>();
             Item.shootSpeed = 11f;

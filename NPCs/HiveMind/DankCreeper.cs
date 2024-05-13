@@ -1,8 +1,8 @@
-﻿using CalamityMod.Events;
+﻿using System;
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
@@ -42,17 +42,24 @@ namespace CalamityMod.NPCs.HiveMind
             NPC.knockBackResist = BossRushEvent.BossRushActive ? 0f : 0.3f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
-            NPC.canGhostHeal = false;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.Calamity().VulnerableToHeat = true;
             NPC.Calamity().VulnerableToCold = true;
             NPC.Calamity().VulnerableToSickness = true;
+
+            // Scale stats in Expert and Master
+            CalamityGlobalNPC.AdjustExpertModeStatScaling(NPC);
+            CalamityGlobalNPC.AdjustMasterModeStatScaling(NPC);
         }
 
         public override void AI()
         {
+            // Avoid cheap bullshit
+            NPC.damage = 0;
+
             NPC.TargetClosest();
+
             bool revenge = CalamityWorld.revenge;
             float speed = revenge ? 12f : 11f;
             if (BossRushEvent.BossRushActive)
@@ -72,23 +79,24 @@ namespace CalamityMod.NPCs.HiveMind
             float timeToReachTarget = speed / playerDistance;
             playerXDist *= timeToReachTarget;
             playerYDist *= timeToReachTarget;
+
             NPC.ai[0] -= 1f;
             if (playerDistance < 200f || NPC.ai[0] > 0f)
             {
+                // Set damage
+                NPC.damage = NPC.defDamage;
+
                 if (playerDistance < 200f)
-                {
                     NPC.ai[0] = 20f;
-                }
+
                 if (NPC.velocity.X < 0f)
-                {
                     NPC.direction = -1;
-                }
                 else
-                {
                     NPC.direction = 1;
-                }
+
                 return;
             }
+
             NPC.velocity.X = (NPC.velocity.X * 50f + playerXDist) / 51f;
             NPC.velocity.Y = (NPC.velocity.Y * 50f + playerYDist) / 51f;
             if (playerDistance < 350f)
@@ -107,13 +115,13 @@ namespace CalamityMod.NPCs.HiveMind
         {
             for (int k = 0; k < 5; k++)
             {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, 13, hit.HitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Glass, hit.HitDirection, -1f, 0, default, 1f);
             }
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 20; k++)
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 13, hit.HitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Glass, hit.HitDirection, -1f, 0, default, 1f);
                 }
                 if (Main.netMode != NetmodeID.Server)
                 {

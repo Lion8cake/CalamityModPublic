@@ -1,6 +1,6 @@
-﻿using CalamityMod.CalPlayer;
+﻿using System;
+using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -60,7 +60,7 @@ namespace CalamityMod.Projectiles.Summon
             {
                 for (int i = 0; i < 50; i++)
                 {
-                    int spawnDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 16f), Projectile.width, Projectile.height - 16, 33, 0f, 0f, 0, default, 1f);
+                    int spawnDust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 16f), Projectile.width, Projectile.height - 16, DustID.Water, 0f, 0f, 0, default, 1f);
                     Main.dust[spawnDust].velocity *= 2f;
                     Main.dust[spawnDust].scale *= 1.15f;
                 }
@@ -166,7 +166,7 @@ namespace CalamityMod.Projectiles.Summon
                         projectileType = ModContent.ProjectileType<WaterElementalSong>();
                     }
                     float projVel = Main.rand.Next(12, 20);
-                    Vector2 fireDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+                    Vector2 fireDirection = Projectile.Center;
                     float fireXVel = projXStore - fireDirection.X;
                     float fireYVel = projYStore - fireDirection.Y;
                     float fireVelocity = (float)Math.Sqrt((double)(fireXVel * fireXVel + fireYVel * fireYVel));

@@ -1,6 +1,6 @@
-﻿using CalamityMod.CalPlayer;
+﻿using System;
+using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -61,7 +61,7 @@ namespace CalamityMod.Projectiles.Summon
                 int constant = 50;
                 for (int i = 0; i < constant; i++)
                 {
-                    int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 16f), Projectile.width, Projectile.height - 16, 173, 0f, 0f, 0, default, 1f);
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y + 16f), Projectile.width, Projectile.height - 16, DustID.ShadowbeamStaff, 0f, 0f, 0, default, 1f);
                     Main.dust[dust].velocity *= 2f;
                     Main.dust[dust].scale *= 1.15f;
                 }
@@ -136,7 +136,7 @@ namespace CalamityMod.Projectiles.Summon
                     projY -= Projectile.Center.Y;
                     int projectileType = ModContent.ProjectileType<DaedalusCrystalShot>();
                     float randSpeed = Main.rand.Next(10, 15); //modify the speed the projectile are shot.  Lower number = slower projectile.
-                    Vector2 firingDirection = new Vector2(Projectile.position.X + (float)Projectile.width * 0.5f, Projectile.position.Y + (float)Projectile.height * 0.5f);
+                    Vector2 firingDirection = Projectile.Center;
                     float projXDirection = projXStore - firingDirection.X;
                     float projYDirection = projYStore - firingDirection.Y;
                     float projSpeed = (float)Math.Sqrt((double)(projXDirection * projXDirection + projYDirection * projYDirection));
