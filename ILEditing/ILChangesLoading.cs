@@ -43,12 +43,6 @@ namespace CalamityMod.ILEditing
             On_Main.DrawCursor += UseCoolFireCursorEffect;
             On_Main.SortDrawCacheWorms += DrawFusableParticles;
             On_Main.DrawInfernoRings += DrawForegroundParticles;
-            On_TileDrawing.DrawPartialLiquid += DrawCustomLava;
-            On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += DrawCustomLavafalls;
-            On_Main.RenderWater += CacheLavaStyle;
-            IL_LiquidRenderer.DrawNormalLiquids += ChangeWaterQuadColors;
-            IL_Main.oldDrawWater += DrawCustomLava3;
-            On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBetter;
             On_TileDrawing.PreDrawTiles += ClearForegroundStuff;
             On_TileDrawing.Draw += ClearTilePings;
             On_CommonCode.ModifyItemDropFromNPC += ColorBlightedGel;
@@ -87,6 +81,21 @@ namespace CalamityMod.ILEditing
 
             // Mana Burn (Chaos Stone) and Chalice of the Blood God
             IL_Player.ApplyLifeAndOrMana += ManaSicknessAndChaliceBufferHeal;
+
+            // Liquid Drawing and functions
+
+            //Lava Drawing, waterfall and block can and will be remade
+            //Lava cache, why, this can be done outside of this detour am I missing something?
+            //Liquid light should be remade to make WaterStyle and LavaStyle to have their own override methods (WaterStyle.ModifyDrawColor)
+            //Can maybe be remade as another WaterStyle override (WaterStyle.ModifyLight)
+
+            On_TileDrawing.DrawPartialLiquid += DrawCustomLava; //Slope Drawing
+            On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += DrawCustomLavafalls; //Waterfall Drawing
+            On_Main.RenderWater += CacheLavaStyle; //Why
+            IL_LiquidRenderer.DrawNormalLiquids += ChangeWaterQuadColors; //Liquid Light & lava drawing
+            IL_Main.oldDrawWater += DrawCustomLava3; //Block Drawing
+            On_TileLightScanner.GetTileLight += LiquidEmitLight; //Light
+            //On_TileLightScanner.ApplyLiquidLight += LiquidEmitLight;
 
             // Custom grappling
             On_Player.GrappleMovement += CustomGrappleMovementCheck;

@@ -993,109 +993,29 @@ namespace CalamityMod.ILEditing
         #endregion
 
         #region Water Visuals
-        private static void MakeSulphSeaWaterBetter(Terraria.Graphics.Light.On_TileLightScanner.orig_GetTileLight orig, TileLightScanner self, int x, int y, out Vector3 outputColor)
+        private static void LiquidEmitLight(On_TileLightScanner.orig_GetTileLight orig, TileLightScanner self, int x, int y, out Vector3 lightColor)
         {
-            orig(self, x, y, out outputColor);
-            if (outputColor == Vector3.One || outputColor == new Vector3(0.25f, 0.25f, 0.25f) || outputColor == new Vector3(0.5f, 0.5f, 0.5f))
-                return;
-
-            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-            if (tile.LiquidAmount <= 0 || tile.HasTile || (Main.waterStyle != SulphuricWater.Type &&
-            Main.waterStyle != SulphuricDepthsWater.Type && Main.waterStyle != SunkenSeaWater.Type))
-                return;
-
-            Tile above = CalamityUtils.ParanoidTileRetrieval(x, y - 1);
-            if (!Main.gamePaused && !above.HasTile && above.LiquidAmount <= 0 && Main.rand.NextBool(9) &&
-            Main.waterStyle == SulphuricWater.Type)
+            orig.Invoke(self, x, y, out lightColor);
+            if (Main.tile[x, y].LiquidAmount > 0)
             {
-                MediumMistParticle acidFoam = new(new(x * 16f + Main.rand.NextFloat(16f), y * 16f + 8f), -Vector2.UnitY.RotatedByRandom(0.67f) * Main.rand.NextFloat(1f, 2.4f), Color.LightSeaGreen, Color.White, 0.16f, 128f, 0.02f);
-                GeneralParticleHandler.SpawnParticle(acidFoam);
-            }
-
-            if (tile.TileType != (ushort)ModContent.TileType<RustyChestTile>())
-            {
-                if (Main.waterStyle == SulphuricWater.Type && Main.dayTime && !Main.raining)
+                if (Main.tile[x, y].LiquidType == LiquidID.Water)
                 {
-                    float brightness = MathHelper.Clamp(0.2f - (y / 680), 0f, 0.2f);
-                    if (y > 580)
-                        brightness *= 1f - (y - 580) / 100f;
-
-                    float waveScale1 = Main.GameUpdateCount * 0.014f;
-                    float waveScale2 = Main.GameUpdateCount * 0.1f;
-                    int scalar = x + (-y / 2);
-                    float wave1 = waveScale1 * -50 + scalar * 15;
-                    float wave2 = waveScale2 * -10 + scalar * 14;
-                    float wave3 = waveScale1 * -100 + scalar * 13;
-                    float wave4 = waveScale2 * 10 + scalar * 25;
-                    float wave5 = waveScale1 * -70 + scalar * 5;
-                    float wave1angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave1));
-                    float wave2angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave2));
-                    float wave3angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave3));
-                    float wave4angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave4));
-                    float wave5angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave5));
-                    outputColor = Vector3.Lerp(outputColor, Color.LightSeaGreen.ToVector3(), 0.41f + wave1angle + wave2angle + wave3angle + wave4angle + wave5angle);
-                    outputColor *= brightness;
-                }
-
-                if (Main.waterStyle == SulphuricWater.Type && !Main.dayTime && !Main.raining)
-                {
-                    float brightness = MathHelper.Clamp(0.17f - (y / 680), 0f, 0.17f);
-                    if (y > 580)
-                        brightness *= 1f - (y - 580) / 100f;
-
-                    float waveScale1 = Main.GameUpdateCount * 0.014f;
-                    float waveScale2 = Main.GameUpdateCount * 0.1f;
-                    int scalar = x + (-y / 2);
-                    float wave1 = waveScale1 * -50 + scalar * 15;
-                    float wave2 = waveScale2 * -10 + scalar * 14;
-                    float wave3 = waveScale1 * -100 + scalar * 13;
-                    float wave4 = waveScale2 * 10 + scalar * 25;
-                    float wave5 = waveScale1 * -70 + scalar * 5;
-                    float wave1angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave1));
-                    float wave2angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave2));
-                    float wave3angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave3));
-                    float wave4angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave4));
-                    float wave5angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave5));
-                    outputColor = Vector3.Lerp(outputColor, Color.LightSeaGreen.ToVector3(), 0.41f + wave1angle + wave2angle + wave3angle + wave4angle + wave5angle);
-                    outputColor *= brightness;
-                }
-
-                if (Main.waterStyle == SulphuricWater.Type && Main.raining)
-                {
-                    float brightness = MathHelper.Clamp(1f - (y / 680), 0f, 1f);
-                    if (y > 580)
-                        brightness *= 1f - (y - 580) / 100f;
-
-                    outputColor = Vector3.Lerp(outputColor, Color.LightSeaGreen.ToVector3(), 0.41f);
-                    outputColor *= brightness;
-                }
-
-                if (Main.waterStyle == SulphuricDepthsWater.Type)
-                    outputColor = Vector3.Lerp(outputColor, Color.MediumSeaGreen.ToVector3(), 0.18f);
-
-                if (Main.waterStyle == SunkenSeaWater.Type)
-                {
-                    float brightness = MathHelper.Clamp(0.07f, 0f, 0.07f);
-                    float waveScale1 = Main.GameUpdateCount * 0.028f;
-                    float waveScale2 = Main.GameUpdateCount * 0.1f;
-                    int yScale = -y / 2;
-                    int xScale = x / 15;
-                    float wave1 = Main.GameUpdateCount * 0.024f * -50 + ((-x / 30) + (y / 30)) * 25;
-                    float wave2 = waveScale2 * -10 + ((-xScale) + yScale) * 45;
-                    float wave3 = waveScale1 * -100 + ((x / 7) + (y / 50)) * 25;
-                    float wave4 = Main.GameUpdateCount * 0.15f * 10 + ((x / 3) + yScale) * 45;
-                    float wave5 = waveScale1 * -70 + ((-x / 25) + (-y / 25)) * 20;
-                    float wave6 = waveScale2 * -10 + (xScale + yScale) * 45;
-                    float bigwave = Main.GameUpdateCount * 0.01f * -70 + ((-x / 2) + (-y / 40)) * 5;
-                    float wave1angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave1));
-                    float wave2angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave2));
-                    float wave3angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave3));
-                    float wave4angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave4));
-                    float wave5angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave5));
-                    float wave6angle = 0.55f + 0.45f * (float)Math.Sin(MathHelper.ToRadians(wave6));
-                    float bigwaveangle = 0.55f + 0.80f * (float)Math.Sin(MathHelper.ToRadians(bigwave));
-                    outputColor = Vector3.Lerp(outputColor, Color.DeepSkyBlue.ToVector3(), 0.07f + wave1angle + wave2angle + wave3angle + wave4angle + wave5angle + wave6angle + bigwaveangle);
-                    outputColor *= brightness;
+                    float R = 0f;
+                    float G = 0f;
+                    float B = 0f;
+                    CalamityWaterLoader.ModifyLightSetup(x, y, Main.waterStyle, ref R, ref G, ref B);
+                    if (lightColor.X < R)
+                    {
+                        lightColor.X = R;
+                    }
+                    if (lightColor.Y < G)
+                    {
+                        lightColor.Y = G;
+                    }
+                    if (lightColor.Z < B)
+                    {
+                        lightColor.Z = B;
+                    }
                 }
             }
         }

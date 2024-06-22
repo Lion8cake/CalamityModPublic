@@ -6,7 +6,7 @@ namespace CalamityMod.Waters
 {
     public class CragsLavaflow : ModWaterfallStyle { }
 
-    public class CragsLavaStyle : CustomLavaStyle
+    public class CragsLava : CustomLavaStyle
     {
         public override string LavaTexturePath => "CalamityMod/Waters/CragsLava";
 
