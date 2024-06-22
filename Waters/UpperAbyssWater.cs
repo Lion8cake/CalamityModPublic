@@ -1,9 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Systems;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 
 namespace CalamityMod.Waters
 {
-    public class UpperAbyssWater : ModWaterStyle
+    public class UpperAbyssWaterflow : ModWaterfallStyle { }
+
+    public class UpperAbyssWater : CalamityModWaterStyle
     {
         public override int ChooseWaterfallStyle()
         {

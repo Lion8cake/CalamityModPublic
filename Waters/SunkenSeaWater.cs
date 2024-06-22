@@ -8,6 +8,8 @@ using Terraria.ModLoader;
 
 namespace CalamityMod.Waters
 {
+    public class SunkenSeaWaterflow : ModWaterfallStyle { }
+
     public class SunkenSeaWater : CalamityModWaterStyle
     {
         public override int ChooseWaterfallStyle()
