@@ -92,10 +92,10 @@ namespace CalamityMod.ILEditing
             On_TileDrawing.DrawPartialLiquid += DrawCustomLava; //Slope Drawing
             On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += DrawCustomLavafalls; //Waterfall Drawing
             On_Main.RenderWater += CacheLavaStyle; //Why
-            IL_LiquidRenderer.DrawNormalLiquids += ChangeWaterQuadColors; //Liquid Light & lava drawing
             IL_Main.oldDrawWater += DrawCustomLava3; //Block Drawing
-            On_TileLightScanner.GetTileLight += LiquidEmitLight; //Light
-            //On_TileLightScanner.ApplyLiquidLight += LiquidEmitLight;
+            On_TileLightScanner.ApplyLiquidLight += LiquidEmitLight;
+            IL_LiquidRenderer.DrawNormalLiquids += LiquidDrawColors; //Liquid Light (removed ->)& lava drawing
+            IL_TileDrawing.DrawTile_LiquidBehindTile += LiquidSlopeDrawColors;
 
             // Custom grappling
             On_Player.GrappleMovement += CustomGrappleMovementCheck;

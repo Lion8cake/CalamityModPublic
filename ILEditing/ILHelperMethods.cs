@@ -134,7 +134,7 @@ namespace CalamityMod.ILEditing
             return initialLightColor;
         }
 
-        private static void SelectSulphuricWaterColor(int x, int y, ref VertexColors initialColor)
+        public static void SelectSulphuricWaterColor(int x, int y, ref VertexColors initialColor, bool isSlope)
         {
             if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.Count >= 1)
             {
@@ -177,10 +177,20 @@ namespace CalamityMod.ILEditing
                 }
             }
 
-            initialColor.TopLeftColor *= 0.4f;
-            initialColor.TopRightColor *= 0.4f;
-            initialColor.BottomLeftColor *= 0.4f;
-            initialColor.BottomRightColor *= 0.4f;
+            if (isSlope)
+            {
+                initialColor.TopLeftColor *= 1f / 3;
+                initialColor.TopRightColor *= 1f / 3;
+                initialColor.BottomLeftColor *= 1f / 3;
+                initialColor.BottomRightColor *= 1f / 3;
+            }
+            else
+            {
+                initialColor.TopLeftColor *= 0.4f;
+                initialColor.TopRightColor *= 0.4f;
+                initialColor.BottomLeftColor *= 0.4f;
+                initialColor.BottomRightColor *= 0.4f;
+            }
         }
 
         public static void DumpToLog(ILContext il) => CalamityMod.Instance.Logger.Debug(il.ToString());

@@ -5,6 +5,9 @@ using CalamityMod.Tiles.Abyss;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Graphics;
+using CalamityMod.Dusts.WaterSplash;
+using CalamityMod.Gores.WaterDroplet;
 
 namespace CalamityMod.Waters
 {
@@ -12,26 +15,11 @@ namespace CalamityMod.Waters
 
     public class SunkenSeaWater : CalamityModWaterStyle
     {
-        public override int ChooseWaterfallStyle()
-        {
-            return ModContent.Find<ModWaterfallStyle>("CalamityMod/SunkenSeaWaterflow").Slot;
-        }
-
-        public override int GetSplashDust()
-        {
-            return 33;
-        }
-
-        public override int GetDropletGore()
-        {
-            return 713;
-        }
-
-        public override Color BiomeHairColor()
-        {
-            return Color.Blue;
-        }
-
+        public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("CalamityMod/SunkenSeaWaterflow").Slot;
+        public override int GetSplashDust() => ModContent.DustType<SunkenSeaSplash>();
+        public override int GetDropletGore() => ModContent.GoreType<SunkenSeaWaterDroplet>();
+        public override Color BiomeHairColor() => new Color(46, 155, 1716);
+        public override void DrawColor(int x, int y, ref VertexColors liquidColor, bool isSlope) => ILEditing.ILChanges.SelectSulphuricWaterColor(x, y, ref liquidColor, isSlope);
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             Vector3 outputColor = new Vector3(r, g, b);

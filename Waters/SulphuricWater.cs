@@ -7,6 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Graphics;
+using Terraria.ID;
+using CalamityMod.Dusts.WaterSplash;
+using CalamityMod.Gores.WaterDroplet;
 
 namespace CalamityMod.Waters
 {
@@ -15,12 +19,12 @@ namespace CalamityMod.Waters
     public class SulphuricWater : CalamityModWaterStyle
     {
         public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("CalamityMod/SulphuricWaterflow").Slot;
-        public override int GetSplashDust() => 101; //bruh
-        public override int GetDropletGore() => 708; //bruh2
+        public override int GetSplashDust() => ModContent.DustType<SulphuricSplash>();
+        public override int GetDropletGore() => ModContent.GoreType<SulphuricWaterDroplet>();
         public override Asset<Texture2D> GetRainTexture() => ModContent.Request<Texture2D>("CalamityMod/Waters/SulphuricRain");
         public override byte GetRainVariant() => (byte)Main.rand.Next(3);
-        public override Color BiomeHairColor() => Color.Turquoise;
-
+        public override Color BiomeHairColor() => new Color(43, 168, 110);
+        public override void DrawColor(int x, int y, ref VertexColors liquidColor, bool isSlope) => ILEditing.ILChanges.SelectSulphuricWaterColor(x, y, ref liquidColor, isSlope);
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             Vector3 outputColor = new Vector3(r, g, b);
