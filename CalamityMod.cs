@@ -51,6 +51,7 @@ using CalamityMod.Projectiles;
 using CalamityMod.Projectiles.BaseProjectiles;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
+using CalamityMod.Systems;
 using CalamityMod.UI;
 using CalamityMod.UI.CalamitasEnchants;
 using CalamityMod.UI.DraedonsArsenal;
@@ -107,6 +108,16 @@ namespace CalamityMod
 
         // Destroyer glowmasks
         public static Asset<Texture2D>[] DestroyerGlowmasks = new Asset<Texture2D>[3];
+
+        // Holds the Texture Arrays for all the lava textures.
+        // These are used for the lava styles. They are seperate from Textureasset.Instance._liquidTexture as they will conflict with ModWaterStyle
+        // Can hold up to 255 lava styles (more than enough) (excluding the normal lava texture which is liquidTexture 1)
+        public struct LavaTextures
+        {
+            public static Asset<Texture2D>[] liquid = new Asset<Texture2D>[1];
+            public static Asset<Texture2D>[] slope = new Asset<Texture2D>[1];
+            public static Asset<Texture2D>[] block = new Asset<Texture2D>[1];
+        }
 
         // Wall of Flesh glowmasks
         public static Asset<Texture2D> WallOfFleshEyeGlowmask;
@@ -244,6 +255,7 @@ namespace CalamityMod
             SetupBossKillTimes();
             SchematicManager.Load();
             CustomLavaManagement.Load();
+            ModLavaLoader.ResizeArray();
             Attunement.Load();
             BalancingChangesManager.Load();
             BaseIdleHoldoutProjectile.LoadAll();

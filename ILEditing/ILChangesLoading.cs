@@ -89,10 +89,10 @@ namespace CalamityMod.ILEditing
             //Liquid light should be remade to make WaterStyle and LavaStyle to have their own override methods (WaterStyle.ModifyDrawColor)
             //Can maybe be remade as another WaterStyle override (WaterStyle.ModifyLight)
 
-            On_TileDrawing.DrawPartialLiquid += DrawCustomLava; //Slope Drawing
+            /*On_TileDrawing.DrawPartialLiquid += DrawCustomLava; //Slope Drawing
             On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += DrawCustomLavafalls; //Waterfall Drawing
             On_Main.RenderWater += CacheLavaStyle; //Why
-            IL_Main.oldDrawWater += DrawCustomLava3; //Block Drawing
+            IL_Main.oldDrawWater += DrawCustomLava3; //Block Drawing*/
             On_TileLightScanner.ApplyLiquidLight += LiquidEmitLight;
             IL_LiquidRenderer.DrawNormalLiquids += LiquidDrawColors; //Liquid Light (removed ->)& lava drawing
             IL_TileDrawing.DrawTile_LiquidBehindTile += LiquidSlopeDrawColors;
