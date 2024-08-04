@@ -63,6 +63,7 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Dyes;
+using Terraria.GameContent.Liquid;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -117,7 +118,12 @@ namespace CalamityMod
             public static Asset<Texture2D>[] liquid = new Asset<Texture2D>[1];
             public static Asset<Texture2D>[] slope = new Asset<Texture2D>[1];
             public static Asset<Texture2D>[] block = new Asset<Texture2D>[1];
+            public static Asset<Texture2D>[] fall = new Asset<Texture2D>[1];
         }
+
+        public static int LavaStyle;
+
+        public static float[] lavaAlpha = new float[1];
 
         // Wall of Flesh glowmasks
         public static Asset<Texture2D> WallOfFleshEyeGlowmask;
@@ -165,6 +171,7 @@ namespace CalamityMod
         internal Mod thorium = null;
         internal Mod varia = null;
         internal Mod wikithis = null;
+        internal Mod biomeLava = null;
 
         //hell background
         //private List<HellBGLoad> loadCache;
@@ -211,6 +218,8 @@ namespace CalamityMod
             ModLoader.TryGetMod("Varia", out varia);
             wikithis = null;
             ModLoader.TryGetMod("Wikithis", out wikithis);
+            biomeLava = null;
+            ModLoader.TryGetMod("BiomeLava", out biomeLava);
 
             // Initialize the EnemyStats struct as early as it is safe to do so
             NPCStats.Load();
@@ -254,8 +263,11 @@ namespace CalamityMod
             SetupVanillaDR();
             SetupBossKillTimes();
             SchematicManager.Load();
+
+            //lava
             CustomLavaManagement.Load();
-            ModLavaLoader.ResizeArray();
+            LavaRendering.instance = new LavaRendering();
+
             Attunement.Load();
             BalancingChangesManager.Load();
             BaseIdleHoldoutProjectile.LoadAll();
@@ -312,6 +324,13 @@ namespace CalamityMod
             DestroyerGlowmasks[0] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaBossGlowmasks/DestroyerHeadGlow", AssetRequestMode.AsyncLoad);
             DestroyerGlowmasks[1] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaBossGlowmasks/DestroyerBodyGlow", AssetRequestMode.AsyncLoad);
             DestroyerGlowmasks[2] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaBossGlowmasks/DestroyerTailGlow", AssetRequestMode.AsyncLoad);
+
+            // Lava Texture
+            LavaTextures.liquid[0] = LiquidRenderer.Instance._liquidTextures[1];
+            LavaTextures.slope[0] = TextureAssets.LiquidSlope[1];
+            LavaTextures.block[0] = TextureAssets.Liquid[1];
+            var waterfallTexture = (Asset<Texture2D>[])typeof(WaterfallManager).GetField("waterfallTexture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).GetValue(Main.instance.waterfallManager);
+            LavaTextures.fall[0] = waterfallTexture[1];
 
             // Wall of Flesh glowmasks
             WallOfFleshEyeGlowmask = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaBossGlowmasks/WallOfFleshEyeTelegraphGlow", AssetRequestMode.AsyncLoad);
@@ -443,6 +462,7 @@ namespace CalamityMod
             thorium = null;
             varia = null;
             wikithis = null;
+            biomeLava = null;
 
             AstralSky = null;
 

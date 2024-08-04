@@ -10,7 +10,7 @@ namespace CalamityMod.Systems
     public abstract class CalamityModWaterStyle : ModWaterStyle
     {
         /// <summary>
-        /// Allows water styles to manipulate what color the liquid is drawn to, this can allow waters to be see-throughable to see the backgrounds (surface and underground backgrounds not walls)
+        /// Allows water styles to manipulate what color the liquid is drawn to, this can allow waters to be see-throughable to see backgrounds (surface and underground backgrounds not walls)
         /// </summary>
         /// <param name="x">X position of the water</param>
         /// <param name="y">Y position of the water</param>
@@ -20,7 +20,7 @@ namespace CalamityMod.Systems
         }
 
         /// <summary>
-        /// Allows you to determine how much light this water emits.<br />>
+        /// Allows you to determine how much light this water emits.<br />
         /// It can also let you light up the block in front of this water.<br />
         /// See <see cref="M:Terraria.Graphics.Light.TileLightScanner.ApplyLiquidLight(Terraria.Tile,Microsoft.Xna.Framework.Vector3@)" /> for vanilla tile light values to use as a reference.<br />
         /// </summary>

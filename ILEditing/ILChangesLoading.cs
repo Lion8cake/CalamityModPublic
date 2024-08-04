@@ -82,19 +82,36 @@ namespace CalamityMod.ILEditing
             // Mana Burn (Chaos Stone) and Chalice of the Blood God
             IL_Player.ApplyLifeAndOrMana += ManaSicknessAndChaliceBufferHeal;
 
-            // Liquid Drawing and functions
+            //LavaStyles
+            if (CalamityMod.Instance.biomeLava == null)
+            {
+                //Rendering/Drawing
+                IL_Main.DoDraw += DoDrawLavas;
+                IL_Main.RenderWater += RenderLavas;
+                IL_Main.RenderBackground += RenderLavaBackgrounds;
 
-            //Lava Drawing, waterfall and block can and will be remade
-            //Lava cache, why, this can be done outside of this detour am I missing something?
-            //Liquid light should be remade to make WaterStyle and LavaStyle to have their own override methods (WaterStyle.ModifyDrawColor)
-            //Can maybe be remade as another WaterStyle override (WaterStyle.ModifyLight)
+                IL_TileDrawing.Draw += AddTileLiquidDrawing;
 
-            /*On_TileDrawing.DrawPartialLiquid += DrawCustomLava; //Slope Drawing
-            On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += DrawCustomLavafalls; //Waterfall Drawing
-            On_Main.RenderWater += CacheLavaStyle; //Why
-            IL_Main.oldDrawWater += DrawCustomLava3; //Block Drawing*/
+                //Blocking
+                IL_LiquidRenderer.DrawNormalLiquids += BlockLavaDrawing;
+                On_TileDrawing.DrawTile_LiquidBehindTile += BlockLavaDrawingForSlopes;
+                On_TileDrawing.DrawPartialLiquid += BlockLavaDrawingForSlopes2;
+                On_WaterfallManager.DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects += LavafallRemover;
+                IL_Main.oldDrawWater += BlockRetroLightingLava;
+
+                //Replacing
+
+                //Other
+                On_WaterfallManager.Draw += LavaFallRedrawer;
+                On_WaterfallManager.StylizeColor += WaterfallGlowmaskEditor;
+
+                //Waterfall light
+                On_WaterfallManager.AddLight += LavafallLightEditor;
+            }
+
+            // Liquid Lighting and alpha (Liquid Viusuals)
             On_TileLightScanner.ApplyLiquidLight += LiquidEmitLight;
-            IL_LiquidRenderer.DrawNormalLiquids += LiquidDrawColors; //Liquid Light (removed ->)& lava drawing
+            IL_LiquidRenderer.DrawNormalLiquids += LiquidDrawColors; //Liquid Light
             IL_TileDrawing.DrawTile_LiquidBehindTile += LiquidSlopeDrawColors;
 
             // Custom grappling

@@ -39,6 +39,7 @@ using Terraria.GameContent.Liquid;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.Graphics;
+using Terraria.Graphics.Capture;
 using Terraria.Graphics.Light;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -65,7 +66,7 @@ namespace CalamityMod.ILEditing
         // This function is (optionally) invoked manually in an IL edit to enable NPCs to spawn at night.
         private static Action VanillaSpawnTownNPCs;
 
-        private static readonly MethodInfo textureGetValueMethod = typeof(Asset<Texture2D>).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance);
+        //private static readonly MethodInfo textureGetValueMethod = typeof(Asset<Texture2D>).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance);
 
         public static event Func<VertexColors, int, Point, VertexColors> ExtraColorChangeConditions;
 
@@ -774,37 +775,408 @@ namespace CalamityMod.ILEditing
         #endregion
 
         #region Lava Style Edits
+        //Nine Layers of Hell brought to you by LIONEIGHTCAKE!!
+        //All new liquid rendering for lava can be found in Systems/LavaRendering.cs
 
-        //Lava Code goes here
+        //To save on time, a LOT of the edits are from the BiomeLava mod (owned by myself, lion8cake). Obv every edit has been changed to reflect
+        //Calamity's style of IL edits and to remove any unnessesary edits not relivant to calamity. In the loading of the detours and edits
+        //BiomeLava is a check for whether they load or not. If BiomeLava is active all ModLavaStyles will be turned into ModCalls for BiomeLava.
+
+        #region Lava Rendering
+        private void DoDrawLavas(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdsfld<Main>("drawToScreen"), i => i.MatchBrfalse(out _), i => i.MatchLdarg0(), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawWaters")))
+            {
+                LogFailure("DoDraw Lava", "Could not locate the drawing of Background Waters");
+                return;
+            }
+            cursor.EmitDelegate(() => {
+                LavaRendering.instance.DrawLavas(isBackground: true);
+            });
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdsfld<Main>("drawToScreen"), i => i.MatchBrfalse(out _), i => i.MatchLdarg0(), i => i.MatchLdcI4(0), i => i.MatchCall<Main>("DrawWaters")))
+            {
+                LogFailure("DoDraw Lava", "Could not locate the drawing of Waters");
+                return;
+            }
+            cursor.EmitDelegate(() => {
+                LavaRendering.instance.DrawLavas();
+            });
+        }
+
+        private void RenderLavas(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(0), i => i.MatchCall<Main>("DrawWaters")))
+            {
+                LogFailure("Render Lava", "Could not locate the drawing of Waters");
+                return;
+            }
+            cursor.EmitDelegate(() => {
+                LavaRendering.instance.DrawLavas();
+            });
+        }
+
+        private void RenderLavaBackgrounds(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawWaters")))
+            {
+                LogFailure("Render Lava Backgroumds", "Could not locate the drawing of Background Waters");
+                return;
+            }
+            cursor.EmitDelegate(() => {
+                LavaRendering.instance.DrawLavas(isBackground: true);
+            });
+        }
+
+        /*private void DrawLavatoCapture(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            float[] alphaSave = CalamityMod.lavaAlpha.ToArray();
+            c.GotoNext(MoveType.Before, i => i.MatchLdcI4(0), i => i.MatchStloc(34), i => i.MatchBr(out _), i => i.MatchLdloc(34), i => i.MatchLdcI4(1), i => i.MatchBeq(out _));
+            c.EmitLdloc(8);
+            c.EmitDelegate((CaptureBiome biome) => {
+                for (int i = 0; i < 7; i++)
+                {
+                    if (i != 1)
+                    {
+                        CalamityMod.lavaAlpha[i] = ((i == CalamityMod.LavaStyle) ? 1f : 0f);
+                    }
+                }
+            });
+            c.GotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(1), i => i.MatchLdsfld<Main>("waterStyle"), i => i.MatchLdcR4(1), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawLiquid"));
+            c.EmitDelegate(() => {
+                DrawLiquid(bg: true, CalamityMod.LavaStyle);
+            });
+            c.GotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(1), i => i.MatchLdsfld<Main>("bloodMoon"), i => i.MatchBrtrue(out _), i => i.MatchLdloc(8), i => i.MatchLdfld<CaptureBiome>("WaterStyle"), i => i.MatchBr(out _), i => i.MatchLdcI4(9), i => i.MatchLdcR4(1), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawLiquid"));
+            c.EmitDelegate(() => {
+                DrawLiquid(bg: true, CalamityMod.LavaStyle);
+            });
+            c.GotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(0), i => i.MatchLdsfld<Main>("waterStyle"), i => i.MatchLdcR4(1), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawLiquid"));
+            c.EmitDelegate(() => {
+                DrawLiquid(bg: false, CalamityMod.LavaStyle);
+            });
+            c.GotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdcI4(0), i => i.MatchLdloc(8), i => i.MatchLdfld<CaptureBiome>("WaterStyle"), i => i.MatchLdcR4(1), i => i.MatchLdcI4(1), i => i.MatchCall<Main>("DrawLiquid"));
+            c.EmitDelegate(() => {
+                DrawLiquid(bg: false, CalamityMod.LavaStyle);
+            });
+            c.GotoNext(MoveType.After, i => i.MatchLdloc2(), i => i.MatchStsfld<Main>("liquidAlpha"));
+            c.EmitDelegate(() => {
+                CalamityMod.lavaAlpha = alphaSave;
+            });
+        }*/
+
+        private void AddTileLiquidDrawing(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdarg0(), i => i.MatchLdarg1(), i => i.MatchLdcI4(0), i => i.MatchLdarg(out int waterStyleOverride), i => i.MatchLdloc1(), i => i.MatchLdloc2(), i => i.MatchLdloc(12), i => i.MatchLdloc(13), i => i.MatchLdloc(14), i => i.MatchCall<TileDrawing>("DrawTile_LiquidBehindTile")))
+            {
+
+                return;
+            }
+            cursor.EmitLdloc1();
+            cursor.EmitLdloc2();
+            cursor.EmitLdloc(12);
+            cursor.EmitLdloc(13);
+            cursor.EmitLdloc(14);
+            cursor.EmitDelegate((Microsoft.Xna.Framework.Vector2 unscaledPosition, Microsoft.Xna.Framework.Vector2 vector, int j, int i, Terraria.Tile tile) => {
+                LavaRendering.instance.DrawTile_LiquidBehindTile(solidLayer: false, inFrontOfPlayers: false, -1, unscaledPosition, vector, j, i, tile);
+            });
+        }
+        #endregion
+        
+        #region Lava Blocking
+        private void BlockLavaDrawing(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            ILLabel target = cursor.DefineLabel();
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdloc2(), i => i.MatchLdfld(typeof(LiquidRenderer).GetNestedType("LiquidDrawCache", BindingFlags.NonPublic), "Type"), i => i.MatchStloc(8)))
+            {
+                LogFailure("Liquid Renderer Drawing", "Could not locate the variable equating the LiquidCache Type");
+                return;
+            }
+            cursor.EmitLdloc3();
+            cursor.EmitLdloc(4);
+            cursor.EmitLdarg3();
+            cursor.Emit(OpCodes.Ldloc_2);
+            cursor.Emit(OpCodes.Ldfld, typeof(LiquidRenderer).GetNestedType("LiquidDrawCache", BindingFlags.NonPublic).GetRuntimeField("Type"));
+            cursor.EmitDelegate((int i, int j, int style, int type) => {
+                return (type == 1 && style <= LavaRendering.instance.WaterStyleMaxCount) || (type != 1 && style > LavaRendering.instance.WaterStyleMaxCount);
+            });
+            cursor.EmitBrtrue(target);
+            if (!cursor.TryGotoNext(MoveType.After, c => c.MatchCallvirt(typeof(Asset<Texture2D>).GetMethod("get_Value", BindingFlags.Public | BindingFlags.Instance))))
+            {
+                LogFailure("Liquid Renderer Drawing", "Test");
+                return;
+            }
+            cursor.EmitLdarg3();
+            cursor.EmitDelegate<Func<Texture2D, int, Texture2D>>((initialTexture, style) => style >= LavaRendering.instance.WaterStyleMaxCount ? CalamityMod.LavaTextures.liquid[style - LavaRendering.instance.WaterStyleMaxCount - 1].Value : initialTexture);
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdloc(2), i => i.MatchSizeof(typeof(LiquidRenderer).GetNestedType("LiquidDrawCache", BindingFlags.NonPublic)), i => i.MatchAdd(), i => i.MatchStloc(2)))
+            {
+                LogFailure("Liquid Renderer Drawing", "Could not locate the LiquidCache variable incrementing");
+                return;
+            }
+            cursor.MarkLabel(target);
+        }
+
+        private void BlockLavaDrawingForSlopes(On_TileDrawing.orig_DrawTile_LiquidBehindTile orig, TileDrawing self, bool solidLayer, bool inFrontOfPlayers, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, Tile tileCache)
+        {
+            Tile tile = Main.tile[tileX + 1, tileY];
+            Tile tile2 = Main.tile[tileX - 1, tileY];
+            Tile tile3 = Main.tile[tileX, tileY - 1];
+            Tile tile4 = Main.tile[tileX, tileY + 1];
+            if (tileCache.LiquidType == LiquidID.Lava || tile.LiquidType == LiquidID.Lava || tile2.LiquidType == LiquidID.Lava || tile3.LiquidType == LiquidID.Lava || tile4.LiquidType == LiquidID.Lava)
+            {
+                return;
+            }
+            orig.Invoke(self, solidLayer, inFrontOfPlayers, waterStyleOverride, screenPosition, screenOffset, tileX, tileY, tileCache);
+        }
+
+        private void BlockLavaDrawingForSlopes2(On_TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, bool behindBlocks, Tile tileCache, ref Vector2 position, ref Rectangle liquidSize, int liquidType, ref VertexColors colors)
+        {
+            if (liquidType == 1)
+            {
+                return;
+            }
+            orig.Invoke(self, behindBlocks, tileCache, ref position, ref liquidSize, liquidType, ref colors);
+        }
+
+        private void LavafallRemover(On_WaterfallManager.orig_DrawWaterfall_int_int_int_float_Vector2_Rectangle_Color_SpriteEffects orig, WaterfallManager self, int waterfallType, int x, int y, float opacity, Vector2 position, Rectangle sourceRect, Color color, SpriteEffects effects)
+        {
+            if (waterfallType == 1 && CalamityMod.LavaStyle != 0)
+            {
+                return;
+            }
+            orig.Invoke(self, waterfallType, x, y, opacity, position, sourceRect, color, effects);
+        }
+
+        private void BlockRetroLightingLava(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            ILLabel target = cursor.DefineLabel();
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCgt(), i => i.MatchLdarg1(), i => i.MatchOr(), i => i.MatchBrfalse(out target)))
+            {
+                LogFailure("old Drawing Waters", "Could not locate the if statement that contains the check for liquid types, amounts and wether the liquid has a bg (arg1) or not");
+                return;
+            }
+            if (target == null)
+            {
+                LogFailure("old Drawing Waters", "The BrFalse returned null, the boolean check getting was unsuccessful");
+                return;
+            }
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdindU1(), i => i.MatchSub(), i => i.MatchConvR4(), i => i.MatchStloc(14)))
+            {
+                LogFailure("old Drawing Waters", "Could not locate the num3 local variable creation to put the if check after");
+                return;
+            }
+            cursor.EmitLdloc(12);
+            cursor.EmitLdloc(11);
+            cursor.EmitDelegate((int i, int j) => {
+                return Main.tile[i, j].LiquidType == LiquidID.Lava;
+            });
+            cursor.EmitBrtrue(target);
+        }
+        #endregion
+
+        /*
+        #region Lava Replacing
+        private void LavaBubbleReplacer(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext(MoveType.After, i => i.MatchLdcI4(16), i => i.MatchLdcI4(16), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type => lavaBubbleDust[lavaStyle]);
+            c.GotoNext(MoveType.After, i => i.MatchLdcI4(16), i => i.MatchLdcI4(8), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type2 => lavaBubbleDust[lavaStyle]);
+        }
+        
+        private void LavaDropletReplacer(ILContext il)
+		{
+			ILCursor c = new ILCursor(il);
+			c.GotoNext(MoveType.After, i => i.MatchLdarg(out _), i => i.MatchLdcI4(374), i => i.MatchBneUn(out _), i => i.MatchLdcI4(716));
+			c.EmitDelegate<Func<int, int>>(type => lavaDripGore[lavaStyle]);
+		}
+
+        private void SplashItemLava(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(15), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type => lavaBubbleDust[lavaStyle]);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(23), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type2 => lavaBubbleDust[lavaStyle]);
+        }
+
+        private void SplashProjectileLava(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(22), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type => lavaBubbleDust[lavaStyle]);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(30), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type2 => lavaBubbleDust[lavaStyle]);
+        }
+
+        private void SplashNPCLava(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(10), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type => lavaBubbleDust[lavaStyle]);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(19), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type2 => lavaBubbleDust[lavaStyle]);
+        }
+
+        private void SplashPlayerLava(ILContext il)
+        {
+            ILCursor c = new ILCursor(il);
+            c.GotoNext(MoveType.Before, i => i.MatchLdarg0(), i => i.MatchLdcI4(24), i => i.MatchLdloc(161), i => i.MatchLdcI4(1), i => i.MatchLdcI4(0), i => i.MatchCall<Player>("AddBuff"));
+            c.EmitLdarg0();
+            c.EmitLdloc(161);
+            c.EmitDelegate((Player player, int onFiretime) =>
+            {
+                if (ModContent.GetInstance<BiomeLavaConfig>().LavaDebuffs)
+                {
+                    LavaStylesLoader.InflictDebuff(player, null, lavaStyle, onFiretime);
+                    if (lavaStyle < LavaStyleID.Count && lavaExtraDebuff[lavaStyle] != BuffID.OnFire)
+                    {
+                        player.AddBuff(lavaExtraDebuff[lavaStyle], lavaExtraDebuffLength[lavaStyle] != 0 ? lavaExtraDebuffLength[lavaStyle] : onFiretime);
+                    }
+                }
+            });
+            //Dusts
+            c.GotoNext(MoveType.After, i => i.MatchStloc(172), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type => lavaBubbleDust[lavaStyle]);
+            c.GotoNext(MoveType.After, i => i.MatchStloc(180), i => i.MatchBr(out _), i => i.MatchLdarg0(), i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("X"), i => i.MatchLdcR4(6), i => i.MatchSub(), i => i.MatchLdarg0(),
+                i => i.MatchLdflda<Entity>("position"), i => i.MatchLdfld<Vector2>("Y"), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("height"), i => i.MatchLdcI4(2), i => i.MatchDiv(), i => i.MatchConvR4(), i => i.MatchAdd(), i => i.MatchLdcR4(8),
+                i => i.MatchSub(), i => i.MatchNewobj(out _), i => i.MatchLdarg0(), i => i.MatchLdfld<Entity>("width"), i => i.MatchLdcI4(12), i => i.MatchAdd(), i => i.MatchLdcI4(24), i => i.MatchLdcI4(35));
+            c.EmitDelegate<Func<int, int>>(type2 => lavaBubbleDust[lavaStyle]);
+        }
+        #endregion
+        */
+
+        #region Other
+        private Color WaterfallGlowmaskEditor(On_WaterfallManager.orig_StylizeColor orig, float alpha, int maxSteps, int waterfallType, int y, int s, Tile tileCache, Color aColor)
+        {
+            if (CalamityMod.LavaStyle != 0 && !LavaStylesLoader.Get(CalamityMod.LavaStyle).LavafallGlowmask())
+            {
+                return aColor;
+            }
+            else
+            {
+                return orig.Invoke(alpha, maxSteps, waterfallType, y, s, tileCache, aColor);
+            }
+        }
+
+        private void LavaFallRedrawer(On_WaterfallManager.orig_Draw orig, WaterfallManager self, SpriteBatch spriteBatch)
+        {
+            orig.Invoke(self, spriteBatch);
+            LavaRendering.instance.InitialDrawLavafall(self);
+        }
+        #endregion
 
         #endregion
 
-        #region Water Visuals
+        #region Liquid Visuals
+        //Contains all liquid light and liquid alpha (seethrough-ability)
         private void LiquidEmitLight(On_TileLightScanner.orig_ApplyLiquidLight orig, TileLightScanner self, Tile tile, ref Vector3 lightColor)
         {
             orig.Invoke(self, tile, ref lightColor);
-            if (tile.LiquidAmount > 0)
+            if (tile.LiquidType == LiquidID.Water)
             {
-                if (tile.LiquidType == LiquidID.Water)
+                float R = 0f;
+                float G = 0f;
+                float B = 0f;
+                CalamityWaterLoader.ModifyLightSetup(tile.X(), tile.Y(), Main.waterStyle, ref R, ref G, ref B);
+                if (lightColor.X < R)
                 {
-                    float R = 0f;
-                    float G = 0f;
-                    float B = 0f;
-                    CalamityWaterLoader.ModifyLightSetup(tile.X(), tile.Y(), Main.waterStyle, ref R, ref G, ref B);
-                    if (lightColor.X < R)
-                    {
-                        lightColor.X = R;
-                    }
-                    if (lightColor.Y < G)
-                    {
-                        lightColor.Y = G;
-                    }
-                    if (lightColor.Z < B)
-                    {
-                        lightColor.Z = B;
-                    }
+                    lightColor.X = R;
+                }
+                if (lightColor.Y < G)
+                {
+                    lightColor.Y = G;
+                }
+                if (lightColor.Z < B)
+                {
+                    lightColor.Z = B;
                 }
             }
+            else if (tile.LiquidType == LiquidID.Lava)
+            {
+                Vector3 lavaLight = new Vector3(0.55f, 0.33f, 0.11f);
+                float R = CalamityMod.LavaStyle == 0 ? lavaLight.X : 0f;
+                float G = CalamityMod.LavaStyle == 0 ? lavaLight.Y : 0f;
+                float B = CalamityMod.LavaStyle == 0 ? lavaLight.Z : 0f;
+                LavaStylesLoader.ModifyLightSetup(tile.X(), tile.Y(), CalamityMod.LavaStyle, ref R, ref G, ref B);
+                for (int j = 0; j < LavaStylesLoader.TotalCount; j++)
+                {
+                    if (CalamityMod.lavaAlpha[j] > 0f && j != CalamityMod.LavaStyle)
+                    {
+                        float r = j == 0 ? lavaLight.X : 0f;
+                        float g = j == 0 ? lavaLight.Y : 0f;
+                        float b = j == 0 ? lavaLight.Z : 0f;
+                        LavaStylesLoader.ModifyLightSetup(tile.X(), tile.Y(), j, ref r, ref g, ref b);
+                        float r2 = CalamityMod.LavaStyle == 0 ? lavaLight.X : 0f;
+                        float g2 = CalamityMod.LavaStyle == 0 ? lavaLight.Y : 0f;
+                        float b2 = CalamityMod.LavaStyle == 0 ? lavaLight.Z : 0f;
+                        LavaStylesLoader.ModifyLightSetup(tile.X(), tile.Y(), CalamityMod.LavaStyle, ref r2, ref g2, ref b2);
+                        R = Single.Lerp(r, r2, CalamityMod.lavaAlpha[CalamityMod.LavaStyle]);
+                        G = Single.Lerp(g, g2, CalamityMod.lavaAlpha[CalamityMod.LavaStyle]);
+                        B = Single.Lerp(b, b2, CalamityMod.lavaAlpha[CalamityMod.LavaStyle]);
+                    }
+                }
+                if (!(R == 0 && G == 0 && B == 0))
+                {
+                    float colorManipulator = (float)(270 - Main.mouseTextColor) / 900f;
+                    R += colorManipulator;
+                    G += colorManipulator;
+                    B += colorManipulator;
+                }
+                if (lightColor.X < R)
+                {
+                    lightColor.X = R;
+                }
+                if (lightColor.Y < G)
+                {
+                    lightColor.Y = G;
+                }
+                if (lightColor.Z < B)
+                {
+                    lightColor.Z = B;
+                }
+            }
+        }
+
+        private void LavafallLightEditor(On_WaterfallManager.orig_AddLight orig, int waterfallType, int x, int y)
+        {
+            if (waterfallType == 1)
+            {
+                float r = 0.55f;
+                float g = 0.33f;
+                float b = 0.11f;
+                LavaStylesLoader.ModifyLightSetup(x, y, CalamityMod.LavaStyle, ref r, ref g, ref b);
+                if (!(r == 0 && g == 0 && b == 0))
+                {
+                    float r8;
+                    float num3 = (r8 = (r + (float)(270 - Main.mouseTextColor) / 900f) * 0.4f);
+                    float g8 = num3 * g;
+                    float b8 = num3 * b;
+                    Lighting.AddLight(x, y, r8, g8, b8);
+                }
+                return;
+            }
+            orig.Invoke(waterfallType, x, y);
         }
 
         private static void LiquidDrawColors(ILContext il)
@@ -853,7 +1225,7 @@ namespace CalamityMod.ILEditing
                 }
                 else if (liquidType == LiquidID.Lava)
                 {
-                    LavaStylesLoader.DrawColorSetup(x, y, Main.waterStyle, ref initialColor); //replace main.waterstyle with lavastyle
+                    LavaStylesLoader.DrawColorSetup(x, y, CalamityMod.LavaStyle, ref initialColor);
                 }
             });
         }
@@ -888,7 +1260,7 @@ namespace CalamityMod.ILEditing
                         }
                         else if (tile.LiquidType == LiquidID.Lava || i == 1)
                         {
-                            LavaStylesLoader.DrawColorSetup(x, y, Main.waterStyle, ref initialColor); //replace main.waterstyle with lavastyle
+                            LavaStylesLoader.DrawColorSetup(x, y, CalamityMod.LavaStyle, ref initialColor);
                         }
                     }
                 }
