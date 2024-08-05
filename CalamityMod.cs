@@ -267,6 +267,7 @@ namespace CalamityMod
             //lava
             CustomLavaManagement.Load();
             LavaRendering.instance = new LavaRendering();
+            WeakReferenceSupport.LavaStytleToBiomeLava();
 
             Attunement.Load();
             BalancingChangesManager.Load();

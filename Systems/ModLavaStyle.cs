@@ -115,78 +115,9 @@ namespace CalamityMod.Systems
         /// <param name="player">The Player that is inflicted with the debuff apon entering the lavastyle</param>
         /// <param name="npc">The NPC that is inflicted with the debuff apon entering the lavastyle</param>
         /// <param name="onfireDuration">The duration of the OnFire! debuff. This allows for easy replacement of OnFire</param>
-        public virtual void InflictDebuff(Player player, NPC npc, int onfireDuration)
+        public virtual void InflictDebuff(Player player, int onfireDuration)
         {
         }
-
-
-
-
-
-
-
-
-
-        /*/// <summary>
-        /// The ID of the lava style.
-        /// </summary>
-        public int Slot { get; internal set; }
-
-        protected sealed override void Register()
-        {
-            Slot = LoaderManager.Get<LavaStylesLoader>().Register(this);
-        }
-
-        public sealed override void SetupContent()
-        {
-            SetStaticDefaults();
-            CalamityMod.LavaTextures.liquid[Slot] = ModContent.Request<Texture2D>(Texture, (AssetRequestMode)2);
-            CalamityMod.LavaTextures.slope[Slot] = ModContent.Request<Texture2D>(SlopeTexture, (AssetRequestMode)2);
-            CalamityMod.LavaTextures.block[Slot] = ModContent.Request<Texture2D>(BlockTexture, (AssetRequestMode)2);
-        }
-
-        public virtual string BlockTexture => Texture + "_Block";
-
-        public virtual string SlopeTexture => Texture + "_Slope";
-
-        /// <summary>
-        /// The ID of the waterfall style the game should use when this lava style is in use.
-        /// </summary>
-        public abstract int ChooseWaterfallStyle();
-
-        /// <summary>
-        /// The ID of the dust that is created when anything splashes in lava.
-        /// </summary>
-        public abstract int GetSplashDust();
-
-        /// <summary>
-        /// The ID of the gore that represents droplets of water falling down from a block. Return <see cref="F:Terraria.ID.GoreID.LavaDrip" /> (or another existing droplet gore) or make a custom ModGore that uses <see cref="F:Terraria.ID.GoreID.Sets.LiquidDroplet" />.
-        /// </summary>
-        public abstract int GetDropletGore();
-
-        /// <summary>
-        /// Allows lava styles to manipulate what color the liquid is drawn to, this can allow lava to be see-throughable to see backgrounds (surface and underground backgrounds not walls)
-        /// </summary>
-        /// <param name="x">X position of the lava</param>
-        /// <param name="y">Y position of the lava</param>
-        /// <param name="liquidColor">The vertexColor of the lava color, this is both used to get the current color and to set the color of the lava</param>
-        public virtual void DrawColor(int x, int y, ref VertexColors liquidColor, bool isSlope)
-        {
-        }
-
-        /// <summary>
-        /// Allows you to determine how much light this lava emits.<br />
-        /// It can also let you light up the block in front of this lava.<br />
-        /// See <see cref="M:Terraria.Graphics.Light.TileLightScanner.ApplyLiquidLight(Terraria.Tile,Microsoft.Xna.Framework.Vector3@)" /> for vanilla tile light values to use as a reference.<br />
-        /// </summary>
-        /// <param name="i">The x position in tile coordinates.</param>
-        /// <param name="j">The y position in tile coordinates.</param>
-        /// <param name="r">The red component of light, usually a value between 0 and 1</param>
-        /// <param name="g">The green component of light, usually a value between 0 and 1</param>
-        /// <param name="b">The blue component of light, usually a value between 0 and 1</param>
-        public virtual void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
-        {
-        }*/
     }
 
     public class LavaStylesLoader : ModSystem
@@ -308,12 +239,12 @@ namespace CalamityMod.Systems
             }
         }
 
-        public static void InflictDebuff(Player player, NPC npc, int type, int onfireDuration)
+        public static void InflictDebuff(Player player, int type, int onfireDuration)
         {
             ModLavaStyle lavaStyle = Get(type);
             if (lavaStyle != null)
             {
-                lavaStyle?.InflictDebuff(player, npc, onfireDuration);
+                lavaStyle?.InflictDebuff(player, onfireDuration);
             }
         }
 
@@ -333,64 +264,5 @@ namespace CalamityMod.Systems
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-        /*public LavaStylesLoader()
-        {
-            //VanillaCount = 1;
-            typeof(Loader).GetMethod("Initialize", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance).Invoke(this, new object[] { 1 });
-        }
-
-        internal void ResizeArray()
-        {
-            Array.Resize(ref CalamityMod.LavaTextures.liquid, ModContent.GetContent<ModLavaStyle>().Count());
-            Array.Resize(ref CalamityMod.LavaTextures.slope, ModContent.GetContent<ModLavaStyle>().Count());
-            Array.Resize(ref CalamityMod.LavaTextures.block, ModContent.GetContent<ModLavaStyle>().Count());
-            Array.Resize(ref CalamityMod.lavaAlpha, ModContent.GetContent<ModLavaStyle>().Count());
-        }
-
-        public void DrawWaterfall(WaterfallManager waterfallManager)
-        {
-            foreach (ModLavaStyle lavaStyle in ModContent.GetContent<ModLavaStyle>())
-            {
-                if (CalamityMod.lavaAlpha[lavaStyle.Slot] > 0f)
-                {
-                    typeof(WaterfallManager).GetMethod("DrawWaterfall", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance).Invoke(waterfallManager, new object[] { lavaStyle.ChooseWaterfallStyle(), CalamityMod.lavaAlpha[lavaStyle.Slot] } );
-                }
-            }
-        }
-
-        internal static void ModifyLightSetup(int i, int j, int type, ref float r, ref float g, ref float b)
-        {
-            ModLavaStyle styles = LoaderManager.Get<LavaStylesLoader>().Get(type);
-            if (styles != null)
-            {
-                styles?.ModifyLight(i, j, ref r, ref g, ref b);
-            }
-        }
-
-        internal static void DrawColorSetup(int x, int y, int type, ref VertexColors liquidColor, bool isSlope = false)
-        {
-            ModLavaStyle styles = LoaderManager.Get<LavaStylesLoader>().Get(type);
-            if (styles != null)
-            {
-                styles?.DrawColor(x, y, ref liquidColor, isSlope);
-            }
-        }
-
-        /// <summary>
-        /// Returns the ModLavaStyle with the given ID.
-        /// </summary>
-        public static ModLavaStyle GetModLavaStyle(int style)
-        {
-            return LoaderManager.Get<LavaStylesLoader>().Get(style);
-        }*/
     }
 }
