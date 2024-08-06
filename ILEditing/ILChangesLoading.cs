@@ -100,6 +100,13 @@ namespace CalamityMod.ILEditing
                 IL_Main.oldDrawWater += BlockRetroLightingLava;
 
                 //Replacing
+                IL_LiquidRenderer.InternalPrepareDraw += LavaBubbleReplacer;
+                IL_TileDrawing.EmitLiquidDrops += LavaDropletReplacer;
+                IL_NPC.Collision_WaterCollision += SplashEntityLava;
+                IL_Projectile.Update += SplashEntityLava;
+                IL_Item.MoveInWorld += SplashEntityLava;
+                IL_Player.Update += SplashEntityLava;
+                IL_Player.Update += PlayerDebuffEdit;
 
                 //Other
                 On_WaterfallManager.Draw += LavaFallRedrawer;

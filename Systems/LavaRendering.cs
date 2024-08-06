@@ -23,18 +23,24 @@ namespace CalamityMod.Systems
 
         public int WaterStyleMaxCount = ModContent.GetContent<ModWaterStyle>().Count() + LoaderManager.Get<WaterStylesLoader>().VanillaCount;
 
-        public static int CalculateLavaStyle()
-        {
-            return 0;
-        }
-
         public void DrawLavas(bool isBackground = false)
         {
             Main.drewLava = false;
             if (!isBackground)
             {
-                CalamityMod.LavaStyle = CalculateLavaStyle();
+                CalamityMod.LavaStyle = 0;
                 LavaStylesLoader.IsLavaActive();
+                for (int i = 0; i < 1; i++)
+                {
+                    if (CalamityMod.LavaStyle != i)
+                    {
+                        CalamityMod.lavaAlpha[i] = Math.Max(CalamityMod.lavaAlpha[i] - 0.2f, 0f);
+                    }
+                    else
+                    {
+                        CalamityMod.lavaAlpha[i] = Math.Min(CalamityMod.lavaAlpha[i] + 0.2f, 1f);
+                    }
+                }
                 LavaStylesLoader.UpdateLiquidAlphas();
             }
             bool flag = false;
@@ -168,7 +174,6 @@ namespace CalamityMod.Systems
                     Color color = Lighting.GetColor(j, i);
                     float num3 = 256 - Main.tile[j, i].LiquidAmount;
                     num3 /= 32f;
-                    bool flag = false;
                     int num4 = 0;
                     if (Main.tile[j, i].LiquidType == LiquidID.Lava)
                     {
@@ -325,6 +330,7 @@ namespace CalamityMod.Systems
                             if (Main.tile[j, i].LiquidAmount > 200 && Main.rand.NextBool(700))
                             {
                                 Dust.NewDust(new Vector2((float)(j * 16), (float)(i * 16)), 16, 16, dustLava());
+                                Main.NewText("lava dust " + dustLava());
                             }
                             if (value.Y == 0 && Main.rand.NextBool(350))
                             {
@@ -346,10 +352,6 @@ namespace CalamityMod.Systems
                     float num18 = (float)(int)color.B * num9;
                     float num19 = (float)(int)color.A * num9;
                     color = new((int)(byte)num16, (int)(byte)num17, (int)(byte)num18, (int)(byte)num19);
-                    if (flag)
-                    {
-                        color = new(color.ToVector4() * LiquidRenderer.GetShimmerBaseColor(j, i));
-                    }
                     if (Lighting.NotRetro && !bg)
                     {
                         Color color2 = color;
@@ -402,10 +404,6 @@ namespace CalamityMod.Systems
                                 color3.G = (byte)((color2.G * 3 + color4.G * 2) / 5);
                                 color3.B = (byte)((color2.B * 3 + color4.B * 2) / 5);
                                 color3.A = (byte)((color2.A * 3 + color4.A * 2) / 5);
-                                if (flag)
-                                {
-                                    color3 = new(color3.ToVector4() * LiquidRenderer.GetShimmerBaseColor(j, i));
-                                }
                                 Main.spriteBatch.Draw(CalamityMod.LavaTextures.block[num4].Value, vector2 - Main.screenPosition + new Vector2((float)num20, (float)num21) + vector, (Rectangle?)new Rectangle(value.X + num20, value.Y + num21, width, height), color3, 0f, default(Vector2), 1f, (SpriteEffects)0, 0f);
                             }
                         }
@@ -1177,11 +1175,27 @@ namespace CalamityMod.Systems
 
         public static int dustLava()
         {
-            if (CalamityMod.LavaStyle >= 2)
+            if (CalamityMod.LavaStyle >= 1)
             {
                 return LavaStylesLoader.Get(CalamityMod.LavaStyle).GetSplashDust();
             }
-            return DustID.Lava;
+            else
+            {
+                return DustID.Lava;
+            }
+        }
+
+        //just better as a method rather than hardcoded type values
+        public static int goreLava()
+        {
+            if (CalamityMod.LavaStyle >= 1)
+            {
+                return LavaStylesLoader.Get(CalamityMod.LavaStyle).GetDropletGore();
+            }
+            else
+            {
+                return GoreID.LavaDrip;
+            }
         }
     }
 }

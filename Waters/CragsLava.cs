@@ -1,8 +1,13 @@
-﻿using CalamityMod.Systems;
+﻿using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.CalPlayer;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using CalamityMod.Dusts.WaterSplash;
+using CalamityMod.Gores.WaterDroplet;
 
 namespace CalamityMod.Waters
 {
@@ -10,9 +15,9 @@ namespace CalamityMod.Waters
     {
         public override string WaterfallTexture => "CalamityMod/Waters/CragsLavaflow";
 
-        public override int GetSplashDust() => 0;
+        public override int GetSplashDust() => ModContent.DustType<CragsLavaSplash>();
 
-        public override int GetDropletGore() => 0;
+        public override int GetDropletGore() => ModContent.GoreType<CragsLavaDroplet>();
 
         public override bool IsLavaActive() => Main.LocalPlayer.Calamity().ZoneCalamity || Main.LocalPlayer.Calamity().BrimstoneLavaFountainCounter > 0;
 
@@ -25,23 +30,9 @@ namespace CalamityMod.Waters
 
         public override void InflictDebuff(Player player, int onfireDuration)
         {
-            //Add Searing lava here
-            /*int buffID = 0;
-            if (player != null)
-            {
-                player.AddBuff(buffID, onfireDuration / 2);
-            }
-            if (npc != null)
-            {
-                if (Main.remixWorld && !npc.friendly)
-                {
-                    npc.AddBuff(buffID, onfireDuration / 2);
-                }
-                else
-                {
-                    npc.AddBuff(buffID, onfireDuration / 2);
-                }
-            }*/
+            // Extra DoT in the lava of the crags. Negated by Flame-licked Shell.
+            if (!player.GetModPlayer<CalamityPlayer>().flameLickedShell)
+                player.AddBuff(ModContent.BuffType<SearingLava>(), 2, false);
         }
     }
 }
