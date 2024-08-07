@@ -89,7 +89,7 @@ namespace CalamityMod.ILEditing
                 IL_Main.DoDraw += DoDrawLavas;
                 IL_Main.RenderWater += RenderLavas;
                 IL_Main.RenderBackground += RenderLavaBackgrounds;
-
+                IL_Main.DrawCapture += DrawLavatoCapture;
                 IL_TileDrawing.Draw += AddTileLiquidDrawing;
 
                 //Blocking

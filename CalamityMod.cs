@@ -265,9 +265,9 @@ namespace CalamityMod
             SchematicManager.Load();
 
             //lava
-            CustomLavaManagement.Load();
             LavaRendering.instance = new LavaRendering();
             WeakReferenceSupport.LavaStytleToBiomeLava();
+            LavaRendering.alphaSave = new float[lavaAlpha.Length];
 
             Attunement.Load();
             BalancingChangesManager.Load();
@@ -485,7 +485,6 @@ namespace CalamityMod
             InvasionProgressUIManager.UnloadGUIs();
             BossRushEvent.Unload();
             SchematicManager.Unload();
-            CustomLavaManagement.Unload();
             CooldownRegistry.Unload();
             PlayerDashManager.Unload();
 
