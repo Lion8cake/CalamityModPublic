@@ -18,7 +18,7 @@ namespace CalamityMod.Waters
         public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("CalamityMod/SunkenSeaWaterflow").Slot;
         public override int GetSplashDust() => ModContent.DustType<SunkenSeaSplash>();
         public override int GetDropletGore() => ModContent.GoreType<SunkenSeaWaterDroplet>();
-        public override Color BiomeHairColor() => new Color(46, 155, 1716);
+        public override Color BiomeHairColor() => new Color(46, 155, 171);
         public override void DrawColor(int x, int y, ref VertexColors liquidColor, bool isSlope) => ILEditing.ILChanges.SelectSulphuricWaterColor(x, y, ref liquidColor, isSlope);
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {

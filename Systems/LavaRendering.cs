@@ -16,7 +16,7 @@ using static Terraria.WaterfallManager;
 
 namespace CalamityMod.Systems
 {
-    public class LavaRendering
+    public class LavaRendering : ModSystem
     {
         //Welcome to Calamity's lava rendering. Prepare your eyes
         public static LavaRendering instance;
@@ -24,6 +24,11 @@ namespace CalamityMod.Systems
         public int WaterStyleMaxCount = ModContent.GetContent<ModWaterStyle>().Count() + LoaderManager.Get<WaterStylesLoader>().VanillaCount;
 
         internal static float[] alphaSave;
+
+        public override void Load()
+        {
+            LavaRendering.alphaSave = new float[CalamityMod.lavaAlpha.Length];
+        }
 
         public void DrawLavas(bool isBackground = false)
         {

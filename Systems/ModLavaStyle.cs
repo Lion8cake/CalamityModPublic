@@ -105,15 +105,9 @@ namespace CalamityMod.Systems
         }
 
         /// <summary>
-        /// Allows your lavastyle to inflict debuffs to Players and NPCs when they enter your lava style <br />
-        /// Only runs when the BiomeLava Config Lava Style Debuffs is active. Otherwise this method wont run. <br />
-        /// Check for if Player or NPC is null before doing each other's Add debuff code. <br />
-        /// For NPCS only: <br />
-        /// Npc debuff code is only ran client side to prevent massive issues with detecting if an NPC is allowed to have What lava style. <br />
-        /// all code is called ONLY in singleplayer for NPCs.
+        /// Allows your lavastyle to inflict debuffs to Players and NPCs when they enter your lava style
         /// </summary>
         /// <param name="player">The Player that is inflicted with the debuff apon entering the lavastyle</param>
-        /// <param name="npc">The NPC that is inflicted with the debuff apon entering the lavastyle</param>
         /// <param name="onfireDuration">The duration of the OnFire! debuff. This allows for easy replacement of OnFire</param>
         public virtual void InflictDebuff(Player player, int onfireDuration)
         {

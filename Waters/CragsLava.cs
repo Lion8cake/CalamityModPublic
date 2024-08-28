@@ -31,7 +31,7 @@ namespace CalamityMod.Waters
         public override void InflictDebuff(Player player, int onfireDuration)
         {
             // Extra DoT in the lava of the crags. Negated by Flame-licked Shell.
-            if (!player.GetModPlayer<CalamityPlayer>().flameLickedShell)
+            if (!player.Calamity().flameLickedShell)
                 player.AddBuff(ModContent.BuffType<SearingLava>(), 2, false);
         }
     }

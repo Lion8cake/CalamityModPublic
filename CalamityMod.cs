@@ -156,6 +156,7 @@ namespace CalamityMod
 
         // Please keep this in alphabetical order so it's easy to read
         internal Mod ancientsAwakened = null;
+        internal Mod biomeLava = null;
         internal Mod bossChecklist = null;
         internal Mod coloredDamageTypes = null;
         internal Mod crouchMod = null;
@@ -171,7 +172,6 @@ namespace CalamityMod
         internal Mod thorium = null;
         internal Mod varia = null;
         internal Mod wikithis = null;
-        internal Mod biomeLava = null;
 
         //hell background
         //private List<HellBGLoad> loadCache;
@@ -188,6 +188,8 @@ namespace CalamityMod
             ModLoader.TryGetMod("CalamityModMusic", out musicMod);
             ancientsAwakened = null;
             ModLoader.TryGetMod("AAMod", out ancientsAwakened);
+            biomeLava = null;
+            ModLoader.TryGetMod("BiomeLava", out biomeLava);
             bossChecklist = null;
             ModLoader.TryGetMod("BossChecklist", out bossChecklist);
             coloredDamageTypes = null;
@@ -218,8 +220,6 @@ namespace CalamityMod
             ModLoader.TryGetMod("Varia", out varia);
             wikithis = null;
             ModLoader.TryGetMod("Wikithis", out wikithis);
-            biomeLava = null;
-            ModLoader.TryGetMod("BiomeLava", out biomeLava);
 
             // Initialize the EnemyStats struct as early as it is safe to do so
             NPCStats.Load();
@@ -267,7 +267,6 @@ namespace CalamityMod
             //lava
             LavaRendering.instance = new LavaRendering();
             WeakReferenceSupport.LavaStytleToBiomeLava();
-            LavaRendering.alphaSave = new float[lavaAlpha.Length];
 
             Attunement.Load();
             BalancingChangesManager.Load();
@@ -448,6 +447,7 @@ namespace CalamityMod
             musicMod = null;
 
             ancientsAwakened = null;
+            biomeLava = null;
             bossChecklist = null;
             coloredDamageTypes = null;
             crouchMod = null;
@@ -463,7 +463,6 @@ namespace CalamityMod
             thorium = null;
             varia = null;
             wikithis = null;
-            biomeLava = null;
 
             AstralSky = null;
 
